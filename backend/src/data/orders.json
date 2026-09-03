@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1787885411679",
+    "userId": "1787779811153",
+    "customer": {
+      "fullName": "Restaurant Admin",
+      "phone": "+971503203400",
+      "email": "admin@techmaster.com"
+    },
+    "deliveryAddress": {
+      "emirate": "Dubai",
+      "area": "dfggfds",
+      "street": "Farook Abd Al Wahab",
+      "building": "31",
+      "floor": "",
+      "apartment": "",
+      "landmark": "",
+      "instructions": ""
+    },
+    "orderNotes": "",
+    "items": [
+      {
+        "menuItemId": "1787091490742",
+        "name": "Labrador Retriever Puppy",
+        "price": 7500,
+        "quantity": 1,
+        "lineTotal": 7500
+      }
+    ],
+    "subtotal": 7500,
+    "deliveryFee": 0,
+    "total": 7500,
+    "status": "pending",
+    "paymentMethod": "cod",
+    "paymentStatus": "unpaid",
+    "createdAt": "2026-08-28T02:50:11.679Z"
+  },
+  {
+    "id": "1787887593594",
+    "userId": "1787779811153",
+    "customer": {
+      "fullName": "Restaurant Admin",
+      "phone": "+971503203400",
+      "email": "admin@techmaster.com"
+    },
+    "deliveryAddress": {
+      "emirate": "Sharjah",
+      "area": "dfggfds",
+      "street": "Farook Abd Al Wahab",
+      "building": "31",
+      "floor": "1",
+      "apartment": "31",
+      "landmark": "",
+      "instructions": ""
+    },
+    "orderNotes": "",
+    "items": [
+      {
+        "menuItemId": "1787091490742",
+        "name": "Labrador Retriever Puppy",
+        "price": 7500,
+        "quantity": 1,
+        "lineTotal": 7500
+      }
+    ],
+    "subtotal": 7500,
+    "deliveryFee": 0,
+    "total": 7500,
+    "status": "pending",
+    "paymentMethod": "cod",
+    "paymentStatus": "unpaid",
+    "createdAt": "2026-08-28T03:26:33.594Z"
+  }
+]
