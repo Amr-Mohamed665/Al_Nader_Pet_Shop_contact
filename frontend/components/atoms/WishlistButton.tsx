@@ -4,15 +4,17 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useCheckWishlist, useAddToWishlist, useRemoveFromWishlist } from '@/hooks/useWishlist';
 import { showToast } from '@/utils/toast';
+import { playSound, getSoundForCategory } from '@/lib/sounds';
 import type { MouseEvent } from 'react';
 
 interface WishlistButtonProps {
   productId: string;
   productName?: string;
+  category?: string;
   className?: string;
 }
 
-export default function WishlistButton({ productId, productName, className = '' }: WishlistButtonProps) {
+export default function WishlistButton({ productId, productName, category, className = '' }: WishlistButtonProps) {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { data: inWishlist, isLoading } = useCheckWishlist(productId);
@@ -31,9 +33,11 @@ export default function WishlistButton({ productId, productName, className = '' 
     if (inWishlist) {
       await removeFromWishlist.mutateAsync(productId);
       showToast('info', productName ? `${productName} removed from wishlist` : 'Removed from wishlist');
+      playSound('wishlist-remove');
     } else {
       await addToWishlist.mutateAsync(productId);
       showToast('success', productName ? `${productName} added to wishlist ❤️` : 'Added to wishlist ❤️');
+      playSound(getSoundForCategory(category || productName));
     }
   };
 

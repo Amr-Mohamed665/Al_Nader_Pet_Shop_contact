@@ -38,7 +38,7 @@ export const checkoutSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
   emirate: z.enum(UAE_EMIRATES, {
     message: 'Please select a valid UAE emirate',
-  }).optional(),
+  }),
   area: z.string().min(1, 'Area / Community is required').max(100, 'Area must be 100 characters or fewer'),
   street: z.string().min(1, 'Street name is required').max(200, 'Street must be 200 characters or fewer'),
   building: z.string().min(1, 'Building or Villa is required').max(100, 'Building must be 100 characters or fewer'),

@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import Cookies from 'js-cookie';
 import { useAuth } from '@/context/AuthContext';
 import { showToast } from '@/utils/toast';
+import { playSound, getSoundForCategory } from '@/lib/sounds';
 import type { CartItem, Product } from '@/types';
 
 interface CartContextValue {
@@ -77,6 +78,8 @@ export function CartProvider({ children }: CartProviderProps) {
       ];
     });
     showToast('success', `${product.name} added to cart!`);
+    const categorySound = getSoundForCategory(product.category || product.categorySlug || product.name);
+    playSound(categorySound);
   }, []);
 
   const removeItem = useCallback((productId: string) => {
@@ -84,6 +87,7 @@ export function CartProvider({ children }: CartProviderProps) {
       const item = prev.find((i) => i.id === productId);
       if (item) {
         showToast('info', `${item.name} removed from cart`);
+        playSound('cart-remove');
       }
       return prev.filter((i) => i.id !== productId);
     });
@@ -95,6 +99,7 @@ export function CartProvider({ children }: CartProviderProps) {
         const item = prev.find((i) => i.id === productId);
         if (item) {
           showToast('info', `${item.name} removed from cart`);
+          playSound('cart-remove');
         }
         return prev.filter((i) => i.id !== productId);
       });

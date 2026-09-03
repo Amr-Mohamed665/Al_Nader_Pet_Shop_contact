@@ -269,6 +269,7 @@ export default function Navbar() {
 
             {/* Mobile: Wishlist + Cart + Hamburger */}
             <div className="lg:hidden flex items-center gap-1">
+
               {/* Wishlist Icon */}
               <Link
                 href="/wishlist"

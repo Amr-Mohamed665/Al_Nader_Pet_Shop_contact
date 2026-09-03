@@ -45,6 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <WishlistButton
           productId={id}
           productName={name}
+          category={typeof product.category === 'string' ? product.category : product.category?.name || product.categorySlug}
           className="absolute top-3 right-3 z-20 bg-white/80 hover:bg-white border border-slate-200/50 backdrop-blur-sm rounded-full h-8.5 w-8.5 shadow-sm"
         />
 

@@ -5,6 +5,7 @@ import './globals.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
+import { SoundProvider } from '@/context/SoundContext';
 import QueryProvider from '@/components/guards/QueryProvider';
 import WhatsAppFloat from '@/components/atoms/WhatsAppFloat';
 import ReduxProvider from '@/components/providers/ReduxProvider';
@@ -35,12 +36,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="min-h-full flex flex-col bg-cream-50 font-body text-slate-800 antialiased font-medium">
         <ReduxProvider>
           <AuthProvider>
-            <QueryProvider>
-              <CartProvider>
-                {children}
-                <WhatsAppFloat />
-              </CartProvider>
-            </QueryProvider>
+            <SoundProvider>
+              <QueryProvider>
+                <CartProvider>
+                  {children}
+                  <WhatsAppFloat />
+                </CartProvider>
+              </QueryProvider>
+            </SoundProvider>
           </AuthProvider>
         </ReduxProvider>
       </body>

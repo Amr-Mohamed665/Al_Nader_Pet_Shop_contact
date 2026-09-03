@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import ShopLayout from '@/components/templates/ShopLayout';
 import ProtectedRoute from '@/components/guards/ProtectedRoute';
 import Price from '@/components/atoms/Price';
@@ -16,6 +17,9 @@ import { useAuth } from '@/context/AuthContext';
 import { ordersService } from '@/services/orders.service';
 import { checkoutSchema } from '@/lib/validators';
 import { UAE_EMIRATES } from '@/constants/uae';
+import { playSound } from '@/lib/sounds';
+
+type CheckoutFormData = z.input<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -32,13 +36,13 @@ export default function CheckoutPage() {
     reset,
     setError,
     formState: { errors },
-  } = useForm<any>({
-    resolver: zodResolver(checkoutSchema) as any,
+  } = useForm<CheckoutFormData>({
+    resolver: zodResolver(checkoutSchema),
     defaultValues: {
       fullName: user?.name || '',
       phone: '',
       email: user?.email || '',
-      emirate: '',
+      emirate: undefined,
       area: '',
       street: '',
       building: '',
@@ -47,6 +51,7 @@ export default function CheckoutPage() {
       landmark: '',
       instructions: '',
       orderNotes: '',
+      paymentMethod: 'cod',
     },
   });
 
@@ -57,7 +62,7 @@ export default function CheckoutPage() {
         fullName: user.name || '',
         email: user.email || '',
         phone: '',
-        emirate: '',
+        emirate: undefined,
         area: '',
         street: '',
         building: '',
@@ -66,6 +71,7 @@ export default function CheckoutPage() {
         landmark: '',
         instructions: '',
         orderNotes: '',
+        paymentMethod: 'cod',
       } as any);
     }
   }, [user, reset]);
@@ -112,14 +118,17 @@ export default function CheckoutPage() {
       };
  
       const response = await ordersService.create(payload as any);
- 
+
       if (response.success && response.data) {
         clearCart();
+        playSound('success');
         router.push(`/orders/${response.data.id}`);
       } else {
         setServerError(response.message || 'Failed to place order.');
+        playSound('error');
       }
     } catch (err: any) {
+      playSound('error');
       const backendErrors = err.response?.data?.errors;
       if (backendErrors && typeof backendErrors === 'object') {
         Object.entries(backendErrors).forEach(([key, msg]) => {

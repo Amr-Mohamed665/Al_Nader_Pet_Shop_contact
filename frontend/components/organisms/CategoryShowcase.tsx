@@ -94,11 +94,12 @@ export default function CategoryShowcase() {
         {showcaseCategories.map((cat, idx) => {
           const theme = CARD_THEMES[idx % CARD_THEMES.length];
           const href = cat.slug === 'accessories' ? '/accessories' : `/category/${cat.slug}`;
+
           return (
             <Link
               key={cat.id || cat.slug}
               href={href}
-              className={`flex items-center gap-4 p-4 rounded-2xl border ${theme.bgColor} ${theme.borderColor} ${theme.hoverBg} transition-all duration-300 shadow-sm hover:shadow-md group`}
+              className={`flex items-center gap-4 p-4 rounded-2xl border ${theme.bgColor} ${theme.borderColor} ${theme.hoverBg} transition-all duration-300 shadow-sm hover:shadow-md group relative`}
             >
               {/* Image (left) */}
               <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-white shadow-inner">
@@ -117,7 +118,7 @@ export default function CategoryShowcase() {
               </div>
 
               {/* Content (right) */}
-              <div className="flex flex-col min-w-0">
+              <div className="flex flex-col min-w-0 flex-1">
                 <h3 className="text-sm font-extrabold text-slate-900 tracking-tight leading-snug">
                   {cat.name}
                 </h3>
