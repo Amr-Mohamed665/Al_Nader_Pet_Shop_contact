@@ -74,7 +74,8 @@ export interface DeliveryAddress {
 }
 
 export interface Customer {
-  name: string;
+  name?: string;
+  fullName?: string;
   email: string;
   phone: string;
 }
@@ -83,6 +84,7 @@ export interface Order {
   id: string;
   _id?: string;
   user?: string | User;
+  userId?: string;
   customer?: Customer;
   items: OrderItem[];
   deliveryAddress?: DeliveryAddress;
@@ -91,6 +93,7 @@ export interface Order {
   total?: number;
   createdAt?: string;
   updatedAt?: string;
+  [key: string]: any;
 }
 
 // ─── ENUM / UNION TYPES ───────────────────────────────────────────────────────

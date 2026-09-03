@@ -7,7 +7,7 @@ import { cn } from '@/utils/cn';
 interface FormFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue'> {
   label?: string;
   error?: string;
-  register?: (name: string) => any;
+  register?: any;
   className?: string;
   wrapperClassName?: string;
   labelClassName?: string;

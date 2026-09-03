@@ -36,8 +36,36 @@ export default function EditProductPage() {
   }, [id]);
 
   useEffect(() => {
-    if (id) fetchProduct();
-  }, [id, fetchProduct]);
+    if (!id) return;
+    let isCancelled = false;
+
+    const load = async () => {
+      try {
+        const response = await productsService.getById(id);
+        if (isCancelled) return;
+        if (response.success) {
+          setProduct(response.data);
+          setFetchError(null);
+        } else {
+          setFetchError(response.message || 'Product not found.');
+        }
+      } catch (err: any) {
+        if (!isCancelled) {
+          setFetchError(err.response?.data?.message || err.message || 'Failed to load product.');
+        }
+      } finally {
+        if (!isCancelled) {
+          setFetchLoading(false);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [id]);
 
   const handleSubmit = async (data: any) => {
     setSubmitLoading(true);

@@ -209,12 +209,12 @@ export function useReorderCategories() {
       }
 
       const current = queryClient.getQueryData<Category[]>(['categories']) || getStoredCategories();
-      const reordered = orderedIds
+      const reordered: Category[] = (orderedIds
         .map((id, idx) => {
           const item = current.find((c) => String(c.id || c._id) === String(id));
           return item ? { ...item, order: idx } : null;
         })
-        .filter((c): c is Category => c !== null);
+        .filter((c): c is Category => c !== null)) as Category[];
 
       saveStoredCategories(reordered);
       queryClient.setQueryData(['categories'], reordered);

@@ -5,9 +5,9 @@ import Price from '@/components/atoms/Price';
 import Badge from '@/components/atoms/Badge';
 import { formatDateShort } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/getStatusColor';
-import type { Order } from '@/types';
+import type { Order, BadgeVariant } from '@/types';
 
-function statusBadgeVariant(status: string) {
+function statusBadgeVariant(status: string): BadgeVariant {
   switch (status) {
     case 'completed': return 'success';
     case 'pending': return 'warning';
@@ -72,14 +72,14 @@ export default function RecentOrders({ orders = [] }: RecentOrdersProps) {
                     </Badge>
                   </div>
                   <div className="flex justify-between items-center text-slate-400">
-                    <span>{formatDateShort(order.createdAt)}</span>
+                    <span>{formatDateShort(order.createdAt || '')}</span>
                     <span className="font-semibold text-slate-600">
                       {itemCount} item{itemCount !== 1 ? 's' : ''}
                     </span>
                   </div>
                   <div className="flex justify-between items-center pt-1.5 border-t border-slate-50">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total</span>
-                    <Price amount={order.total} className="text-teal-600 font-extrabold" />
+                    <Price amount={order.total ?? 0} className="text-teal-600 font-extrabold" />
                   </div>
                 </div>
               );
@@ -114,7 +114,7 @@ export default function RecentOrders({ orders = [] }: RecentOrdersProps) {
                         </Link>
                       </td>
                       <td className="px-5 py-3 text-xs text-slate-400">
-                        {formatDateShort(order.createdAt)}
+                        {formatDateShort(order.createdAt || '')}
                       </td>
                       <td className="px-5 py-3">
                         <span className="text-xs font-semibold text-slate-600">
@@ -122,7 +122,7 @@ export default function RecentOrders({ orders = [] }: RecentOrdersProps) {
                         </span>
                       </td>
                       <td className="px-5 py-3">
-                        <Price amount={order.total} className="text-xs text-teal-600 font-extrabold" />
+                        <Price amount={order.total ?? 0} className="text-xs text-teal-600 font-extrabold" />
                       </td>
                       <td className="px-5 py-3">
                         <Badge variant={statusBadgeVariant(order.status)}>

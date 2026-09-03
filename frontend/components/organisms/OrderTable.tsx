@@ -17,13 +17,13 @@ import {
   TableRow,
   TableCell,
 } from '@/components/ui/table';
-import type { Order } from '@/types';
+import type { Order, OrderStatus } from '@/types';
 
 export interface OrderTableProps {
   orders?: Order[];
-  onStatusUpdate: (orderId: string, status: string) => void;
+  onStatusUpdate: (orderId: string, status: OrderStatus) => void | Promise<unknown>;
   updatingId?: string | null;
-  onDelete?: (orderId: string) => Promise<void> | void;
+  onDelete?: (orderId: string) => void | Promise<unknown>;
 }
 
 export default function OrderTable({ orders = [], onStatusUpdate, updatingId, onDelete }: OrderTableProps) {
@@ -115,7 +115,7 @@ export default function OrderTable({ orders = [], onStatusUpdate, updatingId, on
               <div className="grid grid-cols-2 gap-2 text-xs border-b border-slate-100 pb-2">
                 <div>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Customer</span>
-                  <span className="font-bold text-slate-800">{order.customer?.fullName || `User #${order.userId}`}</span>
+                  <span className="font-bold text-slate-800">{(order.customer as any)?.fullName || (order.customer as any)?.name || `User #${(order as any).userId || order.user}`}</span>
                 </div>
                 {order.customer?.phone && (
                   <div className="text-right">
@@ -135,11 +135,11 @@ export default function OrderTable({ orders = [], onStatusUpdate, updatingId, on
               <div className="flex justify-between items-center text-xs">
                 <div>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Date</span>
-                  <span className="text-slate-500">{formatDateShort(order.createdAt)}</span>
+                  <span className="text-slate-500">{formatDateShort(order.createdAt || '')}</span>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Total</span>
-                  <Price amount={order.total} className="text-teal-600 font-extrabold text-sm" />
+                  <Price amount={order.total ?? 0} className="text-teal-600 font-extrabold text-sm" />
                 </div>
               </div>
 
@@ -147,7 +147,7 @@ export default function OrderTable({ orders = [], onStatusUpdate, updatingId, on
                 <select
                   value={order.status}
                   disabled={updatingId === order.id}
-                  onChange={(e) => onStatusUpdate(order.id, e.target.value)}
+                  onChange={(e) => onStatusUpdate(order.id, e.target.value as OrderStatus)}
                   className={`px-2.5 py-1.5 text-[10px] font-bold border rounded-lg focus:outline-none transition-all duration-150 flex-grow uppercase cursor-pointer ${statusInfo.bg}`}
                 >
                   {VALID_STATUS_VALUES.map((status) => {
@@ -213,21 +213,21 @@ export default function OrderTable({ orders = [], onStatusUpdate, updatingId, on
                   
                   {/* Date */}
                   <TableCell className="px-3.5 py-3.5 text-slate-400">
-                    {formatDateShort(order.createdAt)}
+                    {formatDateShort(order.createdAt || '')}
                   </TableCell>
                   
                   {/* Customer Details */}
                   <TableCell className="px-3.5 py-3.5">
                     {order.customer ? (
                       <div className="space-y-0.5 min-w-0">
-                        <p className="font-bold text-slate-800 leading-tight truncate max-w-[170px]" title={order.customer.fullName}>
-                          {order.customer.fullName}
+                        <p className="font-bold text-slate-800 leading-tight truncate max-w-[170px]" title={(order.customer as any).fullName || (order.customer as any).name}>
+                          {(order.customer as any).fullName || (order.customer as any).name}
                         </p>
                         <p className="text-[10px] text-slate-400 font-semibold">{order.customer.phone}</p>
                       </div>
                     ) : (
                       <div className="space-y-0.5">
-                        <span className="text-slate-400 font-mono text-[10px] block">User #{order.userId}</span>
+                        <span className="text-slate-400 font-mono text-[10px] block">User #{(order as any).userId || order.user}</span>
                       </div>
                     )}
                   </TableCell>
@@ -239,7 +239,7 @@ export default function OrderTable({ orders = [], onStatusUpdate, updatingId, on
                   
                   {/* Total */}
                   <TableCell className="px-3.5 py-3.5">
-                    <Price amount={order.total} className="text-teal-600 font-extrabold text-sm" />
+                    <Price amount={order.total ?? 0} className="text-teal-600 font-extrabold text-sm" />
                   </TableCell>
                   
                   {/* Dynamic Status Dropdown Badge */}
@@ -247,7 +247,7 @@ export default function OrderTable({ orders = [], onStatusUpdate, updatingId, on
                     <select
                       value={order.status}
                       disabled={updatingId === order.id}
-                      onChange={(e) => onStatusUpdate(order.id, e.target.value)}
+                      onChange={(e) => onStatusUpdate(order.id, e.target.value as OrderStatus)}
                       className={`w-full px-2.5 py-1 text-[10px] font-extrabold rounded-full border cursor-pointer focus:outline-none transition-all duration-150 text-center uppercase tracking-wider select-none ${statusInfo.bg}`}
                     >
                       {VALID_STATUS_VALUES.map((status) => {

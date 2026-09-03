@@ -1,4 +1,5 @@
-export function formatDate(dateString: string | Date): string {
+export function formatDate(dateString: string | Date | undefined): string {
+  if (!dateString) return '—';
   return new Intl.DateTimeFormat('en-AE', {
     year: 'numeric',
     month: 'short',
@@ -8,7 +9,8 @@ export function formatDate(dateString: string | Date): string {
   }).format(new Date(dateString));
 }
 
-export function formatDateShort(dateString: string | Date): string {
+export function formatDateShort(dateString: string | Date | undefined): string {
+  if (!dateString) return '—';
   return new Intl.DateTimeFormat('en-AE', {
     year: 'numeric',
     month: 'short',

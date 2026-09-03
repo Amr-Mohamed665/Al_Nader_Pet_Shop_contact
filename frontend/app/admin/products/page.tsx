@@ -377,12 +377,16 @@ export default function AdminProductsPage() {
         productsService.getAll({ all: true }),
         productsService.getFeaturedIds(),
       ]);
-      if (productsRes.success) setProducts(productsRes.data);
+      if (productsRes.success && productsRes.data) setProducts(productsRes.data);
+      else if (productsRes.success) setProducts([]);
       else setError(productsRes.message || 'Failed to load products.');
 
-      if (featuredRes.success) {
+      if (featuredRes.success && featuredRes.data) {
         setFeaturedIds(featuredRes.data);
         setPendingFeatured(featuredRes.data);
+      } else if (featuredRes.success) {
+        setFeaturedIds([]);
+        setPendingFeatured([]);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'An error occurred.');
@@ -445,20 +449,22 @@ export default function AdminProductsPage() {
     let cancelled = false;
 
     const load = async () => {
-      setLoading(true);
-      setError(null);
       try {
         const [productsRes, featuredRes] = await Promise.all([
           productsService.getAll({ all: true }),
           productsService.getFeaturedIds(),
         ]);
         if (cancelled) return;
-        if (productsRes.success) setProducts(productsRes.data);
+        if (productsRes.success && productsRes.data) setProducts(productsRes.data);
+        else if (productsRes.success) setProducts([]);
         else setError(productsRes.message || 'Failed to load products.');
 
-        if (featuredRes.success) {
+        if (featuredRes.success && featuredRes.data) {
           setFeaturedIds(featuredRes.data);
           setPendingFeatured(featuredRes.data);
+        } else if (featuredRes.success) {
+          setFeaturedIds([]);
+          setPendingFeatured([]);
         }
       } catch (err: any) {
         if (!cancelled) setError(err.response?.data?.message || err.message || 'An error occurred.');
@@ -484,7 +490,7 @@ export default function AdminProductsPage() {
 
     try {
       const res = await productsService.setFeaturedIds(newPending);
-      if (res.success) {
+      if (res.success && res.data) {
         setFeaturedIds(res.data);
         setPendingFeatured(res.data);
       } else {

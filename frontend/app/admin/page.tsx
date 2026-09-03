@@ -84,8 +84,8 @@ export default function AdminDashboardPage() {
         ordersService.getAll(),
       ]);
 
-      const productsData = productsRes.success ? productsRes.data : [];
-      const allOrders = ordersRes.success ? ordersRes.data : [];
+      const productsData = (productsRes.success && productsRes.data) ? productsRes.data : [];
+      const allOrders = (ordersRes.success && ordersRes.data) ? ordersRes.data : [];
 
       setProductsCount(productsData.length);
       setOrdersData(allOrders);
@@ -96,9 +96,45 @@ export default function AdminDashboardPage() {
     }
   }, []);
 
-  useEffect(() => {
+  const handleRetry = useCallback(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const load = async () => {
+      try {
+        const [productsRes, ordersRes] = await Promise.all([
+          productsService.getAll({ all: true }),
+          ordersService.getAll(),
+        ]);
+
+        if (isCancelled) return;
+
+        const productsData = (productsRes.success && productsRes.data) ? productsRes.data : [];
+        const allOrders = (ordersRes.success && ordersRes.data) ? ordersRes.data : [];
+
+        setProductsCount(productsData.length);
+        setOrdersData(allOrders);
+        setError(null);
+      } catch (err: any) {
+        if (!isCancelled) {
+          setError(err.response?.data?.message || err.message || 'Failed to load dashboard data.');
+        }
+      } finally {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   const filteredOrders = getFilteredOrders(ordersData, selectedPeriod);
 
@@ -152,7 +188,7 @@ export default function AdminDashboardPage() {
               <span className="text-xs text-slate-400 font-bold tracking-wide">Loading dashboard...</span>
             </div>
           ) : error ? (
-            <ErrorState onRetry={fetchData} description={error} />
+            <ErrorState onRetry={handleRetry} description={error} />
           ) : (
             <>
               {/* Stats Cards */}

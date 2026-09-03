@@ -16,12 +16,14 @@ export const productSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   price: z.preprocess(
     (val) => (val === '' ? undefined : Number(val)),
-    z.number({ invalid_type_error: 'Price must be a number' }).min(0.01, 'Price must be greater than 0')
+    z.number().min(0.01, 'Price must be greater than 0')
   ),
   description: z.string().optional(),
   image: z.string().url('Must be a valid URL starting with http:// or https://').or(z.literal('')),
   available: z.boolean().default(true),
 });
+
+const UAE_EMIRATES = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'] as const;
 
 export const checkoutSchema = z.object({
   fullName: z.string().min(1, 'Full name is required').max(100, 'Full name must be 100 characters or fewer'),
@@ -34,9 +36,9 @@ export const checkoutSchema = z.object({
     { message: 'Please enter a valid UAE phone number (e.g. 05x xxx xxxx)' }
   ),
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  emirate: z.enum(["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al Quwain", "Ras Al Khaimah", "Fujairah"], {
-    errorMap: () => ({ message: 'Please select a valid UAE emirate' })
-  }),
+  emirate: z.enum(UAE_EMIRATES, {
+    message: 'Please select a valid UAE emirate',
+  }).optional(),
   area: z.string().min(1, 'Area / Community is required').max(100, 'Area must be 100 characters or fewer'),
   street: z.string().min(1, 'Street name is required').max(200, 'Street must be 200 characters or fewer'),
   building: z.string().min(1, 'Building or Villa is required').max(100, 'Building must be 100 characters or fewer'),
@@ -45,5 +47,5 @@ export const checkoutSchema = z.object({
   landmark: z.string().max(200, 'Landmark must be 200 characters or fewer').optional().or(z.literal('')),
   instructions: z.string().max(500, 'Instructions must be 500 characters or fewer').optional().or(z.literal('')),
   orderNotes: z.string().max(500, 'Order notes must be 500 characters or fewer').optional().or(z.literal('')),
-  paymentMethod: z.enum(['cod', 'card']).default('cod'),
+  paymentMethod: z.enum(['cod', 'card'] as const).default('cod'),
 });

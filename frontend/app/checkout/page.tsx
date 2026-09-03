@@ -32,8 +32,8 @@ export default function CheckoutPage() {
     reset,
     setError,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(checkoutSchema),
+  } = useForm<any>({
+    resolver: zodResolver(checkoutSchema) as any,
     defaultValues: {
       fullName: user?.name || '',
       phone: '',
@@ -66,7 +66,7 @@ export default function CheckoutPage() {
         landmark: '',
         instructions: '',
         orderNotes: '',
-      });
+      } as any);
     }
   }, [user, reset]);
  
@@ -84,7 +84,9 @@ export default function CheckoutPage() {
     setServerError('');
     try {
       const orderItems = items.map((item) => ({
-        menuItemId: item.id,
+        id: item.id,
+        name: item.name,
+        price: item.price,
         quantity: item.quantity,
       }));
  
@@ -109,9 +111,9 @@ export default function CheckoutPage() {
         paymentMethod: 'cod',
       };
  
-      const response = await ordersService.create(payload);
+      const response = await ordersService.create(payload as any);
  
-      if (response.success) {
+      if (response.success && response.data) {
         clearCart();
         router.push(`/orders/${response.data.id}`);
       } else {

@@ -31,7 +31,7 @@ const badgeVariants = cva(
 export interface BadgeProps
   extends HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {
-  render?: ReactNode | ((props: Record<string, any>) => ReactNode);
+  render?: any;
 }
 
 function Badge({

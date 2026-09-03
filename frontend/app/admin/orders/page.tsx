@@ -8,6 +8,7 @@ import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
 import useOrders from '@/hooks/useOrders';
 import { ORDER_STATUSES } from '@/constants/orderStatuses';
+import type { OrderStatus } from '@/types';
 
 const ALL_FILTER = { value: 'all', label: 'All Orders' };
 const FILTER_TABS = [ALL_FILTER, ...ORDER_STATUSES];
@@ -25,7 +26,7 @@ export default function AdminOrdersPage() {
     (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
-  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
+  const handleStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
     try {
       await updateStatus({ orderId, status: newStatus });
     } catch (err: any) {

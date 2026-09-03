@@ -13,8 +13,9 @@ import { ordersService } from '@/services/orders.service';
 import { formatDate } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/getStatusColor';
 import { VALID_STATUS_VALUES } from '@/constants/orderStatuses';
+import type { BadgeVariant, OrderStatus } from '@/types';
 
-function statusBadgeVariant(status: string): string {
+function statusBadgeVariant(status: string): BadgeVariant {
   switch (status) {
     case 'completed': return 'success';
     case 'pending': return 'warning';
@@ -48,11 +49,43 @@ export default function AdminOrderDetailPage() {
     }
   }, [id]);
 
-  useEffect(() => {
-    if (id) fetchOrder();
-  }, [id, fetchOrder]);
+  const handleRetry = useCallback(() => {
+    fetchOrder();
+  }, [fetchOrder]);
 
-  const handleStatusChange = async (newStatus: string) => {
+  useEffect(() => {
+    if (!id) return;
+    let isCancelled = false;
+
+    const load = async () => {
+      try {
+        const response = await ordersService.getById(id);
+        if (isCancelled) return;
+        if (response.success) {
+          setOrder(response.data);
+          setError(null);
+        } else {
+          setError(response.message || 'Order not found.');
+        }
+      } catch (err: any) {
+        if (!isCancelled) {
+          setError(err.response?.data?.message || err.message || 'Failed to load order.');
+        }
+      } finally {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [id]);
+
+  const handleStatusChange = async (newStatus: OrderStatus) => {
     setUpdatingStatus(true);
     try {
       const response = await ordersService.updateStatus(id, newStatus);
@@ -83,7 +116,7 @@ export default function AdminOrderDetailPage() {
       <AdminRoute>
         <AdminLayout>
           <div className="py-12">
-            <ErrorState title="Order not found" description={error ?? undefined} onRetry={fetchOrder} />
+            <ErrorState title="Order not found" description={error ?? undefined} onRetry={handleRetry} />
           </div>
         </AdminLayout>
       </AdminRoute>
@@ -127,7 +160,7 @@ export default function AdminOrderDetailPage() {
                 <select
                   value={order.status}
                   disabled={updatingStatus}
-                  onChange={(e) => handleStatusChange(e.target.value)}
+                  onChange={(e) => handleStatusChange(e.target.value as OrderStatus)}
                   className={`px-3 py-1.5 text-xs font-extrabold rounded-xl border cursor-pointer focus:outline-none transition-all duration-150 uppercase tracking-wider ${statusInfo.bg}`}
                 >
                   {VALID_STATUS_VALUES.map((status: string) => {

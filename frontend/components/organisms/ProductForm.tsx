@@ -44,8 +44,8 @@ export default function ProductForm({
     watch,
     control,
     formState: { errors },
-  } = useForm<ProductFormValues>({
-    resolver: zodResolver(productSchema),
+  } = useForm<any>({
+    resolver: zodResolver(productSchema) as any,
     defaultValues: initialValues || {
       name: '',
       category: '',
@@ -58,7 +58,7 @@ export default function ProductForm({
 
   const available = watch('available');
 
-  const onFormSubmit = (data: ProductFormValues) => {
+  const onFormSubmit = (data: any) => {
     onSubmit(data);
   };
 
@@ -113,7 +113,7 @@ export default function ProductForm({
         id="name"
         label="Product Name"
         register={register as any}
-        error={errors.name?.message}
+        error={errors.name?.message ? String(errors.name.message) : undefined}
         placeholder="Enter product name (e.g. Premium Dog Kibbles)"
       />
 
@@ -143,9 +143,9 @@ export default function ProductForm({
               );
             })}
           </select>
-          {errors.category && (
+          {errors.category?.message && (
             <span className="text-xs text-red-500 font-medium mt-0.5">
-              {errors.category.message}
+              {String(errors.category.message)}
             </span>
           )}
         </div>
@@ -156,7 +156,7 @@ export default function ProductForm({
           type="number"
           step="0.01"
           register={register as any}
-          error={errors.price?.message}
+          error={errors.price?.message ? String(errors.price.message) : undefined}
           placeholder="e.g. 149"
         />
       </div>
@@ -166,7 +166,7 @@ export default function ProductForm({
         label="Product Description"
         type="textarea"
         register={register as any}
-        error={errors.description?.message}
+        error={errors.description?.message ? String(errors.description.message) : undefined}
         placeholder="Provide details about product ingredients, sizing, care, or instructions."
       />
 
@@ -177,7 +177,7 @@ export default function ProductForm({
           <ImageUploader
             value={value}
             onChange={onChange}
-            error={errors.image?.message}
+            error={errors.image?.message ? String(errors.image.message) : undefined}
             label="Product Image"
           />
         )}

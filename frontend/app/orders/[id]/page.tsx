@@ -37,9 +37,41 @@ export default function OrderDetailPage() {
     }
   }, [id]);
 
+  const handleRetry = useCallback(() => {
+    fetchOrder();
+  }, [fetchOrder]);
+
   useEffect(() => {
-    if (id) fetchOrder();
-  }, [id, fetchOrder]);
+    if (!id) return;
+    let isCancelled = false;
+
+    const load = async () => {
+      try {
+        const response = await ordersService.getById(id);
+        if (isCancelled) return;
+        if (response.success) {
+          setOrder(response.data);
+          setError(null);
+        } else {
+          setError(response.message || 'Order not found.');
+        }
+      } catch (err: any) {
+        if (!isCancelled) {
+          setError(err.response?.data?.message || err.message || 'Failed to load order.');
+        }
+      } finally {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [id]);
 
   if (loading) {
     return (
@@ -55,7 +87,7 @@ export default function OrderDetailPage() {
     return (
       <ShopLayout>
         <div className="py-12">
-          <ErrorState title="Order not found" description={error ?? undefined} onRetry={fetchOrder} />
+          <ErrorState title="Order not found" description={error ?? undefined} onRetry={handleRetry} />
         </div>
       </ShopLayout>
     );

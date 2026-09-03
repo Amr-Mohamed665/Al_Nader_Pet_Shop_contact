@@ -33,16 +33,17 @@ export default function Home() {
         productsService.getFeaturedIds(),
       ]);
 
-      if (!productsRes.success) {
+      if (!productsRes.success || !productsRes.data) {
         throw new Error(productsRes.message || 'Failed to load products.');
       }
 
-      const allAvailable = productsRes.data.filter((p: any) => p.available !== false);
+      const allProducts = productsRes.data || [];
+      const allAvailable = allProducts.filter((p: any) => p.available !== false);
 
       let featuredList: any[] = [];
-      if (featuredRes.success && featuredRes.data.length > 0) {
-        const featuredIdSet = featuredRes.data;
-        featuredList = featuredIdSet
+      const featuredData = (featuredRes.success && featuredRes.data) ? featuredRes.data : [];
+      if (featuredData.length > 0) {
+        featuredList = featuredData
           .map((id: string) => allAvailable.find((p: any) => p.id === id))
           .filter(Boolean);
       }

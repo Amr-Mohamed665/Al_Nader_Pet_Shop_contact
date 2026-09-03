@@ -33,7 +33,7 @@ export default function OrderCard({ order }: OrderCardProps) {
         </div>
         
         <p className="text-xs text-slate-400">
-          Placed on {formatDateShort(createdAt)}
+          Placed on {formatDateShort(createdAt || '')}
         </p>
 
         <p className="text-xs font-semibold text-slate-600 truncate max-w-lg leading-relaxed">
@@ -46,7 +46,7 @@ export default function OrderCard({ order }: OrderCardProps) {
           <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-0.5">
             Total Amount
           </span>
-          <Price amount={total} className="text-lg text-teal-600 font-extrabold" />
+          <Price amount={total ?? 0} className="text-lg text-teal-600 font-extrabold" />
         </div>
 
         <Link href={`/orders/${id}`}>
