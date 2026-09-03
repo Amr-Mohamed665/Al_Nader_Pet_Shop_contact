@@ -30,12 +30,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
 
         {/* Bottom Row - 2 Column Split */}
         <div className="grid grid-cols-1 lg:grid-cols-12">
-          {/* Left Column - Form Content */}
-          <div className="lg:col-span-6 p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
-            {children}
-          </div>
-
-          {/* Right Column - Hero Banner */}
+          {/* Left Column - Hero Banner */}
           <div className="relative hidden lg:flex lg:col-span-6 flex-col justify-between p-8 lg:p-12 text-white overflow-hidden">
             {/* Background Image - same as HeroSection */}
             <div className="absolute inset-0 z-0">
@@ -113,6 +108,11 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             <div className="relative z-10 pt-4 border-t border-white/10 text-xs text-purple-200/80">
               © {new Date().getFullYear()} Al Nader Pets & Accessories. All rights reserved.
             </div>
+          </div>
+
+          {/* Right Column - Form Content */}
+          <div className="lg:col-span-6 p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
+            {children}
           </div>
         </div>
         </div>
