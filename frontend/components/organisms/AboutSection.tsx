@@ -8,11 +8,11 @@ export default function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Text Content */}
           <div className="flex flex-col justify-center p-8 sm:p-10 lg:p-14 order-2 lg:order-1">
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-teal-600 uppercase tracking-widest mb-3">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold text-[#7C4DDB] uppercase tracking-widest mb-3 bg-[#7C4DDB]/10 px-3 py-1 rounded-full self-start">
               🐾 ABOUT AL NADER
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-5 leading-tight">
-              Your Trusted Pet Shop in the <span className="text-teal-600">UAE</span>
+              Your Trusted Pet Shop in the <span className="text-[#7C4DDB]">UAE</span>
             </h2>
             
             <div className="space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed mb-8 font-medium">
@@ -26,7 +26,7 @@ export default function AboutSection() {
 
             <Link
               href="/about"
-              className="inline-flex items-center gap-2 self-start px-6 py-3 bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 shadow-md shadow-teal-500/10 hover:shadow-lg hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 self-start px-7 py-3.5 bg-gradient-to-br from-[#7C4DDB] to-[#581C87] hover:opacity-95 text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider rounded-2xl transition-all duration-300 shadow-[0_4px_20px_rgba(124,77,219,0.4)] hover:shadow-[0_0_30px_rgba(124,77,219,0.6)] hover:-translate-y-1"
             >
               Learn More About Us 🐾
             </Link>

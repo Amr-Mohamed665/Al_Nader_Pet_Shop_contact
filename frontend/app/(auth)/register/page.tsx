@@ -102,7 +102,7 @@ export default function RegisterPage() {
               type="submit"
               variant="primary"
               isLoading={loading}
-              className="w-full py-3.5 font-extrabold shadow-md shadow-teal-500/10 text-xs uppercase tracking-wider mt-2 bg-teal-500 hover:bg-teal-600 text-white rounded-xl"
+              className="w-full py-3.5 font-extrabold text-xs sm:text-sm uppercase tracking-wider mt-2 bg-gradient-to-br from-[#7C4DDB] to-[#581C87] hover:opacity-95 text-white rounded-2xl shadow-[0_4px_20px_rgba(124,77,219,0.4)] hover:shadow-[0_0_30px_rgba(124,77,219,0.6)] hover:-translate-y-0.5 transition-all duration-300 border-0"
             >
               Sign Up 📝
             </Button>
@@ -112,7 +112,7 @@ export default function RegisterPage() {
 
           <p className="text-center text-xs text-slate-500">
             Already have an account?{' '}
-            <Link href="/login" className="font-bold text-teal-600 hover:text-teal-700 hover:underline">
+            <Link href="/login" className="font-bold text-[#7C4DDB] hover:text-[#581C87] hover:underline">
               Login here
             </Link>
           </p>
