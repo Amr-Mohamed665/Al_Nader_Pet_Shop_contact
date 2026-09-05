@@ -93,12 +93,7 @@ export default function HeroSection() {
           className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight tracking-tight mb-5 animate-fade-in-up text-white"
           style={{ color: '#ffffff', textShadow: '0 4px 30px rgba(0,0,0,0.4)' }}
         >
-          <span className="text-white" style={{ color: '#ffffff' }}>Where Pets Become{' '}</span>
-          <span
-            className="bg-gradient-to-r from-purple-300 via-purple-400 to-amber-400 bg-clip-text text-transparent"
-          >
-            Family
-          </span>
+          Where Pets Become Family
         </h1>
 
         {/* Subheadline */}

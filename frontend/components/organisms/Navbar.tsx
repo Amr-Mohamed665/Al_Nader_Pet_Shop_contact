@@ -310,11 +310,21 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" href="/login">
+                <div className="flex items-center gap-2.5">
+                  <Button
+                    variant="outline"
+                    size="md"
+                    href="/login"
+                    className="px-5 py-2 text-sm font-extrabold text-purple-700 border-purple-200 hover:bg-purple-50 hover:border-purple-300 rounded-xl transition-all shadow-xs"
+                  >
                     Login
                   </Button>
-                  <Button variant="primary" size="sm" className="bg-purple-600 hover:bg-purple-500 focus:ring-purple-500" href="/register">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    href="/register"
+                    className="px-5 py-2 text-sm font-extrabold text-white bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 rounded-xl shadow-md shadow-purple-600/25 transition-all hover:scale-102"
+                  >
                     Register
                   </Button>
                 </div>
@@ -488,100 +498,6 @@ export default function Navbar() {
                 Contact Us
               </Link>
 
-              {/* Categories Accordion on Mobile */}
-              <div className="border-b border-slate-100 pb-1">
-                <button
-                  onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
-                  className={`w-full flex items-center justify-between px-3 py-3 text-sm font-bold rounded-lg transition-all ${
-                    isActive('/products') || isActive('/category') || isActive('/accessories')
-                      ? 'bg-purple-50 text-purple-600 font-extrabold'
-                      : 'text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <i className="fa-solid fa-layer-group text-xs text-purple-500" />
-                    Categories
-                  </span>
-                  <i
-                    className={`fa-solid fa-chevron-down text-[10px] transition-transform ${
-                      mobileCategoriesOpen ? 'rotate-180 text-purple-600' : ''
-                    }`}
-                  />
-                </button>
-
-                {mobileCategoriesOpen && (
-                  <div className="pl-3 pr-2 space-y-1 mt-1 bg-slate-50/70 rounded-xl p-2 border border-slate-100">
-                    {/* All Products */}
-                    <Link
-                      href="/products"
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-extrabold text-purple-600 hover:bg-purple-50 rounded-lg"
-                    >
-                      <i className="fa-solid fa-boxes-stacked" />
-                      All Products
-                    </Link>
-
-                    {/* Top Categories: Hamster, Dogs, Cats, Birds, Reptiles */}
-                    {topCategories.map((cat) => {
-                      const imageUrl = getCategoryImageUrl(cat);
-                      return (
-                        <Link
-                          key={cat.id}
-                          href={`/category/${cat.slug}`}
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg capitalize"
-                        >
-                          <div className="relative w-6 h-6 rounded-md overflow-hidden flex-shrink-0 border border-slate-200 bg-slate-100">
-                            <img src={imageUrl} alt={cat.name} className="w-full h-full object-cover" />
-                          </div>
-                          {cat.name}
-                        </Link>
-                      );
-                    })}
-
-                    {/* Accessories */}
-                    <div className="border-t border-slate-200/60 pt-1 mt-1">
-                      <Link
-                        href="/accessories"
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-800 hover:bg-purple-50 rounded-lg"
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <div className="relative w-6 h-6 rounded-md overflow-hidden flex-shrink-0 border border-slate-200 bg-slate-100">
-                            <img
-                              src={getCategoryImageUrl(accessoriesCategory, 'accessories')}
-                              alt="Accessories"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          Accessories
-                        </span>
-                        <i className="fa-solid fa-arrow-right text-[10px] text-purple-600" />
-                      </Link>
-                      {accessoriesTree.length > 0 && (
-                        <div className="pl-4 space-y-1 mt-1">
-                          {accessoriesTree.map((group) => {
-                            const displayName = group.name.toLowerCase().includes('accessories') || group.name.toLowerCase().includes('accessory')
-                              ? group.name
-                              : `${group.name} Accessories`;
-                            return (
-                              <Link
-                                key={group.id}
-                                href={`/accessories/${group.slug}`}
-                                onClick={() => setMenuOpen(false)}
-                                className="block px-3 py-1.5 text-[11px] font-medium text-slate-600 hover:text-purple-600 hover:bg-white rounded-md capitalize"
-                              >
-                                • {displayName}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
               <hr className="border-slate-100 !my-3" />
 
               {loading ? (
@@ -632,11 +548,23 @@ export default function Navbar() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col gap-2 pt-2">
-                  <Button variant="outline" className="w-full" href="/login" onClick={() => setMenuOpen(false)}>
+                <div className="flex flex-col gap-2.5 pt-2">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full py-3 text-base font-bold text-purple-700 border-purple-200 hover:bg-purple-50 rounded-xl"
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                  >
                     Login
                   </Button>
-                  <Button variant="primary" className="w-full bg-purple-600 hover:bg-purple-500 focus:ring-purple-500" href="/register" onClick={() => setMenuOpen(false)}>
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="w-full py-3 text-base font-extrabold text-white bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 rounded-xl shadow-md shadow-purple-600/25"
+                    href="/register"
+                    onClick={() => setMenuOpen(false)}
+                  >
                     Register
                   </Button>
                 </div>
