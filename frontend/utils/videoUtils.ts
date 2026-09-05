@@ -4,7 +4,7 @@
  */
 
 // File extensions that can be played with <video> tag
-const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov', '.m4v'] as const;
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.mkv'] as const;
 
 export interface EmbedInfo {
   platform: string;
@@ -48,7 +48,7 @@ const EMBED_PATTERNS: EmbedPattern[] = [
 export function isDirectVideo(url: string | null | undefined): boolean {
   if (!url) return false;
   const lower = url.toLowerCase().split('?')[0];
-  return VIDEO_EXTENSIONS.some((ext) => lower.endsWith(ext));
+  return VIDEO_EXTENSIONS.some((ext) => lower.endsWith(ext)) || lower.includes('/video/upload/');
 }
 
 /**

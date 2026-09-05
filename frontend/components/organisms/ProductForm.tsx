@@ -46,6 +46,7 @@ export default function ProductForm({
     formState: { errors },
   } = useForm<any>({
     resolver: zodResolver(productSchema) as any,
+    shouldFocusError: false,
     defaultValues: initialValues || {
       name: '',
       category: '',
@@ -60,6 +61,32 @@ export default function ProductForm({
 
   const onFormSubmit = (data: any) => {
     onSubmit(data);
+  };
+
+  const onFormError = () => {
+    setTimeout(() => {
+      const errorSelectors = [
+        'p.text-red-500',
+        'p.text-rose-500',
+        'span.text-red-500',
+        'span.text-rose-500',
+        '[role="alert"]',
+        '.field-error',
+      ];
+      const form = document.querySelector('form');
+      if (!form) return;
+      const errorEls = form.querySelectorAll(errorSelectors.join(','));
+      for (let i = 0; i < errorEls.length; i++) {
+        const el = errorEls[i] as HTMLElement;
+        if (el.closest('.fixed')) continue;
+        const text = (el.innerText || el.textContent || '').trim();
+        if (text.length > 0) {
+          const container = el.closest('.flex-col') || el.parentElement || el;
+          container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          break;
+        }
+      }
+    }, 50);
   };
 
   const buildOptions = (): SelectOption[] => {
@@ -108,7 +135,7 @@ export default function ProductForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-5 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-sm max-w-xl">
+    <form onSubmit={handleSubmit(onFormSubmit, onFormError)} className="space-y-5 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-sm max-w-xl">
       <FormField
         id="name"
         label="Product Name"

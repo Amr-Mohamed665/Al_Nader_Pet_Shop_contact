@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import Link from 'next/link';
 import Price from '@/components/atoms/Price';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -13,7 +14,7 @@ interface StatCardProps {
 
 function StatCard({ icon, iconBgClass, iconColorClass, label, subLabel, children }: StatCardProps) {
   return (
-    <Card className="bg-white border border-slate-200/80 rounded-2xl shadow-sm gap-0 ring-0 py-5 px-5">
+    <Card className="bg-white border border-slate-200/80 rounded-2xl shadow-sm gap-0 ring-0 py-5 px-5 hover:border-purple-300 transition-all">
       <CardContent className="px-0">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-grow min-w-0">
@@ -38,11 +39,17 @@ export interface DashboardStatsProps {
   productsCount?: number;
   ordersCount?: number;
   revenue?: number;
+  blogsCount?: number;
 }
 
-export default function DashboardStats({ productsCount = 0, ordersCount = 0, revenue = 0 }: DashboardStatsProps) {
+export default function DashboardStats({
+  productsCount = 0,
+  ordersCount = 0,
+  revenue = 0,
+  blogsCount = 0,
+}: DashboardStatsProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
       {/* Revenue Card */}
       <StatCard
         icon="fa-solid fa-coins"
@@ -79,6 +86,23 @@ export default function DashboardStats({ productsCount = 0, ordersCount = 0, rev
           {productsCount}
         </span>
       </StatCard>
+
+      {/* Blog Articles Card */}
+      <Link href="/admin/blogs">
+        <StatCard
+          icon="fa-solid fa-newspaper"
+          iconBgClass="bg-indigo-50"
+          iconColorClass="text-indigo-500"
+          label="Blog Articles"
+          subLabel="Click to manage care guides"
+        >
+          <span className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center justify-between">
+            {blogsCount}
+            <i className="fa-solid fa-arrow-right text-xs text-indigo-500" />
+          </span>
+        </StatCard>
+      </Link>
     </div>
   );
 }
+

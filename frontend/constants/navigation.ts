@@ -2,6 +2,7 @@ import type { NavLink, ContactInfo } from '@/types';
 
 export const SHOP_NAV_LINKS: NavLink[] = [
   { label: 'Home', href: '/' },
+  { label: 'Blog', href: '/blog' },
   { label: 'All Products', href: '/products' },
   { label: 'Dogs', href: '/category/dogs' },
   { label: 'Cats', href: '/category/cats' },
@@ -15,10 +16,12 @@ export const ADMIN_NAV_LINKS: NavLink[] = [
   { label: 'Manage Products', href: '/admin/products' },
   { label: 'Manage Categories', href: '/admin/categories' },
   { label: 'Manage Orders', href: '/admin/orders' },
+  { label: 'Manage Blogs', href: '/admin/blogs' },
 ];
 
 export const FOOTER_QUICK_LINKS: NavLink[] = [
   { label: 'Home', href: '/' },
+  { label: 'Pet Blog', href: '/blog' },
   { label: 'All Products', href: '/products' },
   { label: 'Dogs', href: '/category/dogs' },
   { label: 'Cats', href: '/category/cats' },

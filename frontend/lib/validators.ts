@@ -14,10 +14,31 @@ export const registerSchema = z.object({
 export const productSchema = z.object({
   name: z.string().min(2, 'Product name is required'),
   category: z.string().min(1, 'Category is required'),
-  price: z.preprocess(
-    (val) => (val === '' ? undefined : Number(val)),
-    z.number().min(0.01, 'Price must be greater than 0')
-  ),
+  price: z.any().transform((val, ctx) => {
+    if (val === '' || val === null || val === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Price is required',
+      });
+      return z.NEVER;
+    }
+    const num = Number(val);
+    if (isNaN(num)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Price is required',
+      });
+      return z.NEVER;
+    }
+    if (num < 0.01) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Price must be greater than 0',
+      });
+      return z.NEVER;
+    }
+    return num;
+  }),
   description: z.string().optional(),
   image: z.string().url('Must be a valid URL starting with http:// or https://').or(z.literal('')),
   available: z.boolean().default(true),

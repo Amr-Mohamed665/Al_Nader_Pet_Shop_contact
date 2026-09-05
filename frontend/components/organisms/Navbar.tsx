@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Logo from '@/components/atoms/Logo';
@@ -25,31 +25,62 @@ export default function Navbar() {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   // Mobile accordions state
+  const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [mobileAccessoriesOpen, setMobileAccessoriesOpen] = useState(false);
   const [mobileGroupsOpen, setMobileGroupsOpen] = useState<Record<string, boolean>>({});
 
-  // Close mobile menu when route changes
-  useEffect(() => {
+  // Close mobile menu when route changes (during render to avoid cascading renders)
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setMenuOpen(false);
+    setMobileCategoriesOpen(false);
     setMobileAccessoriesOpen(false);
     setMobileGroupsOpen({});
-  }, [pathname]);
+  }
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
     return pathname.startsWith(href);
   };
 
+  const getCategoryImageUrl = (cat?: Category, fallbackSlug?: string) => {
+    if (cat?.image) return cat.image;
+    const s = (cat?.slug || fallbackSlug || '').toLowerCase();
+    if (s.includes('dog')) return 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1074&auto=format&fit=crop';
+    if (s.includes('cat')) return 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1043&auto=format&fit=crop';
+    if (s.includes('bird')) return '/images/birds-category.jpg';
+    if (s.includes('hamster')) return 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?q=80&w=1076&auto=format&fit=crop';
+    if (s.includes('reptile')) return 'https://images.unsplash.com/photo-1504450874802-0ba2bcd9b5ae?q=80&w=880&auto=format&fit=crop';
+    if (s.includes('accessories') || s.includes('accessory')) return '/images/accessories-category.jpg';
+    return '/images/accessories-category.jpg';
+  };
+
+  const preferredOrder = ['hamster', 'dogs', 'cats', 'birds', 'reptiles'];
+
   // Filter top-level categories (dogs, cats, birds, hamster, reptiles) - exclude accessories
-  const topCategories = categories.filter(
-    (c) =>
-      !c.isAccessory &&
-      (c.parentId === null || c.parentId === undefined) &&
-      c.slug !== 'accessories' &&
-      !c.slug.toLowerCase().includes('accessories') &&
-      !c.slug.toLowerCase().includes('accessory') &&
-      !c.name.toLowerCase().includes('accessories') &&
-      !c.name.toLowerCase().includes('accessory')
+  const topCategories = categories
+    .filter(
+      (c) =>
+        !c.isAccessory &&
+        (c.parentId === null || c.parentId === undefined) &&
+        c.slug !== 'accessories' &&
+        !c.slug.toLowerCase().includes('accessories') &&
+        !c.slug.toLowerCase().includes('accessory') &&
+        !c.name.toLowerCase().includes('accessories') &&
+        !c.name.toLowerCase().includes('accessory')
+    )
+    .sort((a, b) => {
+      const idxA = preferredOrder.findIndex((p) => a.slug.toLowerCase().includes(p));
+      const idxB = preferredOrder.findIndex((p) => b.slug.toLowerCase().includes(p));
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return (a.order ?? 0) - (b.order ?? 0);
+    });
+
+  const accessoriesCategory = categories.find(
+    (c) => c.slug === 'accessories' || c.slug.toLowerCase().includes('accessories')
   );
 
   const toggleMobileGroup = (groupId: string) => {
@@ -70,7 +101,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-5 xl:space-x-6">
+            <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
               <Link
                 href="/"
                 className={`text-sm font-bold transition-colors whitespace-nowrap ${
@@ -87,6 +118,85 @@ export default function Navbar() {
               >
                 About Us
               </Link>
+
+              {/* Categories Dropdown Menu (Clean Text Only) */}
+              <div className="relative group py-4">
+                <button
+                  className={`text-sm font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer select-none ${
+                    isActive('/products') || isActive('/category') || isActive('/accessories')
+                      ? 'text-purple-600 font-extrabold'
+                      : 'text-slate-600 hover:text-purple-500'
+                  }`}
+                >
+                  <span>Categories</span>
+                  <i className="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180 duration-200" />
+                </button>
+
+                {/* Dropdown Menu */}
+                <div className="absolute top-full left-0 mt-1 w-60 max-h-[82vh] overflow-y-auto bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2 animate-scale-in">
+                  {/* All Products */}
+                  <Link
+                    href="/products"
+                    className="block px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-purple-600 hover:bg-purple-50 transition-colors"
+                  >
+                    All Products
+                  </Link>
+
+                  <div className="border-t border-slate-100 my-1" />
+
+                  {/* Pet Categories: Hamster, Dogs, Cats, Birds, Reptiles */}
+                  <div className="space-y-0.5">
+                    {topCategories.map((cat) => (
+                      <Link
+                        key={cat.id}
+                        href={`/category/${cat.slug}`}
+                        className="block px-3.5 py-2 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-600 hover:bg-slate-50 transition-colors"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-slate-100 my-1" />
+
+                  {/* Accessories */}
+                  <Link
+                    href="/accessories"
+                    className="block px-3.5 py-2.5 rounded-xl text-sm font-bold text-slate-800 hover:text-purple-600 hover:bg-slate-50 transition-colors"
+                  >
+                    Accessories
+                  </Link>
+
+                  {/* Accessories Tree sub-links */}
+                  {accessoriesTree.length > 0 && (
+                    <div className="mt-1 pt-1 border-t border-slate-100/80 space-y-0.5">
+                      {accessoriesTree.map((group) => {
+                        const displayName = group.name.toLowerCase().includes('accessories') || group.name.toLowerCase().includes('accessory')
+                          ? group.name
+                          : `${group.name} Accessories`;
+                        return (
+                          <Link
+                            key={group.id}
+                            href={`/accessories/${group.slug}`}
+                            className="block px-3.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-purple-600 hover:bg-purple-50/50 rounded-lg transition-colors capitalize"
+                          >
+                            {displayName}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <Link
+                href="/blog"
+                className={`text-sm font-bold transition-colors whitespace-nowrap ${
+                  isActive('/blog') ? 'text-purple-600 font-extrabold' : 'text-slate-600 hover:text-purple-500'
+                }`}
+              >
+                Blog
+              </Link>
               <Link
                 href="/contact"
                 className={`text-sm font-bold transition-colors whitespace-nowrap ${
@@ -95,70 +205,6 @@ export default function Navbar() {
               >
                 Contact Us
               </Link>
-              <Link
-                href="/products"
-                className={`text-sm font-bold transition-colors whitespace-nowrap ${
-                  isActive('/products') ? 'text-purple-600 font-extrabold' : 'text-slate-600 hover:text-purple-500'
-                }`}
-              >
-                All Products
-              </Link>
-
-              {/* Other Top-Level Pet Categories */}
-              {topCategories
-                .filter((c) => c.slug !== 'accessories')
-                .map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/category/${cat.slug}`}
-                    className={`text-sm font-bold transition-colors whitespace-nowrap ${
-                      isActive(`/category/${cat.slug}`)
-                        ? 'text-purple-600 font-extrabold'
-                        : 'text-slate-600 hover:text-purple-500'
-                    }`}
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
-
-              {/* Accessories Hover Mega Menu */}
-              <div className="relative group py-4">
-                <span
-                  className={`text-sm font-bold transition-colors whitespace-nowrap flex items-center gap-1 cursor-default select-none ${
-                    isActive('/accessories') ? 'text-purple-600 font-extrabold' : 'text-slate-600 hover:text-purple-500'
-                  }`}
-                >
-                  Accessories
-                  <i className="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180 duration-200" />
-                </span>
-
-                {/* Mega Dropdown */}
-                <div className="absolute top-full left-0 mt-1 w-[260px] max-h-[70vh] overflow-y-auto bg-white border border-slate-200/80 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2 animate-scale-in">
-                  {accessoriesTree.map((group) => {
-                    const displayName = group.name.toLowerCase().includes('accessories') || group.name.toLowerCase().includes('accessory')
-                      ? group.name
-                      : `${group.name} Accessories`;
-                    return (
-                      <Link
-                        key={group.id}
-                        href={`/accessories/${group.slug}`}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-slate-600 hover:text-purple-600 hover:bg-purple-50/60 transition-all capitalize"
-                      >
-                        <span>{displayName}</span>
-                      </Link>
-                    );
-                  })}
-                  <div className="border-t border-slate-100 mt-1 pt-1 px-2">
-                    <Link
-                      href="/accessories"
-                      className="flex items-center justify-between px-3 py-2 text-xs font-bold text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-all group/btn"
-                    >
-                      View All Accessories
-                      <i className="fa-solid fa-arrow-right text-[10px] transition-transform group-hover/btn:translate-x-1" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Desktop Action Buttons */}
@@ -339,6 +385,91 @@ export default function Navbar() {
               >
                 About Us
               </Link>
+
+              {/* Categories Accordion on Mobile (Clean Text Only) */}
+              <div className="border-b border-slate-100 pb-1">
+                <button
+                  onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
+                  className={`w-full flex items-center justify-between px-3 py-3 text-sm font-bold rounded-lg transition-all ${
+                    isActive('/products') || isActive('/category') || isActive('/accessories')
+                      ? 'bg-purple-50 text-purple-600 font-extrabold'
+                      : 'text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <span>Categories</span>
+                  <i
+                    className={`fa-solid fa-chevron-down text-[10px] transition-transform ${
+                      mobileCategoriesOpen ? 'rotate-180 text-purple-600' : ''
+                    }`}
+                  />
+                </button>
+
+                {mobileCategoriesOpen && (
+                  <div className="pl-3 pr-2 space-y-1 mt-1 bg-slate-50/70 rounded-xl p-2 border border-slate-100">
+                    {/* All Products */}
+                    <Link
+                      href="/products"
+                      onClick={() => setMenuOpen(false)}
+                      className="block px-3 py-2 text-xs font-extrabold text-purple-600 hover:bg-purple-50 rounded-lg"
+                    >
+                      All Products
+                    </Link>
+
+                    {/* Top Categories: Hamster, Dogs, Cats, Birds, Reptiles */}
+                    {topCategories.map((cat) => (
+                      <Link
+                        key={cat.id}
+                        href={`/category/${cat.slug}`}
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg capitalize"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+
+                    {/* Accessories */}
+                    <div className="border-t border-slate-200/60 pt-1 mt-1">
+                      <Link
+                        href="/accessories"
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-3 py-2 text-xs font-bold text-slate-800 hover:bg-purple-50 rounded-lg"
+                      >
+                        Accessories
+                      </Link>
+                      {accessoriesTree.length > 0 && (
+                        <div className="pl-3 space-y-1 mt-1">
+                          {accessoriesTree.map((group) => {
+                            const displayName = group.name.toLowerCase().includes('accessories') || group.name.toLowerCase().includes('accessory')
+                              ? group.name
+                              : `${group.name} Accessories`;
+                            return (
+                              <Link
+                                key={group.id}
+                                href={`/accessories/${group.slug}`}
+                                onClick={() => setMenuOpen(false)}
+                                className="block px-3 py-1.5 text-[11px] font-medium text-slate-600 hover:text-purple-600 hover:bg-white rounded-md capitalize"
+                              >
+                                {displayName}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <Link
+                href="/blog"
+                onClick={() => setMenuOpen(false)}
+                className={`flex items-center px-3 py-3 rounded-lg text-sm font-bold transition-all ${
+                  isActive('/blog') ? 'bg-purple-50 text-purple-600 font-extrabold' : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                Blog
+              </Link>
+
               <Link
                 href="/contact"
                 onClick={() => setMenuOpen(false)}
@@ -348,75 +479,97 @@ export default function Navbar() {
               >
                 Contact Us
               </Link>
-              <Link
-                href="/products"
-                onClick={() => setMenuOpen(false)}
-                className={`flex items-center px-3 py-3 rounded-lg text-sm font-bold transition-all ${
-                  isActive('/products') ? 'bg-purple-50 text-purple-600 font-extrabold' : 'text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                All Products
-              </Link>
 
-              {/* Other Top-Level Pet Categories */}
-              {topCategories
-                .filter((c) => c.slug !== 'accessories')
-                .map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/category/${cat.slug}`}
-                    onClick={() => setMenuOpen(false)}
-                    className={`flex items-center px-3 py-3 rounded-lg text-sm font-bold transition-all ${
-                      isActive(`/category/${cat.slug}`)
-                        ? 'bg-purple-50 text-purple-600 font-extrabold'
-                        : 'text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
-
-              {/* Accessories Accordion on Mobile */}
+              {/* Categories Accordion on Mobile */}
               <div className="border-b border-slate-100 pb-1">
                 <button
-                  onClick={() => setMobileAccessoriesOpen(!mobileAccessoriesOpen)}
-                  className="w-full flex items-center justify-between px-3 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 rounded-lg transition-all"
+                  onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
+                  className={`w-full flex items-center justify-between px-3 py-3 text-sm font-bold rounded-lg transition-all ${
+                    isActive('/products') || isActive('/category') || isActive('/accessories')
+                      ? 'bg-purple-50 text-purple-600 font-extrabold'
+                      : 'text-slate-600 hover:bg-slate-50'
+                  }`}
                 >
-                  <span>Accessories</span>
+                  <span className="flex items-center gap-2">
+                    <i className="fa-solid fa-layer-group text-xs text-purple-500" />
+                    Categories
+                  </span>
                   <i
                     className={`fa-solid fa-chevron-down text-[10px] transition-transform ${
-                      mobileAccessoriesOpen ? 'rotate-180 text-purple-600' : ''
+                      mobileCategoriesOpen ? 'rotate-180 text-purple-600' : ''
                     }`}
                   />
                 </button>
 
-                {mobileAccessoriesOpen && (
-                  <div className="pl-4 space-y-2 mt-1 bg-slate-50/50 rounded-xl p-2 border border-slate-100">
+                {mobileCategoriesOpen && (
+                  <div className="pl-3 pr-2 space-y-1 mt-1 bg-slate-50/70 rounded-xl p-2 border border-slate-100">
+                    {/* All Products */}
                     <Link
-                      href="/accessories"
+                      href="/products"
                       onClick={() => setMenuOpen(false)}
-                      className="block px-3 py-2 text-xs font-extrabold text-purple-600 hover:bg-purple-50 rounded-lg"
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-extrabold text-purple-600 hover:bg-purple-50 rounded-lg"
                     >
-                      View All Accessories →
+                      <i className="fa-solid fa-boxes-stacked" />
+                      All Products
                     </Link>
 
-                    {accessoriesTree.map((group) => {
-                      const isOpen = !!mobileGroupsOpen[group.id];
-                      const displayName = group.name.toLowerCase().includes('accessories') || group.name.toLowerCase().includes('accessory')
-                        ? group.name
-                        : `${group.name} Accessories`;
+                    {/* Top Categories: Hamster, Dogs, Cats, Birds, Reptiles */}
+                    {topCategories.map((cat) => {
+                      const imageUrl = getCategoryImageUrl(cat);
                       return (
-                        <div key={group.id} className="space-y-1">
-                          <Link
-                            href={`/accessories/${group.slug}`}
-                            onClick={() => setMenuOpen(false)}
-                            className="w-full flex items-center px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg capitalize"
-                          >
-                            {displayName}
-                          </Link>
-                        </div>
+                        <Link
+                          key={cat.id}
+                          href={`/category/${cat.slug}`}
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded-lg capitalize"
+                        >
+                          <div className="relative w-6 h-6 rounded-md overflow-hidden flex-shrink-0 border border-slate-200 bg-slate-100">
+                            <img src={imageUrl} alt={cat.name} className="w-full h-full object-cover" />
+                          </div>
+                          {cat.name}
+                        </Link>
                       );
                     })}
+
+                    {/* Accessories */}
+                    <div className="border-t border-slate-200/60 pt-1 mt-1">
+                      <Link
+                        href="/accessories"
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center justify-between px-3 py-2 text-xs font-bold text-slate-800 hover:bg-purple-50 rounded-lg"
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <div className="relative w-6 h-6 rounded-md overflow-hidden flex-shrink-0 border border-slate-200 bg-slate-100">
+                            <img
+                              src={getCategoryImageUrl(accessoriesCategory, 'accessories')}
+                              alt="Accessories"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          Accessories
+                        </span>
+                        <i className="fa-solid fa-arrow-right text-[10px] text-purple-600" />
+                      </Link>
+                      {accessoriesTree.length > 0 && (
+                        <div className="pl-4 space-y-1 mt-1">
+                          {accessoriesTree.map((group) => {
+                            const displayName = group.name.toLowerCase().includes('accessories') || group.name.toLowerCase().includes('accessory')
+                              ? group.name
+                              : `${group.name} Accessories`;
+                            return (
+                              <Link
+                                key={group.id}
+                                href={`/accessories/${group.slug}`}
+                                onClick={() => setMenuOpen(false)}
+                                className="block px-3 py-1.5 text-[11px] font-medium text-slate-600 hover:text-purple-600 hover:bg-white rounded-md capitalize"
+                              >
+                                • {displayName}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>

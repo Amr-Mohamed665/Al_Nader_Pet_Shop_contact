@@ -10,6 +10,7 @@ import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
 import { productsService } from '@/services/products.service';
 import { ordersService } from '@/services/orders.service';
+import { blogsService } from '@/services/blogs.service';
 
 const PERIOD_OPTIONS = [
   { value: 'all', label: 'All Time' },
@@ -71,6 +72,7 @@ function getFilteredOrders(orders: any[], period: string): any[] {
 export default function AdminDashboardPage() {
   const [productsCount, setProductsCount] = useState(0);
   const [ordersData, setOrdersData] = useState<any[]>([]);
+  const [blogsCount, setBlogsCount] = useState(0);
   const [selectedPeriod, setSelectedPeriod] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,16 +81,19 @@ export default function AdminDashboardPage() {
     setLoading(true);
     setError(null);
     try {
-      const [productsRes, ordersRes] = await Promise.all([
+      const [productsRes, ordersRes, blogsRes] = await Promise.all([
         productsService.getAll({ all: true }),
         ordersService.getAll(),
+        blogsService.getAll(),
       ]);
 
       const productsData = (productsRes.success && productsRes.data) ? productsRes.data : [];
       const allOrders = (ordersRes.success && ordersRes.data) ? ordersRes.data : [];
+      const allBlogs = (blogsRes.success && blogsRes.data) ? blogsRes.data : [];
 
       setProductsCount(productsData.length);
       setOrdersData(allOrders);
+      setBlogsCount(allBlogs.length);
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to load dashboard data.');
     } finally {
@@ -105,18 +110,21 @@ export default function AdminDashboardPage() {
 
     const load = async () => {
       try {
-        const [productsRes, ordersRes] = await Promise.all([
+        const [productsRes, ordersRes, blogsRes] = await Promise.all([
           productsService.getAll({ all: true }),
           ordersService.getAll(),
+          blogsService.getAll(),
         ]);
 
         if (isCancelled) return;
 
         const productsData = (productsRes.success && productsRes.data) ? productsRes.data : [];
         const allOrders = (ordersRes.success && ordersRes.data) ? ordersRes.data : [];
+        const allBlogs = (blogsRes.success && blogsRes.data) ? blogsRes.data : [];
 
         setProductsCount(productsData.length);
         setOrdersData(allOrders);
+        setBlogsCount(allBlogs.length);
         setError(null);
       } catch (err: any) {
         if (!isCancelled) {
@@ -144,6 +152,7 @@ export default function AdminDashboardPage() {
     revenue: filteredOrders
       .filter((o) => o.status === 'completed')
       .reduce((sum, o) => sum + (o.total || 0), 0),
+    blogs: blogsCount,
   };
 
   const recentOrders = [...filteredOrders]
@@ -196,6 +205,7 @@ export default function AdminDashboardPage() {
                 productsCount={stats.products}
                 ordersCount={stats.orders}
                 revenue={stats.revenue}
+                blogsCount={stats.blogs}
               />
 
               {/* Charts */}

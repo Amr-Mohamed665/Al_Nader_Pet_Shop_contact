@@ -239,7 +239,17 @@ function CategoryFormPage({ initial, onBack, onSave, existingSlugs, isSubmitting
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      setTimeout(() => {
+        const errorEl = document.querySelector('p.text-rose-500, span.text-rose-500, .field-error');
+        if (errorEl) {
+          const container = errorEl.closest('div') || errorEl.parentElement || errorEl;
+          container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 50);
+      return;
+    }
     onSave({ ...form, isAccessory: form.isAccessory, parentId: null });
   };
 

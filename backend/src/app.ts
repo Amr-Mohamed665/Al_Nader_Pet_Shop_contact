@@ -9,6 +9,7 @@ import categoriesRouter from './routes/categories.routes';
 import featuredRouter from './routes/featured.routes';
 import contactRouter from './routes/contact.routes';
 import wishlistRouter from './routes/wishlist.routes';
+import blogsRouter from './routes/blogs.routes';
 import notFound from './middleware/notFound';
 import errorHandler from './middleware/errorHandler';
 
@@ -31,6 +32,7 @@ app.use("/api/categories", categoriesRouter);
 app.use("/api/featured", featuredRouter);
 app.use("/api/contact", contactRouter);
 app.use("/api/wishlist", wishlistRouter);
+app.use("/api/blogs", blogsRouter);
 
 app.use(notFound);
 app.use(errorHandler);

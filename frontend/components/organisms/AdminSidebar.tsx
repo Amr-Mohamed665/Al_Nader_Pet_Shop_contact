@@ -83,6 +83,9 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               {link.label === 'Manage Orders' && (
                 <i className={cn('fa-solid fa-truck mr-2.5 w-4 text-center text-[13px]', isActive(link.href) ? 'text-white' : 'text-slate-500')}></i>
               )}
+              {link.label === 'Manage Blogs' && (
+                <i className={cn('fa-solid fa-newspaper mr-2.5 w-4 text-center text-[13px]', isActive(link.href) ? 'text-white' : 'text-slate-500')}></i>
+              )}
               <span>{link.label}</span>
             </Link>
           ))}

@@ -220,3 +220,34 @@ export interface WithChildren {
 export interface WithClassName {
   className?: string;
 }
+
+// ─── BLOG TYPES ───────────────────────────────────────────────────────────────
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  image: string;
+  author: string;
+  readTime: string;
+  publishedAt: string;
+  tags?: string[];
+}
+
+export interface CreateBlogPostInput {
+  title: string;
+  slug?: string;
+  excerpt?: string;
+  content: string;
+  category?: string;
+  image?: string;
+  author?: string;
+  readTime?: string;
+  tags?: string[];
+}
+
+export interface UpdateBlogPostInput extends Partial<CreateBlogPostInput> {}
+
