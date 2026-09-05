@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import ShopLayout from '@/components/templates/ShopLayout';
-import Breadcrumbs from '@/components/atoms/Breadcrumbs';
+
 import Spinner from '@/components/atoms/Spinner';
 import ProductGrid from '@/components/organisms/ProductGrid';
 import useProducts from '@/hooks/useProducts';
@@ -67,7 +67,7 @@ export default function AccessoriesPage() {
   return (
     <ShopLayout>
       <div className="space-y-8 animate-fade-in max-w-5xl mx-auto">
-        <Breadcrumbs items={[{ label: 'Accessories' }]} />
+
 
         <div className="text-center py-4">
           <span className="inline-block text-[10px] font-bold text-purple-600 uppercase tracking-widest mb-1">

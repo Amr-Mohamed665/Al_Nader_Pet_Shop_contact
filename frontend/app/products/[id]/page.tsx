@@ -14,10 +14,8 @@ import ErrorState from '@/components/molecules/ErrorState';
 import QuantitySelector from '@/components/molecules/QuantitySelector';
 import useProduct from '@/hooks/useProduct';
 import { useCart } from '@/context/CartContext';
-import { useCategoriesQuery } from '@/hooks/useCategories';
 import { productsService } from '@/services/products.service';
 import WishlistButton from '@/components/atoms/WishlistButton';
-import Breadcrumbs from '@/components/atoms/Breadcrumbs';
 import ProductCard from '@/components/organisms/ProductCard';
 
 export default function ProductDetailPage() {
@@ -27,8 +25,7 @@ export default function ProductDetailPage() {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
 
-  // Fetch categories to build dynamic breadcrumbs
-  const { data: categories = [], isLoading: categoriesLoading } = useCategoriesQuery();
+
 
   // Fetch recommendations
   const recommendationsQuery = useQuery({
@@ -51,7 +48,7 @@ export default function ProductDetailPage() {
     setRecIndex((prev) => Math.min(Math.max(0, (recommendations as any[]).length - itemsPerPage), prev + 1));
   };
 
-  const loading = productLoading || categoriesLoading;
+  const loading = productLoading;
 
   if (loading) {
     return (
@@ -85,46 +82,15 @@ export default function ProductDetailPage() {
     }
   };
 
-  // Generate dynamic breadcrumbs
-  const productCategory = (categories as any[]).find((c: any) => c.slug === category);
-  const breadcrumbItems: { label: string; href?: string }[] = [];
-  if (productCategory) {
-    if (productCategory.parentId) {
-      breadcrumbItems.push({ label: 'Accessories', href: '/accessories' });
-      const parentCat = (categories as any[]).find((c: any) => c.id === productCategory.parentId);
-      if (parentCat) {
-        if (parentCat.parentId) {
-          const grandparentCat = (categories as any[]).find((c: any) => c.id === parentCat.parentId);
-          if (grandparentCat) {
-            breadcrumbItems.push({ label: grandparentCat.name, href: `/accessories/${grandparentCat.slug}` });
-          }
-        }
-        breadcrumbItems.push({ label: parentCat.name, href: `/accessories/${parentCat.slug}` });
-      }
-      breadcrumbItems.push({
-        label: productCategory.name,
-        href: `/accessories/${parentCat?.slug || 'dogs'}/${productCategory.slug}`,
-      });
-    } else {
-      breadcrumbItems.push({ label: productCategory.name, href: `/category/${productCategory.slug}` });
-    }
-  }
-  breadcrumbItems.push({ label: name });
-
   return (
     <ShopLayout>
       <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
-        {/* Dynamic Breadcrumbs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <Breadcrumbs items={breadcrumbItems} />
-          
-          <button
-            onClick={() => router.back()}
-            className="text-xs font-bold text-slate-500 hover:text-teal-600 flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
-          >
-            ← Back
-          </button>
-        </div>
+        <button
+          onClick={() => router.back()}
+          className="text-xs font-bold text-slate-500 hover:text-teal-600 flex items-center gap-1.5 transition-colors cursor-pointer"
+        >
+          ← Back
+        </button>
 
         {/* Product Layout Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm">

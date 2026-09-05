@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import ShopLayout from '@/components/templates/ShopLayout';
-import Breadcrumbs from '@/components/atoms/Breadcrumbs';
+
 import ProductGrid from '@/components/organisms/ProductGrid';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
@@ -54,12 +54,7 @@ export default function GroupAccessoriesPage() {
   return (
     <ShopLayout>
       <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
-        <Breadcrumbs
-          items={[
-            { label: 'Accessories', href: '/accessories' },
-            { label: groupItem.name },
-          ]}
-        />
+
 
         {/* Header */}
         <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">

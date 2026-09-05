@@ -2,7 +2,7 @@
 
 import ShopLayout from '@/components/templates/ShopLayout';
 import ProtectedRoute from '@/components/guards/ProtectedRoute';
-import Breadcrumbs from '@/components/atoms/Breadcrumbs';
+
 import ProductGrid from '@/components/organisms/ProductGrid';
 import Spinner from '@/components/atoms/Spinner';
 import EmptyState from '@/components/molecules/EmptyState';
@@ -15,7 +15,7 @@ export default function WishlistPage() {
     <ProtectedRoute>
       <ShopLayout>
         <div className="space-y-6 animate-fade-in max-w-5xl mx-auto">
-          <Breadcrumbs items={[{ label: 'My Wishlist' }]} />
+
 
           {/* Header */}
           <div className="text-center py-6">
