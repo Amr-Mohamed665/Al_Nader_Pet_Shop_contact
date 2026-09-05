@@ -56,8 +56,16 @@ export default function Footer() {
           
           {/* Brand Col */}
           <div className="space-y-4">
-            <div className="bg-white rounded-xl p-1.5 w-fit shadow-sm border border-white/30">
-              <Logo className="h-10 w-36" />
+            <div className="flex flex-col items-start justify-center">
+              <div className="bg-white rounded-xl p-1.5 w-fit shadow-sm border border-white/30">
+                <Logo />
+              </div>
+              <span
+                className="text-sm sm:text-base font-medium text-purple-200 tracking-wide leading-none select-none mt-1.5"
+                style={{ fontFamily: 'var(--font-satisfy), var(--font-great-vibes), cursive' }}
+              >
+                Where Pets Become Family
+              </span>
             </div>
             <p className="text-sm text-purple-200/80 leading-relaxed font-medium">
               We provide the best pets and accessories to bring joy, love and happiness to your home.

@@ -1,4 +1,4 @@
-import { Outfit, Inter } from 'next/font/google';
+import { Outfit, Inter, Caveat, Dancing_Script, Great_Vibes, Satisfy } from 'next/font/google';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
@@ -22,6 +22,32 @@ const inter = Inter({
   display: 'swap',
 });
 
+const caveat = Caveat({
+  subsets: ['latin'],
+  variable: '--font-handwriting',
+  display: 'swap',
+});
+
+const dancingScript = Dancing_Script({
+  subsets: ['latin'],
+  variable: '--font-handwriting-fancy',
+  display: 'swap',
+});
+
+const greatVibes = Great_Vibes({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-great-vibes',
+  display: 'swap',
+});
+
+const satisfy = Satisfy({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-satisfy',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'Al Nader Pet Shop — Premium Pet Supplies',
   description: 'Shop premium food, treats, toys, cages, and accessories for dogs, cats, and birds. Al Nader Pet Shop in Dubai, UAE.',
@@ -31,7 +57,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${inter.variable} h-full scroll-smooth`}
+      className={`${outfit.variable} ${inter.variable} ${caveat.variable} ${dancingScript.variable} ${greatVibes.variable} ${satisfy.variable} h-full scroll-smooth`}
     >
       <body className="min-h-full flex flex-col bg-cream-50 font-body text-slate-800 antialiased font-medium">
         <ReduxProvider>

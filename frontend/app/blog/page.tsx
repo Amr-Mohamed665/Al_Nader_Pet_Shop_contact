@@ -28,7 +28,10 @@ export default function BlogIndexPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section
+        className="relative text-white py-16 px-4 sm:px-6 lg:px-8 overflow-hidden rounded-b-3xl"
+        style={{ background: 'linear-gradient(135deg, rgb(15,7,30) 0%, rgb(42,21,88) 40%, rgb(63,30,115) 70%, rgb(15,7,30) 100%)' }}
+      >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-500/20 via-transparent to-transparent opacity-60 pointer-events-none" />
         <div className="max-w-7xl mx-auto relative z-10 text-center">
           <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-200 border border-purple-400/30 backdrop-blur-md mb-4 animate-fade-in">
@@ -76,7 +79,7 @@ export default function BlogIndexPage() {
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                 selectedCategory === cat
                   ? 'bg-purple-600 text-white shadow-md shadow-purple-600/20 scale-105'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-purple-50 hover:text-purple-600'
+                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-purple-600'
               }`}
             >
               {cat}
@@ -88,7 +91,7 @@ export default function BlogIndexPage() {
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-3">
             <Spinner size="lg" />
-            <span className="text-xs font-bold text-slate-400">Loading pet guides & articles...</span>
+            <span className="text-xs font-bold text-slate-600">Loading pet guides & articles...</span>
           </div>
         ) : blogs.length === 0 ? (
           <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-sm">
@@ -169,7 +172,7 @@ export default function BlogIndexPage() {
             <div className="space-y-4">
               <h2 className="text-xl font-extrabold text-slate-800 tracking-tight flex items-center justify-between">
                 <span>{search || selectedCategory !== 'All' ? 'Articles Results' : 'Recent Articles'}</span>
-                <span className="text-xs font-semibold text-slate-400">{blogs.length} articles</span>
+                <span className="text-xs font-semibold text-slate-500">{blogs.length} articles</span>
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

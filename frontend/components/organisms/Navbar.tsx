@@ -94,10 +94,18 @@ export default function Navbar() {
     <>
       <nav className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between items-center">
-            {/* Logo */}
-            <div className="flex-shrink-0 bg-white rounded-xl p-1.5 border border-slate-200/80 shadow-sm">
-              <Logo />
+          <div className="flex min-h-[80px] py-2 justify-between items-center">
+            {/* Logo & Fancy Handwritten Slogan Underneath */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="flex-shrink-0 bg-white rounded-xl px-2 py-1 border border-slate-200/80 shadow-sm">
+                <Logo />
+              </div>
+              <span
+                className="text-sm sm:text-base md:text-lg font-medium text-purple-700 tracking-wide leading-none select-none mt-1 whitespace-nowrap"
+                style={{ fontFamily: 'var(--font-satisfy), var(--font-great-vibes), cursive' }}
+              >
+                Where Pets Become Family
+              </span>
             </div>
 
             {/* Desktop Navigation */}
