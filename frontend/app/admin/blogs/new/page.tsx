@@ -18,7 +18,7 @@ export default function CreateBlogPage() {
     category: 'Care Guides',
     author: 'Al Nader Pet Care Team',
     readTime: '5 min read',
-    image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1074&auto=format&fit=crop',
+    image: '',
     excerpt: '',
     content: '',
     tags: 'Pet Care, Guides',
@@ -191,21 +191,9 @@ export default function CreateBlogPage() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">
-                    Full Article Content *
-                  </label>
-
-                  <button
-                    type="button"
-                    onClick={() => inlineFileInputRef.current?.click()}
-                    disabled={isUploadingInline}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-extrabold text-xs rounded-xl border border-purple-200/60 transition-all active:scale-95 disabled:opacity-50"
-                  >
-                    <i className={isUploadingInline ? "fa-solid fa-spinner animate-spin text-xs" : "fa-solid fa-cloud-arrow-up text-xs"} />
-                    {isUploadingInline ? 'Uploading...' : 'Insert Image'}
-                  </button>
-                </div>
+                <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
+                  Full Article Content *
+                </label>
 
                 <div
                   onDragOver={(e) => {
@@ -247,7 +235,7 @@ export default function CreateBlogPage() {
                 </div>
                 <p className="text-[10px] text-slate-400 mt-1.5 flex items-center gap-1">
                   <i className="fa-solid fa-circle-info text-slate-400" />
-                  Tip: Drag &amp; drop image files onto the text area or click &quot;Insert Image&quot; to upload directly.
+                  Tip: Drag &amp; drop image files onto the text area to upload directly.
                 </p>
               </div>
             </div>
