@@ -1,10 +1,15 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ShopLayout from '@/components/templates/ShopLayout';
 import Image from 'next/image';
 import { CONTACT_INFO } from '@/constants/navigation';
 
 export default function AboutPage() {
+  const router = useRouter();
+  const [search, setSearch] = useState('');
+
   return (
     <ShopLayout>
       <div className="space-y-12 sm:space-y-16 animate-fade-in max-w-5xl mx-auto">
@@ -20,6 +25,36 @@ export default function AboutPage() {
             <p className="text-sm sm:text-base text-purple-200/90 leading-relaxed font-medium">
               UAE&apos;s premier destination for high-quality pet supplies, healthy food, and accessories since 2018.
             </p>
+
+            {/* Search Bar */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (search.trim()) {
+                  router.push(`/products?search=${encodeURIComponent(search.trim())}`);
+                } else {
+                  router.push('/products');
+                }
+              }}
+              className="pt-2 max-w-md mx-auto"
+            >
+              <div className="relative flex items-center">
+                <i className="fa-solid fa-magnifying-glass absolute left-4 text-slate-400 text-xs pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search products, food, supplies..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-10 pr-20 py-3 bg-white text-slate-800 placeholder-slate-400 rounded-2xl shadow-md text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-400 border border-white/20 transition-all"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-1.5 px-3.5 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl transition-all shadow-sm"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
           </div>
           {/* Background glowing design */}
           <div className="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] rounded-full bg-purple-600/20 blur-3xl pointer-events-none" />

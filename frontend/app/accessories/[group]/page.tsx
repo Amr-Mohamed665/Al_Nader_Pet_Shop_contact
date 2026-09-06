@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import ShopLayout from '@/components/templates/ShopLayout';
@@ -7,11 +8,13 @@ import ShopLayout from '@/components/templates/ShopLayout';
 import ProductGrid from '@/components/organisms/ProductGrid';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
+import SearchBar from '@/components/molecules/SearchBar';
 import useProducts from '@/hooks/useProducts';
 import { useAccessoriesTree } from '@/hooks/useCategories';
 
 export default function GroupAccessoriesPage() {
   const { group } = useParams<{ group: string }>();
+  const [search, setSearch] = useState('');
   const { tree: accessoriesTree, isLoading: treeLoading } = useAccessoriesTree();
   const { products, loading: productsLoading, error, refetch } = useProducts();
 
@@ -47,9 +50,17 @@ export default function GroupAccessoriesPage() {
 
   // Get all descendant subcategory slugs
   const groupSlugs = [groupItem.slug.toLowerCase(), ...groupItem.subcategories.map((s: any) => s.slug.toLowerCase())];
-  const groupProducts = products.filter(
+  let groupProducts = products.filter(
     (p: any) => p.category && groupSlugs.includes(p.category.toLowerCase()) && p.available !== false
   );
+
+  // Search filter
+  if (search.trim()) {
+    const query = search.toLowerCase().trim();
+    groupProducts = groupProducts.filter(
+      (p: any) => p.name?.toLowerCase().includes(query) || p.description?.toLowerCase().includes(query)
+    );
+  }
 
   return (
     <ShopLayout>
@@ -104,14 +115,9 @@ export default function GroupAccessoriesPage() {
 
         <hr className="border-slate-200/80 !my-6" />
 
-        {/* Product List Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-extrabold text-slate-900 tracking-tight">
-            All {groupItem.name.toLowerCase().includes('accessories') || groupItem.name.toLowerCase().includes('accessory') ? groupItem.name : `${groupItem.name} Accessories`}
-          </h2>
-          <span className="text-xs text-slate-400 font-bold">
-            {groupProducts.length} Product(s) Found
-          </span>
+        {/* Search Bar */}
+        <div className="flex justify-end">
+          <SearchBar onSearch={setSearch} initialValue={search} placeholder={`Search ${groupItem.name}...`} className="w-full max-w-xs" />
         </div>
 
         {/* Product Grid */}

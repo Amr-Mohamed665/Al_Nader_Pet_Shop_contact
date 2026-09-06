@@ -1,16 +1,19 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import ShopLayout from '@/components/templates/ShopLayout';
 
 import ProductGrid from '@/components/organisms/ProductGrid';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
+import SearchBar from '@/components/molecules/SearchBar';
 import useProducts from '@/hooks/useProducts';
 import { useAccessoriesTree } from '@/hooks/useCategories';
 
 export default function SubcategoryAccessoriesPage() {
   const { group, subcategory } = useParams<{ group: string; subcategory: string }>();
+  const [search, setSearch] = useState('');
   const { tree: accessoriesTree, isLoading: treeLoading } = useAccessoriesTree();
   const { products, loading: productsLoading, error, refetch } = useProducts();
 
@@ -49,9 +52,17 @@ export default function SubcategoryAccessoriesPage() {
   }
 
   // Filter products by specific subcategory slug
-  const filteredProducts = products.filter(
+  let filteredProducts = products.filter(
     (p: any) => p.category && p.category.toLowerCase() === subItem.slug.toLowerCase() && p.available !== false
   );
+
+  // Search filter
+  if (search.trim()) {
+    const query = search.toLowerCase().trim();
+    filteredProducts = filteredProducts.filter(
+      (p: any) => p.name?.toLowerCase().includes(query) || p.description?.toLowerCase().includes(query)
+    );
+  }
 
   return (
     <ShopLayout>
@@ -86,14 +97,9 @@ export default function SubcategoryAccessoriesPage() {
 
         <hr className="border-slate-200/80 !my-6" />
 
-        {/* Product List Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-slate-900 tracking-tight">
-            Available Products
-          </h2>
-          <span className="text-xs text-slate-400 font-bold">
-            {filteredProducts.length} Product(s) Found
-          </span>
+        {/* Search Bar */}
+        <div className="flex justify-end">
+          <SearchBar onSearch={setSearch} initialValue={search} placeholder={`Search ${subItem.name}...`} className="w-full max-w-xs" />
         </div>
 
         {/* Product Grid */}

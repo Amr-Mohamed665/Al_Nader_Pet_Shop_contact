@@ -9,11 +9,14 @@ import ErrorState from '@/components/molecules/ErrorState';
 import useProducts from '@/hooks/useProducts';
 import { useCategoriesQuery } from '@/hooks/useCategories';
 
+import SearchBar from '@/components/molecules/SearchBar';
+
 export default function CategoryPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: categories = [], isLoading: categoriesLoading } = useCategoriesQuery();
   const [currentPage, setCurrentPage] = useState(1);
   const [prevSlug, setPrevSlug] = useState(slug);
+  const [search, setSearch] = useState('');
 
   if (slug !== prevSlug) {
     setPrevSlug(slug);
@@ -29,7 +32,14 @@ export default function CategoryPage() {
     loading: productsLoading,
     error,
     refetch,
-  } = useProducts({ category: slug });
+    updateFilters,
+  } = useProducts({ category: slug, search });
+
+  const handleSearch = (term: string) => {
+    setSearch(term);
+    updateFilters({ category: slug, search: term });
+    setCurrentPage(1);
+  };
 
   const loading = categoriesLoading || productsLoading;
 
@@ -43,7 +53,7 @@ export default function CategoryPage() {
     <ShopLayout>
       <div className="space-y-6 animate-fade-in">
         {/* Category Header */}
-        <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm flex items-center justify-between gap-6 relative overflow-hidden">
+        <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
           <div className="space-y-2 z-10 max-w-xl">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight capitalize">
               {(categoryInfo as any)?.name || slug} Supplies
@@ -54,10 +64,10 @@ export default function CategoryPage() {
               </p>
             )}
           </div>
-          
+
           {/* Category image */}
           {(categoryInfo as any)?.image && (
-            <div className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100 shadow-sm z-10">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-slate-50 border border-slate-100 shadow-sm hidden sm:block z-10">
               <img
                 src={(categoryInfo as any).image}
                 alt={(categoryInfo as any).name}
@@ -65,6 +75,16 @@ export default function CategoryPage() {
               />
             </div>
           )}
+        </div>
+
+        {/* Search Bar - Above Products */}
+        <div className="flex justify-end">
+          <SearchBar
+            onSearch={handleSearch}
+            initialValue={search}
+            placeholder={`Search in ${(categoryInfo as any)?.name || slug}...`}
+            className="w-full max-w-xs"
+          />
         </div>
 
         {/* Products Grid */}

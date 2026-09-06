@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Logo from '@/components/atoms/Logo';
 import Avatar from '@/components/atoms/Avatar';
 import Button from '@/components/atoms/Button';
@@ -14,6 +14,7 @@ import type { Category } from '@/types';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, isAuthenticated, isAdmin, logout, loading } = useAuth();
   const { count } = useCart();
   const { data: categories = [] } = useCategoriesQuery();

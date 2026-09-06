@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ShopLayout from '@/components/templates/ShopLayout';
 import ProductGrid from '@/components/organisms/ProductGrid';
 import ProductFilters from '@/components/organisms/ProductFilters';
@@ -10,8 +11,12 @@ import ErrorState from '@/components/molecules/ErrorState';
 import useProducts from '@/hooks/useProducts';
 
 export default function ProductsPage() {
-  const [category, setCategory] = useState('');
-  const [search, setSearch] = useState('');
+  const searchParams = useSearchParams();
+  const initialSearch = searchParams?.get('search') || '';
+  const initialCategory = searchParams?.get('category') || '';
+
+  const [category, setCategory] = useState(initialCategory);
+  const [search, setSearch] = useState(initialSearch);
   const [currentPage, setCurrentPage] = useState(1);
   
   const {
@@ -20,7 +25,15 @@ export default function ProductsPage() {
     error,
     refetch,
     updateFilters,
-  } = useProducts({ search: '', category: '' });
+  } = useProducts({ search: initialSearch, category: initialCategory });
+
+  useEffect(() => {
+    const s = searchParams?.get('search') || '';
+    const c = searchParams?.get('category') || '';
+    setSearch(s);
+    setCategory(c);
+    updateFilters({ search: s, category: c });
+  }, [searchParams]);
 
   const handleSearch = (term: string) => {
     setSearch(term);

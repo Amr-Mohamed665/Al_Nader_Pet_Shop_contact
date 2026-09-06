@@ -8,8 +8,11 @@ import ProductGrid from '@/components/organisms/ProductGrid';
 import useProducts from '@/hooks/useProducts';
 import { useCategoriesQuery } from '@/hooks/useCategories';
 
+import SearchBar from '@/components/molecules/SearchBar';
+
 export default function AccessoriesPage() {
   const [activeTab, setActiveTab] = useState('all');
+  const [search, setSearch] = useState('');
   const { data: categories = [], isLoading: categoriesLoading } = useCategoriesQuery();
   const { products, loading: productsLoading, error, refetch } = useProducts();
 
@@ -40,6 +43,14 @@ export default function AccessoriesPage() {
         (p: any) => p.category && p.category.toLowerCase() === (activeCategory as any).slug.toLowerCase()
       );
     }
+  }
+
+  // 5. Search filter inside accessories
+  if (search.trim()) {
+    const query = search.toLowerCase().trim();
+    displayedAccessories = displayedAccessories.filter(
+      (p: any) => p.name?.toLowerCase().includes(query) || p.description?.toLowerCase().includes(query)
+    );
   }
 
   // Format the label for the tabs (e.g. "Dogs" -> "Dog Accessories")
@@ -79,6 +90,11 @@ export default function AccessoriesPage() {
           <p className="text-sm text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
             Find the perfect toys, beds, feeders, collars, and habitats for your companions.
           </p>
+        </div>
+
+        {/* Search Bar - Above Products */}
+        <div className="flex justify-end">
+          <SearchBar onSearch={setSearch} initialValue={search} placeholder="Search accessories..." className="w-full max-w-xs" />
         </div>
 
         {loading ? (
