@@ -82,7 +82,7 @@ export function create(data: Omit<BlogPost, 'id' | 'publishedAt'> & { slug?: str
     excerpt: data.excerpt || '',
     content: data.content || '',
     category: data.category || 'General',
-    image: data.image || '/images/accessories-category.jpg',
+    image: data.image || '',
     author: data.author || 'Al Nader Pet Care Team',
     readTime: data.readTime || '5 min read',
     publishedAt: new Date().toISOString(),

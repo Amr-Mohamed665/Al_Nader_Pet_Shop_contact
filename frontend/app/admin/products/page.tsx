@@ -467,7 +467,7 @@ export default function AdminProductsPage() {
       void queryClient.invalidateQueries({ queryKey: ['products'] });
     },
     onError: (err: any) => {
-      alert(err.response?.data?.message || 'Failed to delete product.');
+      showToast(err.response?.data?.message || 'Failed to delete product.', 'error');
     },
   });
 

@@ -1,11 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import Swal from 'sweetalert2';
-import 'sweetalert2/dist/sweetalert2.min.css';
 import Price from '@/components/atoms/Price';
 import Badge from '@/components/atoms/Badge';
 import Button from '@/components/atoms/Button';
+import ConfirmModal from '@/components/molecules/ConfirmModal';
+import { showToast } from '@/utils/toast';
 import { formatDateShort } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/getStatusColor';
 import { VALID_STATUS_VALUES } from '@/constants/orderStatuses';
@@ -27,58 +28,26 @@ export interface OrderTableProps {
 }
 
 export default function OrderTable({ orders = [], onStatusUpdate, updatingId, onDelete }: OrderTableProps) {
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDeleteClick = (orderId: string) => {
     if (!onDelete) return;
+    setDeleteTargetId(orderId);
+  };
 
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Do you really want to delete order #${orderId}? This action cannot be undone.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#EF4444', // Danger Red
-      cancelButtonColor: '#94A3B8',  // Slate Gray
-      confirmButtonText: 'Yes, delete it',
-      cancelButtonText: 'Cancel',
-      background: '#FFFFFF',
-      customClass: {
-        popup: 'rounded-2xl border border-slate-100 shadow-xl',
-        title: 'text-slate-900 font-extrabold text-sm tracking-tight',
-        htmlContainer: 'text-slate-500 text-xs font-semibold',
-        confirmButton: 'px-4 py-2 text-xs font-bold text-white rounded-xl transition-all focus:ring-2 focus:ring-rose-500/20',
-        cancelButton: 'px-4 py-2 text-xs font-bold text-white rounded-xl transition-all focus:ring-2 focus:ring-slate-300/20'
-      }
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await onDelete(orderId);
-          Swal.fire({
-            title: 'Deleted!',
-            text: `Order #${orderId} has been successfully deleted.`,
-            icon: 'success',
-            confirmButtonColor: '#20B2A4',
-            customClass: {
-              popup: 'rounded-2xl border border-slate-100 shadow-xl',
-              title: 'text-slate-900 font-extrabold text-sm tracking-tight',
-              htmlContainer: 'text-slate-500 text-xs font-semibold',
-              confirmButton: 'px-4 py-2 text-xs font-bold text-white rounded-xl'
-            }
-          });
-        } catch (err: any) {
-          Swal.fire({
-            title: 'Error!',
-            text: err.response?.data?.message || err.message || 'Failed to delete order.',
-            icon: 'error',
-            confirmButtonColor: '#20B2A4',
-            customClass: {
-              popup: 'rounded-2xl border border-slate-100 shadow-xl',
-              title: 'text-slate-900 font-extrabold text-sm tracking-tight',
-              htmlContainer: 'text-slate-500 text-xs font-semibold',
-              confirmButton: 'px-4 py-2 text-xs font-bold text-white rounded-xl'
-            }
-          });
-        }
-      }
-    });
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId || !onDelete) return;
+    try {
+      setIsDeleting(true);
+      await onDelete(deleteTargetId);
+      showToast('success', `Order #${deleteTargetId} deleted successfully!`);
+    } catch (err: any) {
+      showToast('error', err.response?.data?.message || err.message || 'Failed to delete order.');
+    } finally {
+      setIsDeleting(false);
+      setDeleteTargetId(null);
+    }
   };
 
   if (orders.length === 0) {
@@ -287,6 +256,18 @@ export default function OrderTable({ orders = [], onStatusUpdate, updatingId, on
           </TableBody>
         </Table>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Order?"
+        description={`Are you sure you want to delete order #${deleteTargetId}? This action cannot be undone.`}
+        confirmLabel="Delete"
+        isDanger
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

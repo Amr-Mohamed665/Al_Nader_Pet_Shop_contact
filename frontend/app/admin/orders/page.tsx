@@ -8,7 +8,7 @@ import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
 import useOrders from '@/hooks/useOrders';
 import { ORDER_STATUSES } from '@/constants/orderStatuses';
-import type { OrderStatus } from '@/types';
+import { showToast } from '@/utils/toast';
 
 const ALL_FILTER = { value: 'all', label: 'All Orders' };
 const FILTER_TABS = [ALL_FILTER, ...ORDER_STATUSES];
@@ -29,8 +29,9 @@ export default function AdminOrdersPage() {
   const handleStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
     try {
       await updateStatus({ orderId, status: newStatus });
+      showToast('success', `Order #${orderId} status updated to ${newStatus}`);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update order status.');
+      showToast('error', err.response?.data?.message || err.message || 'Failed to update order status.');
     }
   };
 

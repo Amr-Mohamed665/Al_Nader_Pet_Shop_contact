@@ -36,7 +36,7 @@ export function createBlog(req: Request, res: Response, next: NextFunction): voi
     excerpt: excerpt || '',
     content,
     category: category || 'General',
-    image: image || '/images/accessories-category.jpg',
+    image: image || '',
     author: author || 'Al Nader Pet Care Team',
     readTime: readTime || '5 min read',
     tags: Array.isArray(tags) ? tags : typeof tags === 'string' ? tags.split(',').map((t) => t.trim()) : ['Pet Care'],

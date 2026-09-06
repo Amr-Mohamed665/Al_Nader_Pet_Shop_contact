@@ -11,6 +11,7 @@ import ErrorState from '@/components/molecules/ErrorState';
 import { formatDate } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/getStatusColor';
 import { VALID_STATUS_VALUES } from '@/constants/orderStatuses';
+import { showToast } from '@/utils/toast';
 import type { BadgeVariant, OrderStatus } from '@/types';
 
 import useOrder from '@/hooks/useOrder';
@@ -37,8 +38,9 @@ export default function AdminOrderDetailPage() {
     try {
       await updateStatus({ orderId: id, status: newStatus });
       void refetch();
+      showToast('success', `Order #${id} status updated to ${newStatus}`);
     } catch (err: any) {
-      alert(err.message || 'Failed to update status.');
+      showToast('error', err.response?.data?.message || err.message || 'Failed to update status.');
     }
   };
 

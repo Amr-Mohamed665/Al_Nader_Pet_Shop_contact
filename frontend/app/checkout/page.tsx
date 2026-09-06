@@ -10,7 +10,7 @@ import ShopLayout from '@/components/templates/ShopLayout';
 import ProtectedRoute from '@/components/guards/ProtectedRoute';
 import Price from '@/components/atoms/Price';
 import Button from '@/components/atoms/Button';
-import EmptyState from '@/components/molecules/EmptyState';
+import Spinner from '@/components/atoms/Spinner';
 import FormField from '@/components/molecules/FormField';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
@@ -30,6 +30,7 @@ export default function CheckoutPage() {
   const [serverError, setServerError] = useState('');
   const [step, setStep] = useState<'details' | 'review'>('details');
   const [checkoutData, setCheckoutData] = useState<any>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const {
     register,
@@ -90,6 +91,7 @@ export default function CheckoutPage() {
     setServerError('');
     try {
       const orderItems = items.map((item) => ({
+        menuItemId: item.id,
         id: item.id,
         name: item.name,
         price: item.price,
@@ -120,7 +122,8 @@ export default function CheckoutPage() {
       const response = await createOrderMutation.mutateAsync(payload as any);
 
       if (response.success && response.data) {
-        clearCart();
+        setIsRedirecting(true);
+        clearCart(false);
         playSound('success');
         router.push(`/orders/${response.data.id}`);
       } else {
@@ -148,17 +151,11 @@ export default function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) {
+  if (isRedirecting || createOrderMutation.isPending || createOrderMutation.isSuccess || items.length === 0) {
     return (
       <ShopLayout>
-        <div className="py-12">
-          <EmptyState
-            title="Nothing to checkout"
-            description="Your cart is empty. Add items to your cart before checking out."
-            icon="🛒"
-            actionLabel="Browse Products"
-            actionHref="/products"
-          />
+        <div className="py-28 flex flex-col items-center justify-center gap-3 text-center min-h-[40vh]">
+          <Spinner size="lg" />
         </div>
       </ShopLayout>
     );

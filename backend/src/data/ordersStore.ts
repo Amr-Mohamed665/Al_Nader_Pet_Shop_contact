@@ -122,8 +122,9 @@ export function create(
     throw new ApiError(400, "'items' must be a non-empty array of { menuItemId, quantity }.");
   }
 
-  const orderItems: OrderLineItem[] = requestedItems.map(({ menuItemId, quantity }) => {
-    const qty = Number(quantity);
+  const orderItems: OrderLineItem[] = requestedItems.map((item: any) => {
+    const menuItemId = item.menuItemId || item.id;
+    const qty = Number(item.quantity);
     if (!menuItemId || !Number.isInteger(qty) || qty < 1) {
       throw new ApiError(400, "Each item needs a valid 'menuItemId' and a positive integer 'quantity'.");
     }

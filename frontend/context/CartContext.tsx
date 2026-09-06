@@ -16,7 +16,7 @@ interface CartContextValue {
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
+  clearCart: (showNotification?: boolean) => void;
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
@@ -32,29 +32,27 @@ export function CartProvider({ children }: CartProviderProps) {
   const { user } = useAuth();
   const cartKey = user ? `pet-shop-cart-${user.id}` : 'pet-shop-cart-guest';
 
+  const [prevCartKey, setPrevCartKey] = useState<string | null>(null);
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
-  // Load cart from cookies when cartKey changes
-  /* eslint-disable react-hooks/exhaustive-deps */
-  useEffect(() => {
+  // Synchronize cart items from cookies when cartKey changes during render
+  if (prevCartKey !== cartKey) {
+    setPrevCartKey(cartKey);
     try {
-      const saved = Cookies.get(cartKey);
+      const saved = typeof window !== 'undefined' ? Cookies.get(cartKey) : null;
       setItems(saved ? (JSON.parse(saved) as CartItem[]) : []);
     } catch {
       setItems([]);
     }
-    setLoadedKey(cartKey);
-  }, [cartKey]);
-  /* eslint-enable react-hooks/exhaustive-deps */
+  }
 
-  // Persist to cookies on every change (only if key matches the loaded key)
+  // Persist items to cookies whenever items change (after key sync)
   useEffect(() => {
-    if (loadedKey === cartKey) {
+    if (prevCartKey === cartKey) {
       Cookies.set(cartKey, JSON.stringify(items), { expires: 14 });
     }
-  }, [items, cartKey, loadedKey]);
+  }, [items, cartKey, prevCartKey]);
 
   const addItem = useCallback((product: Product, quantity = 1) => {
     setItems((prev) => {
@@ -112,9 +110,11 @@ export function CartProvider({ children }: CartProviderProps) {
     );
   }, []);
 
-  const clearCart = useCallback(() => {
+  const clearCart = useCallback((showNotification = true) => {
     setItems([]);
-    showToast('info', 'Cart cleared');
+    if (showNotification) {
+      showToast('info', 'Cart cleared');
+    }
   }, []);
 
   const openCart = useCallback(() => setIsOpen(true), []);
