@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/templates/AdminLayout';
 import AdminRoute from '@/components/guards/AdminRoute';
+import ImageUploader from '@/components/molecules/ImageUploader';
 import { useCreateBlogMutation } from '@/hooks/useBlogs';
 
 export default function CreateBlogPage() {
@@ -24,8 +25,57 @@ export default function CreateBlogPage() {
   });
 
   const [error, setError] = useState<string | null>(null);
+  const [isUploadingInline, setIsUploadingInline] = useState(false);
+  const [isDraggingOverContent, setIsDraggingOverContent] = useState(false);
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const inlineFileInputRef = useRef<HTMLInputElement>(null);
 
   const categoriesOptions = ['Care Guides', 'Cat Care', 'Dog Care', 'Nutrition', 'Reptiles', 'General'];
+
+  const uploadInlineFile = async (file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    setIsUploadingInline(true);
+    try {
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'lslwlv9d';
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'pet-shop';
+      
+      const body = new FormData();
+      body.append('file', file);
+      body.append('upload_preset', uploadPreset);
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body,
+      });
+
+      if (!response.ok) throw new Error('Failed to upload image');
+      const data = await response.json();
+
+      if (data.secure_url) {
+        const imageMarkdown = `\n![${file.name.replace(/\.[^/.]+$/, '')}](${data.secure_url})\n`;
+        setFormData((prev) => ({
+          ...prev,
+          content: prev.content + imageMarkdown,
+        }));
+      }
+    } catch (err: any) {
+      console.error('Failed to upload inline image:', err);
+      setError('Failed to upload article inline image.');
+    } finally {
+      setIsUploadingInline(false);
+    }
+  };
+
+  const handleContentDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingOverContent(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith('image/'));
+      for (const file of files) {
+        await uploadInlineFile(file);
+      }
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +116,18 @@ export default function CreateBlogPage() {
     <AdminRoute>
       <AdminLayout>
         <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
+          {/* Hidden Inline File Input */}
+          <input
+            type="file"
+            ref={inlineFileInputRef}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void uploadInlineFile(file);
+            }}
+            accept="image/*"
+            className="hidden"
+          />
+
           {/* Top Bar Navigation */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
             <div>
@@ -129,17 +191,64 @@ export default function CreateBlogPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
-                  Full Article Content *
-                </label>
-                <textarea
-                  rows={14}
-                  required
-                  placeholder="Write your article text here. Supports headings, bullet points, and paragraphs..."
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono"
-                />
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">
+                    Full Article Content *
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={() => inlineFileInputRef.current?.click()}
+                    disabled={isUploadingInline}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-extrabold text-xs rounded-xl border border-purple-200/60 transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    <i className={isUploadingInline ? "fa-solid fa-spinner animate-spin text-xs" : "fa-solid fa-cloud-arrow-up text-xs"} />
+                    {isUploadingInline ? 'Uploading...' : 'Insert Image'}
+                  </button>
+                </div>
+
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDraggingOverContent(true);
+                  }}
+                  onDragLeave={() => setIsDraggingOverContent(false)}
+                  onDrop={handleContentDrop}
+                  className="relative group rounded-2xl"
+                >
+                  <textarea
+                    rows={14}
+                    required
+                    placeholder="Write your article text here. You can drag and drop images directly into this area to upload and embed them!"
+                    value={formData.content}
+                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                    className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl text-xs font-medium text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono transition-all ${
+                      isDraggingOverContent
+                        ? 'border-2 border-dashed border-purple-500 bg-purple-50/50'
+                        : 'border-slate-200'
+                    }`}
+                  />
+
+                  {isDraggingOverContent && (
+                    <div className="absolute inset-0 bg-purple-500/10 backdrop-blur-[2px] border-2 border-dashed border-purple-500 rounded-2xl flex items-center justify-center pointer-events-none">
+                      <span className="bg-white/90 text-purple-700 px-4 py-2 rounded-full text-xs font-bold shadow-md">
+                        <i className="fa-solid fa-file-image mr-2" />
+                        Drop image to insert into article content
+                      </span>
+                    </div>
+                  )}
+
+                  {isUploadingInline && (
+                    <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] rounded-2xl flex items-center justify-center gap-2 pointer-events-none">
+                      <div className="w-6 h-6 border-3 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-xs font-bold text-purple-700">Uploading & inserting image...</span>
+                    </div>
+                  )}
+                </div>
+                <p className="text-[10px] text-slate-400 mt-1.5 flex items-center gap-1">
+                  <i className="fa-solid fa-circle-info text-slate-400" />
+                  Tip: Drag &amp; drop image files onto the text area or click &quot;Insert Image&quot; to upload directly.
+                </p>
               </div>
             </div>
 
@@ -152,16 +261,53 @@ export default function CreateBlogPage() {
                 </h3>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Category</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  >
-                    {categoriesOptions.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bold text-slate-700">Category</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const nextState = !isCustomCategory;
+                        setIsCustomCategory(nextState);
+                        if (nextState) {
+                          setFormData((prev) => ({ ...prev, category: '' }));
+                        } else {
+                          setFormData((prev) => ({ ...prev, category: categoriesOptions[0] }));
+                        }
+                      }}
+                      className="text-[11px] font-bold text-purple-600 hover:text-purple-800 transition-colors"
+                    >
+                      {isCustomCategory ? 'Choose Preset' : '+ Type Custom'}
+                    </button>
+                  </div>
+
+                  {isCustomCategory ? (
+                    <input
+                      type="text"
+                      placeholder="Type custom category name..."
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      autoFocus
+                    />
+                  ) : (
+                    <select
+                      value={formData.category}
+                      onChange={(e) => {
+                        if (e.target.value === '__custom__') {
+                          setIsCustomCategory(true);
+                          setFormData({ ...formData, category: '' });
+                        } else {
+                          setFormData({ ...formData, category: e.target.value });
+                        }
+                      }}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      {categoriesOptions.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                      <option value="__custom__">+ Type Custom Category...</option>
+                    </select>
+                  )}
                 </div>
 
                 <div>
@@ -209,41 +355,13 @@ export default function CreateBlogPage() {
                 </div>
               </div>
 
-              {/* Image Preview Box */}
-              <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
-                <h3 className="text-sm font-extrabold text-slate-800 flex items-center gap-2">
-                  <i className="fa-solid fa-image text-purple-600 text-xs" />
-                  Cover Image
-                </h3>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Image URL</label>
-                  <input
-                    type="text"
-                    placeholder="https://images.unsplash.com/..."
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                </div>
-
-                <div className="relative h-40 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
-                  {formData.image ? (
-                    <img
-                      src={formData.image}
-                      alt="Cover Preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/images/accessories-category.jpg';
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 text-xs font-semibold">
-                      <i className="fa-solid fa-image text-2xl mb-1" />
-                      No Image Provided
-                    </div>
-                  )}
-                </div>
+              {/* Cover Image & Video Drag and Drop Uploader */}
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
+                <ImageUploader
+                  label="Article Cover Image & Video"
+                  value={formData.image}
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                />
               </div>
 
               {/* Submit Buttons */}

@@ -442,51 +442,70 @@ export default function ImageUploader({
 
         {/* Tab 2: Image Link */}
         {activeTab === "url" && (
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Paste image link here (e.g. https://example.com/image.jpg)"
-                value={imageUrlInput}
-                onChange={(e) => {
-                  setImageUrlInput(e.target.value);
-                  setUploadError(null);
-                }}
-                className={cn(
-                  "flex-1 px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all duration-150",
-                  (error || uploadError) &&
-                    "border-red-500 focus:border-red-500 focus:ring-red-500",
-                )}
-              />
-
-              <button
-                type="button"
-                onClick={() => {
+          <div className="space-y-3">
+            <input
+              type="text"
+              placeholder="Paste image link here (e.g. https://example.com/image.jpg)"
+              value={imageUrlInput}
+              onChange={(e) => {
+                setImageUrlInput(e.target.value);
+                setUploadError(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
                   const externalUrl = imageUrlInput.trim();
-
                   if (!externalUrl) {
                     setUploadError("Please enter an image URL.");
                     return;
                   }
-
                   if (externalUrl.includes("res.cloudinary.com")) {
                     handleValueChange(externalUrl, "image");
                     setUploadError(null);
                     return;
                   }
-
                   const cloudinaryUrl =
                     `https://res.cloudinary.com/${cloudName}/image/fetch/` +
                     `w_800,q_auto,f_auto/${encodeURIComponent(externalUrl)}`;
-
                   handleValueChange(cloudinaryUrl, "image");
                   setUploadError(null);
-                }}
-                className="px-4 py-2 bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold rounded-lg transition-all shrink-0"
-              >
-                Apply
-              </button>
-            </div>
+                }
+              }}
+              className={cn(
+                "w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl shadow-xs placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all duration-150",
+                (error || uploadError) &&
+                  "border-red-500 focus:border-red-500 focus:ring-red-500",
+              )}
+            />
+
+            <button
+              type="button"
+              onClick={() => {
+                const externalUrl = imageUrlInput.trim();
+
+                if (!externalUrl) {
+                  setUploadError("Please enter an image URL.");
+                  return;
+                }
+
+                if (externalUrl.includes("res.cloudinary.com")) {
+                  handleValueChange(externalUrl, "image");
+                  setUploadError(null);
+                  return;
+                }
+
+                const cloudinaryUrl =
+                  `https://res.cloudinary.com/${cloudName}/image/fetch/` +
+                  `w_800,q_auto,f_auto/${encodeURIComponent(externalUrl)}`;
+
+                handleValueChange(cloudinaryUrl, "image");
+                setUploadError(null);
+              }}
+              className="w-full py-2 bg-teal-600 hover:bg-teal-500 active:scale-95 text-white text-xs font-extrabold rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5"
+            >
+              <i className="fa-solid fa-check text-xs" />
+              Apply Image Link
+            </button>
 
             {value && !currentIsVideo && (
               <div className="relative group rounded-xl border border-slate-200 overflow-hidden bg-white flex flex-col items-center justify-center p-3 min-h-[150px] transition-all duration-200">
@@ -657,32 +676,32 @@ export default function ImageUploader({
 
         {/* Tab 2: Video Link */}
         {activeVideoTab === "url" && (
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="YouTube, Vimeo, Streamable, or .mp4 URL…"
-                value={videoInput}
-                onChange={(e) => {
-                  setVideoInput(e.target.value);
-                  setUploadError(null);
-                }}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && (e.preventDefault(), handleApplyVideo())
-                }
-                className={cn(
-                  "flex-1 px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all duration-150",
-                  (error || uploadError) && "border-red-500",
-                )}
-              />
-              <button
-                type="button"
-                onClick={handleApplyVideo}
-                className="px-4 py-2 bg-teal-500 hover:bg-teal-600 active:scale-95 text-white text-xs font-extrabold rounded-lg transition-all shrink-0"
-              >
-                Apply
-              </button>
-            </div>
+          <div className="space-y-3">
+            <input
+              type="text"
+              placeholder="YouTube, Vimeo, Streamable, or .mp4 URL…"
+              value={videoInput}
+              onChange={(e) => {
+                setVideoInput(e.target.value);
+                setUploadError(null);
+              }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && (e.preventDefault(), handleApplyVideo())
+              }
+              className={cn(
+                "w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl shadow-xs placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all duration-150",
+                (error || uploadError) && "border-red-500",
+              )}
+            />
+
+            <button
+              type="button"
+              onClick={handleApplyVideo}
+              className="w-full py-2 bg-teal-600 hover:bg-teal-500 active:scale-95 text-white text-xs font-extrabold rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5"
+            >
+              <i className="fa-solid fa-check text-xs" />
+              Apply Video Link
+            </button>
 
             <p className="text-[10px] text-slate-400 leading-relaxed">
               Supported:{" "}
