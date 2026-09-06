@@ -5,29 +5,35 @@ import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/templates/AdminLayout';
 import AdminRoute from '@/components/guards/AdminRoute';
 import ProductForm from '@/components/organisms/ProductForm';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { productsService } from '@/services/products.service';
 
 export default function NewProductPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [error, setError] = useState('');
 
-  const handleSubmit = async (data: any) => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await productsService.create(data);
+  const createMutation = useMutation({
+    mutationFn: (data: any) => productsService.create(data),
+    onSuccess: (response) => {
       if (response.success) {
+        void queryClient.invalidateQueries({ queryKey: ['products'] });
         router.push('/admin/products');
       } else {
         setError(response.message || 'Failed to create product.');
       }
-    } catch (err: any) {
+    },
+    onError: (err: any) => {
       setError(err.response?.data?.message || err.message || 'An error occurred.');
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleSubmit = (data: any) => {
+    setError('');
+    createMutation.mutate(data);
   };
+
+  const loading = createMutation.isPending;
 
   return (
     <AdminRoute>

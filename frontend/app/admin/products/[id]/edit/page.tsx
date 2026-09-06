@@ -1,88 +1,46 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import AdminLayout from '@/components/templates/AdminLayout';
 import AdminRoute from '@/components/guards/AdminRoute';
 import ProductForm from '@/components/organisms/ProductForm';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
+import useProduct from '@/hooks/useProduct';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { productsService } from '@/services/products.service';
 
 export default function EditProductPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [product, setProduct] = useState<any>(null);
-  const [fetchLoading, setFetchLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
-  const [submitLoading, setSubmitLoading] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { product, loading: fetchLoading, error: fetchError, refetch } = useProduct(id);
   const [submitError, setSubmitError] = useState('');
 
-  const fetchProduct = useCallback(async () => {
-    setFetchLoading(true);
-    setFetchError(null);
-    try {
-      const response = await productsService.getById(id);
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => productsService.update(id!, data),
+    onSuccess: (response) => {
       if (response.success) {
-        setProduct(response.data);
-      } else {
-        setFetchError(response.message || 'Product not found.');
-      }
-    } catch (err: any) {
-      setFetchError(err.response?.data?.message || err.message || 'Failed to load product.');
-    } finally {
-      setFetchLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (!id) return;
-    let isCancelled = false;
-
-    const load = async () => {
-      try {
-        const response = await productsService.getById(id);
-        if (isCancelled) return;
-        if (response.success) {
-          setProduct(response.data);
-          setFetchError(null);
-        } else {
-          setFetchError(response.message || 'Product not found.');
-        }
-      } catch (err: any) {
-        if (!isCancelled) {
-          setFetchError(err.response?.data?.message || err.message || 'Failed to load product.');
-        }
-      } finally {
-        if (!isCancelled) {
-          setFetchLoading(false);
-        }
-      }
-    };
-
-    load();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [id]);
-
-  const handleSubmit = async (data: any) => {
-    setSubmitLoading(true);
-    setSubmitError('');
-    try {
-      const response = await productsService.update(id, data);
-      if (response.success) {
+        void queryClient.invalidateQueries({ queryKey: ['products'] });
+        void queryClient.invalidateQueries({ queryKey: ['product', id] });
         router.push('/admin/products');
       } else {
         setSubmitError(response.message || 'Failed to update product.');
       }
-    } catch (err: any) {
+    },
+    onError: (err: any) => {
       setSubmitError(err.response?.data?.message || err.message || 'An error occurred.');
-    } finally {
-      setSubmitLoading(false);
-    }
+    },
+  });
+
+  const handleSubmit = (data: any) => {
+    setSubmitError('');
+    updateMutation.mutate(data);
   };
+
+  const submitLoading = updateMutation.isPending;
 
   if (fetchLoading) {
     return (
@@ -100,7 +58,7 @@ export default function EditProductPage() {
     return (
       <AdminRoute>
         <AdminLayout>
-          <ErrorState title="Product not found" description={fetchError ?? undefined} onRetry={fetchProduct} />
+          <ErrorState title="Product not found" description={fetchError ?? undefined} onRetry={refetch} />
         </AdminLayout>
       </AdminRoute>
     );

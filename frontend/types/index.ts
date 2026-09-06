@@ -67,8 +67,14 @@ export interface OrderItem {
 
 export interface DeliveryAddress {
   street: string;
-  city: string;
+  building?: string;
+  area?: string;
   emirate: string;
+  floor?: string;
+  apartment?: string;
+  landmark?: string;
+  instructions?: string;
+  city?: string;
   country?: string;
   postalCode?: string;
 }

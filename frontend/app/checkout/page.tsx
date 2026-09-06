@@ -14,7 +14,7 @@ import EmptyState from '@/components/molecules/EmptyState';
 import FormField from '@/components/molecules/FormField';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
-import { ordersService } from '@/services/orders.service';
+import useCreateOrder from '@/hooks/useCreateOrder';
 import { checkoutSchema } from '@/lib/validators';
 import { UAE_EMIRATES } from '@/constants/uae';
 import { playSound } from '@/lib/sounds';
@@ -25,7 +25,8 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, total, count, clearCart } = useCart();
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const createOrderMutation = useCreateOrder();
+  const loading = createOrderMutation.isPending;
   const [serverError, setServerError] = useState('');
   const [step, setStep] = useState<'details' | 'review'>('details');
   const [checkoutData, setCheckoutData] = useState<any>(null);
@@ -86,7 +87,6 @@ export default function CheckoutPage() {
   const onPlaceOrder = async (data: any) => {
     if (items.length === 0 || !data) return;
  
-    setLoading(true);
     setServerError('');
     try {
       const orderItems = items.map((item) => ({
@@ -114,10 +114,10 @@ export default function CheckoutPage() {
           instructions: data.instructions || '',
         },
         orderNotes: data.orderNotes || '',
-        paymentMethod: 'cod',
+        paymentMethod: 'cod' as const,
       };
  
-      const response = await ordersService.create(payload as any);
+      const response = await createOrderMutation.mutateAsync(payload as any);
 
       if (response.success && response.data) {
         clearCart();
@@ -145,8 +145,6 @@ export default function CheckoutPage() {
         setStep('details');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    } finally {
-      setLoading(false);
     }
   };
 

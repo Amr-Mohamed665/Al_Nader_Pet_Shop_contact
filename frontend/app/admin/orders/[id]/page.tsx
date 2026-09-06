@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import AdminLayout from '@/components/templates/AdminLayout';
 import AdminRoute from '@/components/guards/AdminRoute';
@@ -9,11 +8,13 @@ import Badge from '@/components/atoms/Badge';
 import Spinner from '@/components/atoms/Spinner';
 import Button from '@/components/atoms/Button';
 import ErrorState from '@/components/molecules/ErrorState';
-import { ordersService } from '@/services/orders.service';
 import { formatDate } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/getStatusColor';
 import { VALID_STATUS_VALUES } from '@/constants/orderStatuses';
 import type { BadgeVariant, OrderStatus } from '@/types';
+
+import useOrder from '@/hooks/useOrder';
+import useOrders from '@/hooks/useOrders';
 
 function statusBadgeVariant(status: string): BadgeVariant {
   switch (status) {
@@ -27,75 +28,17 @@ function statusBadgeVariant(status: string): BadgeVariant {
 export default function AdminOrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [order, setOrder] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [updatingStatus, setUpdatingStatus] = useState(false);
-
-  const fetchOrder = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await ordersService.getById(id);
-      if (response.success) {
-        setOrder(response.data);
-      } else {
-        setError(response.message || 'Order not found.');
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to load order.');
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  const handleRetry = useCallback(() => {
-    fetchOrder();
-  }, [fetchOrder]);
-
-  useEffect(() => {
-    if (!id) return;
-    let isCancelled = false;
-
-    const load = async () => {
-      try {
-        const response = await ordersService.getById(id);
-        if (isCancelled) return;
-        if (response.success) {
-          setOrder(response.data);
-          setError(null);
-        } else {
-          setError(response.message || 'Order not found.');
-        }
-      } catch (err: any) {
-        if (!isCancelled) {
-          setError(err.response?.data?.message || err.message || 'Failed to load order.');
-        }
-      } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    load();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [id]);
+  const { order, loading, error, refetch } = useOrder(id);
+  const { updateStatus, updatingOrderId } = useOrders(true);
+  const updatingStatus = updatingOrderId === id;
 
   const handleStatusChange = async (newStatus: OrderStatus) => {
-    setUpdatingStatus(true);
+    if (!id) return;
     try {
-      const response = await ordersService.updateStatus(id, newStatus);
-      if (response.success) {
-        setOrder(response.data);
-      }
+      await updateStatus({ orderId: id, status: newStatus });
+      void refetch();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update status.');
-    } finally {
-      setUpdatingStatus(false);
+      alert(err.message || 'Failed to update status.');
     }
   };
 
@@ -116,7 +59,7 @@ export default function AdminOrderDetailPage() {
       <AdminRoute>
         <AdminLayout>
           <div className="py-12">
-            <ErrorState title="Order not found" description={error ?? undefined} onRetry={handleRetry} />
+            <ErrorState title="Order not found" description={error ?? undefined} onRetry={refetch} />
           </div>
         </AdminLayout>
       </AdminRoute>

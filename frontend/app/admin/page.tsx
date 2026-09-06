@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import AdminLayout from '@/components/templates/AdminLayout';
 import AdminRoute from '@/components/guards/AdminRoute';
 import DashboardStats from '@/components/organisms/DashboardStats';
@@ -69,18 +69,14 @@ function getFilteredOrders(orders: any[], period: string): any[] {
   }
 }
 
-export default function AdminDashboardPage() {
-  const [productsCount, setProductsCount] = useState(0);
-  const [ordersData, setOrdersData] = useState<any[]>([]);
-  const [blogsCount, setBlogsCount] = useState(0);
-  const [selectedPeriod, setSelectedPeriod] = useState('all');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+import { useQuery } from '@tanstack/react-query';
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
+export default function AdminDashboardPage() {
+  const [selectedPeriod, setSelectedPeriod] = useState('all');
+
+  const dashboardQuery = useQuery({
+    queryKey: ['admin-dashboard-data'],
+    queryFn: async () => {
       const [productsRes, ordersRes, blogsRes] = await Promise.all([
         productsService.getAll({ all: true }),
         ordersService.getAll(),
@@ -91,58 +87,21 @@ export default function AdminDashboardPage() {
       const allOrders = (ordersRes.success && ordersRes.data) ? ordersRes.data : [];
       const allBlogs = (blogsRes.success && blogsRes.data) ? blogsRes.data : [];
 
-      setProductsCount(productsData.length);
-      setOrdersData(allOrders);
-      setBlogsCount(allBlogs.length);
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to load dashboard data.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return {
+        productsCount: productsData.length,
+        ordersData: allOrders,
+        blogsCount: allBlogs.length,
+      };
+    },
+    staleTime: 1000 * 60 * 3, // 3 minutes cache
+  });
 
-  const handleRetry = useCallback(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    const load = async () => {
-      try {
-        const [productsRes, ordersRes, blogsRes] = await Promise.all([
-          productsService.getAll({ all: true }),
-          ordersService.getAll(),
-          blogsService.getAll(),
-        ]);
-
-        if (isCancelled) return;
-
-        const productsData = (productsRes.success && productsRes.data) ? productsRes.data : [];
-        const allOrders = (ordersRes.success && ordersRes.data) ? ordersRes.data : [];
-        const allBlogs = (blogsRes.success && blogsRes.data) ? blogsRes.data : [];
-
-        setProductsCount(productsData.length);
-        setOrdersData(allOrders);
-        setBlogsCount(allBlogs.length);
-        setError(null);
-      } catch (err: any) {
-        if (!isCancelled) {
-          setError(err.response?.data?.message || err.message || 'Failed to load dashboard data.');
-        }
-      } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    load();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
+  const loading = dashboardQuery.isLoading;
+  const error = dashboardQuery.error ? (dashboardQuery.error.message || 'Failed to load dashboard data.') : null;
+  const data = dashboardQuery.data || { productsCount: 0, ordersData: [], blogsCount: 0 };
+  const productsCount = data.productsCount;
+  const ordersData = data.ordersData;
+  const blogsCount = data.blogsCount;
 
   const filteredOrders = getFilteredOrders(ordersData, selectedPeriod);
 
@@ -197,7 +156,7 @@ export default function AdminDashboardPage() {
               <span className="text-xs text-slate-400 font-bold tracking-wide">Loading dashboard...</span>
             </div>
           ) : error ? (
-            <ErrorState onRetry={handleRetry} description={error} />
+            <ErrorState onRetry={() => dashboardQuery.refetch()} description={error} />
           ) : (
             <>
               {/* Stats Cards */}

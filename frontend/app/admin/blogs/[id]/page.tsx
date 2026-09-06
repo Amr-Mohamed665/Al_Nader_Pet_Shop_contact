@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useState, useEffect } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/templates/AdminLayout';
@@ -37,21 +37,22 @@ export default function EditBlogPage({ params }: PageProps) {
 
   const categoriesOptions = ['Care Guides', 'Cat Care', 'Dog Care', 'Nutrition', 'Reptiles', 'General'];
 
-  useEffect(() => {
-    if (post) {
-      setFormData({
-        title: post.title || '',
-        slug: post.slug || '',
-        category: post.category || 'Care Guides',
-        author: post.author || 'Al Nader Pet Care Team',
-        readTime: post.readTime || '5 min read',
-        image: post.image || '',
-        excerpt: post.excerpt || '',
-        content: post.content || '',
-        tags: post.tags ? post.tags.join(', ') : '',
-      });
-    }
-  }, [post]);
+  const [prevPost, setPrevPost] = useState<any>(null);
+
+  if (post && post !== prevPost) {
+    setPrevPost(post);
+    setFormData({
+      title: post.title || '',
+      slug: post.slug || '',
+      category: post.category || 'Care Guides',
+      author: post.author || 'Al Nader Pet Care Team',
+      readTime: post.readTime || '5 min read',
+      image: post.image || '',
+      excerpt: post.excerpt || '',
+      content: post.content || '',
+      tags: post.tags ? post.tags.join(', ') : '',
+    });
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

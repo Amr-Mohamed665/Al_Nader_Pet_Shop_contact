@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import ShopLayout from '@/components/templates/ShopLayout';
 import ProtectedRoute from '@/components/guards/ProtectedRoute';
@@ -9,69 +8,14 @@ import Badge from '@/components/atoms/Badge';
 import Spinner from '@/components/atoms/Spinner';
 import Button from '@/components/atoms/Button';
 import ErrorState from '@/components/molecules/ErrorState';
-import { ordersService } from '@/services/orders.service';
+import useOrder from '@/hooks/useOrder';
 import { formatDate } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/getStatusColor';
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [order, setOrder] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchOrder = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await ordersService.getById(id);
-      if (response.success) {
-        setOrder(response.data);
-      } else {
-        setError(response.message || 'Order not found.');
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to load order.');
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  const handleRetry = useCallback(() => {
-    fetchOrder();
-  }, [fetchOrder]);
-
-  useEffect(() => {
-    if (!id) return;
-    let isCancelled = false;
-
-    const load = async () => {
-      try {
-        const response = await ordersService.getById(id);
-        if (isCancelled) return;
-        if (response.success) {
-          setOrder(response.data);
-          setError(null);
-        } else {
-          setError(response.message || 'Order not found.');
-        }
-      } catch (err: any) {
-        if (!isCancelled) {
-          setError(err.response?.data?.message || err.message || 'Failed to load order.');
-        }
-      } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    load();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [id]);
+  const { order, loading, error, refetch } = useOrder(id);
 
   if (loading) {
     return (
@@ -87,7 +31,7 @@ export default function OrderDetailPage() {
     return (
       <ShopLayout>
         <div className="py-12">
-          <ErrorState title="Order not found" description={error ?? undefined} onRetry={handleRetry} />
+          <ErrorState title="Order not found" description={error ?? undefined} onRetry={refetch} />
         </div>
       </ShopLayout>
     );

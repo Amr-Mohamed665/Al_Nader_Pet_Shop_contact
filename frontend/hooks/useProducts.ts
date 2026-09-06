@@ -1,7 +1,7 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useState } from 'react';
 import { productsService } from '@/services/products.service';
 import type { Product, ProductFilters } from '@/types';
 
@@ -18,6 +18,15 @@ export default function useProducts(
   initialFilters: ProductFilters = { search: '', category: '' }
 ): UseProductsReturn {
   const [filters, setFilters] = useState<ProductFilters>(initialFilters);
+  const [prevInitialFilters, setPrevInitialFilters] = useState(initialFilters);
+
+  if (
+    prevInitialFilters.search !== initialFilters.search ||
+    prevInitialFilters.category !== initialFilters.category
+  ) {
+    setPrevInitialFilters(initialFilters);
+    setFilters(initialFilters);
+  }
 
   const query = useQuery({
     queryKey: ['products', filters],
@@ -29,9 +38,9 @@ export default function useProducts(
     placeholderData: (previousData) => previousData,
   });
 
-  const updateFilters = (newFilters: Partial<ProductFilters>) => {
+  const updateFilters = useCallback((newFilters: Partial<ProductFilters>) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
-  };
+  }, []);
 
   return {
     products: query.data ?? [],

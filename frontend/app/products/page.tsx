@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ShopLayout from '@/components/templates/ShopLayout';
 import ProductGrid from '@/components/organisms/ProductGrid';
@@ -12,12 +12,19 @@ import useProducts from '@/hooks/useProducts';
 
 function ProductsContent() {
   const searchParams = useSearchParams();
-  const initialSearch = searchParams?.get('search') || '';
-  const initialCategory = searchParams?.get('category') || '';
+  const urlSearch = searchParams?.get('search') || '';
+  const urlCategory = searchParams?.get('category') || '';
 
-  const [category, setCategory] = useState(initialCategory);
-  const [search, setSearch] = useState(initialSearch);
+  const [category, setCategory] = useState(urlCategory);
+  const [search, setSearch] = useState(urlSearch);
   const [currentPage, setCurrentPage] = useState(1);
+  const [prevParams, setPrevParams] = useState({ search: urlSearch, category: urlCategory });
+
+  if (prevParams.search !== urlSearch || prevParams.category !== urlCategory) {
+    setPrevParams({ search: urlSearch, category: urlCategory });
+    setSearch(urlSearch);
+    setCategory(urlCategory);
+  }
   
   const {
     products,
@@ -25,15 +32,7 @@ function ProductsContent() {
     error,
     refetch,
     updateFilters,
-  } = useProducts({ search: initialSearch, category: initialCategory });
-
-  useEffect(() => {
-    const s = searchParams?.get('search') || '';
-    const c = searchParams?.get('category') || '';
-    setSearch(s);
-    setCategory(c);
-    updateFilters({ search: s, category: c });
-  }, [searchParams]);
+  } = useProducts({ search, category });
 
   const handleSearch = (term: string) => {
     setSearch(term);
