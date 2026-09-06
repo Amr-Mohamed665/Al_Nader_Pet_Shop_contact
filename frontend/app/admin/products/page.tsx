@@ -13,6 +13,7 @@ import ErrorState from '@/components/molecules/ErrorState';
 import ConfirmModal from '@/components/molecules/ConfirmModal';
 import { productsService } from '@/services/products.service';
 import { useCategoriesQuery } from '@/hooks/useCategories';
+import type { Category } from '@/types';
 import {
   DndContext,
   closestCorners,
@@ -325,32 +326,56 @@ function ProductCard({ product, onDelete, featured, onToggleFeatured, featuredCo
   );
 }
 
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function AdminProductsPage() {
+  const queryClient = useQueryClient();
   const { data: categories = [] } = useCategoriesQuery();
 
-  const getCategoryName = useCallback((slug: string) => {
-    const cat = (categories as any[]).find((c: any) => c.slug === slug);
-    return cat ? cat.name : slug;
+  const getCategoryName = useCallback((category?: string | Category) => {
+    if (!category) return 'Uncategorized';
+    if (typeof category === 'object') {
+      return category.name || category.slug || 'Uncategorized';
+    }
+    const cat = (categories as Category[]).find((c) => c.slug === category || c.id === category || c._id === category);
+    return cat ? cat.name : category;
   }, [categories]);
 
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
-  const [deleting, setDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [togglingAvailId, setTogglingAvailId] = useState<string | null>(null);
-
-  // Featured state
-  const [featuredIds, setFeaturedIds] = useState<string[]>([]);
-  const [pendingFeatured, setPendingFeatured] = useState<string[]>([]);
-
   const [toast, setToast] = useState<{ message: string; type: string } | null>(null);
 
   const showToast = useCallback((message: string, type = 'success') => {
     setToast({ message, type });
   }, []);
+
+  // Fetch products & featured IDs via React Query
+  const productsQuery = useQuery({
+    queryKey: ['admin-products'],
+    queryFn: async () => {
+      const [productsRes, featuredRes] = await Promise.all([
+        productsService.getAll({ all: true }),
+        productsService.getFeaturedIds(),
+      ]);
+
+      const productsList = (productsRes.success && productsRes.data) ? productsRes.data : [];
+      const featuredList = (featuredRes.success && featuredRes.data) ? featuredRes.data : [];
+
+      return {
+        products: productsList,
+        featuredIds: featuredList,
+      };
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const loading = productsQuery.isLoading;
+  const error = productsQuery.error ? (productsQuery.error.message || 'An error occurred.') : null;
+  const productsData = productsQuery.data || { products: [], featuredIds: [] };
+  const products = productsData.products;
+  const pendingFeatured = productsData.featuredIds;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -369,197 +394,134 @@ export default function AdminProductsPage() {
     })
   );
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const [productsRes, featuredRes] = await Promise.all([
-        productsService.getAll({ all: true }),
-        productsService.getFeaturedIds(),
-      ]);
-      if (productsRes.success && productsRes.data) setProducts(productsRes.data);
-      else if (productsRes.success) setProducts([]);
-      else setError(productsRes.message || 'Failed to load products.');
-
-      if (featuredRes.success && featuredRes.data) {
-        setFeaturedIds(featuredRes.data);
-        setPendingFeatured(featuredRes.data);
-      } else if (featuredRes.success) {
-        setFeaturedIds([]);
-        setPendingFeatured([]);
+  // Reorder mutation
+  const reorderMutation = useMutation({
+    mutationFn: (newIds: string[]) => productsService.reorder(newIds),
+    onSuccess: (res) => {
+      if (res.success) {
+        showToast('Products reordered successfully!', 'success');
+        void queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+        void queryClient.invalidateQueries({ queryKey: ['products'] });
+      } else {
+        showToast(res.message || 'Failed to save product order.', 'error');
+        void productsQuery.refetch();
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'An error occurred.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    onError: (err: any) => {
+      showToast(err.response?.data?.message || 'Failed to save product order.', 'error');
+      void productsQuery.refetch();
+    },
+  });
 
-  const handleDragEnd = useCallback(async (event: DragEndEvent) => {
+  // Featured toggle mutation
+  const featuredMutation = useMutation({
+    mutationFn: (newPending: string[]) => productsService.setFeaturedIds(newPending),
+    onSuccess: (res) => {
+      if (res.success) {
+        void queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+        void queryClient.invalidateQueries({ queryKey: ['products'] });
+      } else {
+        showToast(res.message || 'Failed to update featured products.', 'error');
+        void productsQuery.refetch();
+      }
+    },
+    onError: (err: any) => {
+      showToast(err.response?.data?.message || 'Failed to update featured products.', 'error');
+      void productsQuery.refetch();
+    },
+  });
+
+  // Availability toggle mutation
+  const availabilityMutation = useMutation({
+    mutationFn: ({ id, available }: { id: string; available: boolean }) =>
+      productsService.toggleAvailability(id, available),
+    onSuccess: (res, vars) => {
+      setTogglingAvailId(null);
+      if (res.success) {
+        showToast(
+          vars.available
+            ? `"${res.data?.name || 'Product'}" is now live on the website.`
+            : `"${res.data?.name || 'Product'}" is now hidden from the website.`,
+          'success'
+        );
+        void queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+        void queryClient.invalidateQueries({ queryKey: ['products'] });
+      } else {
+        showToast(res.message || 'Failed to update availability.', 'error');
+        void productsQuery.refetch();
+      }
+    },
+    onError: (err: any) => {
+      setTogglingAvailId(null);
+      showToast(err.response?.data?.message || 'Failed to update availability.', 'error');
+      void productsQuery.refetch();
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => productsService.delete(id),
+    onSuccess: () => {
+      setDeleteTarget(null);
+      void queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+      void queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.message || 'Failed to delete product.');
+    },
+  });
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     if (searchQuery) return; // Prevent reordering during active search
 
-    let newProducts: any[] = [];
-    setProducts((prev) => {
-      const oldIndex = prev.findIndex((p) => p.id === active.id);
-      const newIndex = prev.findIndex((p) => p.id === over.id);
-      newProducts = arrayMove(prev, oldIndex, newIndex);
-      return newProducts;
-    });
+    const oldIndex = products.findIndex((p: any) => p.id === active.id);
+    const newIndex = products.findIndex((p: any) => p.id === over.id);
+    const newProducts = arrayMove(products, oldIndex, newIndex);
 
-    try {
-      const res = await productsService.reorder(newProducts.map((p) => p.id));
-      if (res.success) {
-        showToast('Products reordered successfully!', 'success');
-      } else {
-        showToast(res.message || 'Failed to save product order.', 'error');
-        fetchProducts(); // Revert
-      }
-    } catch (err: any) {
-      showToast(err.response?.data?.message || 'Failed to save product order.', 'error');
-      fetchProducts(); // Revert
-    }
-  }, [searchQuery, fetchProducts, showToast]);
+    reorderMutation.mutate(newProducts.map((p: any) => p.id));
+  }, [searchQuery, products, reorderMutation]);
 
-  const handleMoveProduct = useCallback(async (productId: string, direction: 'up' | 'down') => {
-    const index = products.findIndex((p) => p.id === productId);
+  const handleMoveProduct = useCallback((productId: string, direction: 'up' | 'down') => {
+    const index = products.findIndex((p: any) => p.id === productId);
     if (index < 0) return;
     const swapIndex = direction === 'up' ? index - 1 : index + 1;
     if (swapIndex < 0 || swapIndex >= products.length) return;
 
     const newProducts = arrayMove(products, index, swapIndex);
-    setProducts(newProducts);
+    reorderMutation.mutate(newProducts.map((p: any) => p.id));
+  }, [products, reorderMutation]);
 
-    try {
-      const res = await productsService.reorder(newProducts.map((p) => p.id));
-      if (res.success) {
-        showToast('Product moved successfully!', 'success');
-      } else {
-        showToast(res.message || 'Failed to save product order.', 'error');
-        fetchProducts();
-      }
-    } catch (err: any) {
-      showToast(err.response?.data?.message || 'Failed to save product order.', 'error');
-      fetchProducts();
-    }
-  }, [products, fetchProducts, showToast]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const load = async () => {
-      try {
-        const [productsRes, featuredRes] = await Promise.all([
-          productsService.getAll({ all: true }),
-          productsService.getFeaturedIds(),
-        ]);
-        if (cancelled) return;
-        if (productsRes.success && productsRes.data) setProducts(productsRes.data);
-        else if (productsRes.success) setProducts([]);
-        else setError(productsRes.message || 'Failed to load products.');
-
-        if (featuredRes.success && featuredRes.data) {
-          setFeaturedIds(featuredRes.data);
-          setPendingFeatured(featuredRes.data);
-        } else if (featuredRes.success) {
-          setFeaturedIds([]);
-          setPendingFeatured([]);
-        }
-      } catch (err: any) {
-        if (!cancelled) setError(err.response?.data?.message || err.message || 'An error occurred.');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    load();
-    return () => { cancelled = true; };
-  }, []);
-
-  const handleToggleFeatured = useCallback(async (id: string) => {
+  const handleToggleFeatured = useCallback((id: string) => {
     const newPending = pendingFeatured.includes(id)
-      ? pendingFeatured.filter((x) => x !== id)
+      ? pendingFeatured.filter((x: string) => x !== id)
       : pendingFeatured.length >= MAX_FEATURED
         ? null
         : [...pendingFeatured, id];
 
     if (!newPending) return;
+    featuredMutation.mutate(newPending);
+  }, [pendingFeatured, featuredMutation]);
 
-    setPendingFeatured(newPending);
-
-    try {
-      const res = await productsService.setFeaturedIds(newPending);
-      if (res.success && res.data) {
-        setFeaturedIds(res.data);
-        setPendingFeatured(res.data);
-      } else {
-        showToast(res.message || 'Failed to update featured products.', 'error');
-        setPendingFeatured(featuredIds);
-      }
-    } catch (err: any) {
-      showToast(err.response?.data?.message || 'Failed to update featured products.', 'error');
-      setPendingFeatured(featuredIds);
-    }
-  }, [pendingFeatured, featuredIds, showToast]);
-
-  const handleToggleAvailability = useCallback(async (product: any) => {
+  const handleToggleAvailability = useCallback((product: any) => {
     const newAvailable = product.available === false ? true : false;
     setTogglingAvailId(product.id);
-    setProducts((prev) =>
-      prev.map((p) => (p.id === product.id ? { ...p, available: newAvailable } : p))
-    );
-    if (!newAvailable) {
-      setPendingFeatured((prev) => prev.filter((id) => id !== product.id));
-    }
-    try {
-      const res = await productsService.toggleAvailability(product.id, newAvailable);
-      if (res.success) {
-        setProducts((prev) =>
-          prev.map((p) => (p.id === product.id ? res.data : p))
-        );
-        showToast(
-          newAvailable
-            ? `"${product.name}" is now live on the website.`
-            : `"${product.name}" is now hidden from the website.`,
-          'success'
-        );
-      } else {
-        setProducts((prev) =>
-          prev.map((p) => (p.id === product.id ? { ...p, available: !newAvailable } : p))
-        );
-        showToast(res.message || 'Failed to update availability.', 'error');
-      }
-    } catch (err: any) {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === product.id ? { ...p, available: !newAvailable } : p))
-      );
-      showToast(err.response?.data?.message || 'Failed to update availability.', 'error');
-    } finally {
-      setTogglingAvailId(null);
-    }
-  }, [showToast]);
+    availabilityMutation.mutate({ id: product.id, available: newAvailable });
+  }, [availabilityMutation]);
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      await productsService.delete(deleteTarget.id);
-      setPendingFeatured((prev) => prev.filter((id) => id !== deleteTarget.id));
-      setDeleteTarget(null);
-      fetchProducts();
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to delete product.');
-    } finally {
-      setDeleting(false);
-    }
+    deleteMutation.mutate(deleteTarget.id);
   };
+
+  const deleting = deleteMutation.isPending;
 
   const filteredProducts = searchQuery
     ? products.filter(
-        (p) =>
+        (p: any) =>
           p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.category?.toLowerCase().includes(searchQuery.toLowerCase())
+          getCategoryName(p.category).toLowerCase().includes(searchQuery.toLowerCase())
       )
     : products;
 
@@ -651,7 +613,7 @@ export default function AdminProductsPage() {
               <span className="text-xs text-slate-400 font-bold tracking-wide">Loading products...</span>
             </div>
           ) : error ? (
-            <ErrorState onRetry={fetchProducts} description={error} />
+            <ErrorState onRetry={() => void productsQuery.refetch()} description={error} />
           ) : products.length === 0 ? (
             <div className="py-12 text-center bg-white rounded-2xl border border-slate-200/80">
               <i className="fa-solid fa-bone text-4xl text-slate-200 mb-3" />
