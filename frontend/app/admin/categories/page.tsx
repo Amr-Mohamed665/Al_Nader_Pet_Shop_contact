@@ -321,7 +321,12 @@ function CategoryFormPage({ initial, onBack, onSave, existingSlugs, isSubmitting
           </label>
         </div>
 
-        <ImageUploader label="Category Image" value={form.image} onChange={(url: string) => set('image', url)} />
+        <ImageUploader
+          label="Category Image"
+          value={form.image}
+          onChange={(url: string) => set('image', url)}
+          formErrorMessages={Object.values(errors).filter(Boolean) as string[]}
+        />
 
         <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
           <button

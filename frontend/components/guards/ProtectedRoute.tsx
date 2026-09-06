@@ -13,10 +13,7 @@ export default function ProtectedRoute({ children }: RouteProps) {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const mounted = useRef(false);
-
-  useEffect(() => {
-    mounted.current = true;
-  }, []);
+  mounted.current = true; // set synchronously during render, no effect needed
 
   useEffect(() => {
     if (mounted.current && !loading && !isAuthenticated) {

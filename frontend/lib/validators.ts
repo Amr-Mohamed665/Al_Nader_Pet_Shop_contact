@@ -70,3 +70,17 @@ export const checkoutSchema = z.object({
   orderNotes: z.string().max(500, 'Order notes must be 500 characters or fewer').optional().or(z.literal('')),
   paymentMethod: z.enum(['cod', 'card'] as const).default('cod'),
 });
+
+export const blogSchema = z.object({
+  title: z.string().min(1, 'Article Title is required').min(3, 'Title must be at least 3 characters'),
+  slug: z.string().optional(),
+  category: z.string().min(1, 'Category is required'),
+  author: z.string().min(1, 'Author name is required'),
+  readTime: z.string().min(1, 'Read time is required'),
+  image: z.string().optional().or(z.literal('')),
+  excerpt: z.string().optional().or(z.literal('')),
+  content: z.string().min(1, 'Full Article Content is required').min(10, 'Article content must be at least 10 characters'),
+  tags: z.string().optional().or(z.literal('')),
+});
+
+export type BlogFormData = z.infer<typeof blogSchema>;

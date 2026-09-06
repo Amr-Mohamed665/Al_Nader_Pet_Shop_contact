@@ -18,7 +18,14 @@ export default function BlogIndexPage() {
     category: selectedCategory === 'All' ? undefined : selectedCategory,
   });
 
-  const categoriesList = ['All', 'Care Guides', 'Cat Care', 'Nutrition', 'Reptiles'];
+  // Fetch all posts (unfiltered) just to build the full category tab list
+  const { data: allBlogs = [] } = useBlogsQuery();
+
+  // Derive unique categories from all posts and sort alphabetically
+  const dynamicCategories = Array.from(
+    new Set(allBlogs.map((b) => b.category).filter(Boolean))
+  ).sort() as string[];
+  const categoriesList = ['All', ...dynamicCategories];
 
   const featuredPost = blogs.length > 0 ? blogs[0] : null;
   const regularPosts = blogs.length > 0 ? blogs.slice(1) : [];

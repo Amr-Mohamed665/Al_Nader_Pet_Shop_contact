@@ -6,7 +6,6 @@ import Navbar from '@/components/organisms/Navbar';
 import Footer from '@/components/organisms/Footer';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
-import BlogMedia from '@/components/molecules/BlogMedia';
 import { useBlogQuery, useBlogsQuery } from '@/hooks/useBlogs';
 
 interface PageProps {
@@ -80,15 +79,21 @@ export default function SingleBlogPage({ params }: PageProps) {
 
         {/* Article Container */}
         <article className="bg-white rounded-3xl border border-slate-200/80 shadow-xl overflow-hidden">
-          {/* Header Media (Image or Video) */}
-          <div className="relative h-64 sm:h-96 w-full bg-slate-900 overflow-hidden">
-            <BlogMedia
-              src={post.image}
-              alt={post.title}
-              autoPlay={false}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent pointer-events-none" />
+          {/* Header Image */}
+          <div className="relative h-64 sm:h-96 w-full bg-slate-100 overflow-hidden">
+            {post.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={post.image}
+                alt={post.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 flex items-center justify-center">
+                <i className="fa-solid fa-newspaper text-4xl text-white/30" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent" />
 
             <div className="absolute bottom-6 left-6 right-6 text-white">
               <span className="px-3 py-1 bg-purple-600 text-white text-[11px] font-extrabold uppercase tracking-wider rounded-lg shadow-sm inline-block mb-3">

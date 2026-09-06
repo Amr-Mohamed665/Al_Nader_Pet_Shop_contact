@@ -206,6 +206,7 @@ export default function ProductForm({
             onChange={onChange}
             error={errors.image?.message ? String(errors.image.message) : undefined}
             label="Product Image"
+            formErrorMessages={Object.values(errors).map((e) => (e as any)?.message).filter(Boolean) as string[]}
           />
         )}
       />

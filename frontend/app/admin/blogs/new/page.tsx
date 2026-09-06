@@ -3,34 +3,58 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import AdminLayout from '@/components/templates/AdminLayout';
 import AdminRoute from '@/components/guards/AdminRoute';
 import ImageUploader from '@/components/molecules/ImageUploader';
 import { useCreateBlogMutation } from '@/hooks/useBlogs';
+import { blogSchema, type BlogFormData } from '@/lib/validators';
+import { showToast } from '@/utils/toast';
+import { cn } from '@/utils/cn';
 
 export default function CreateBlogPage() {
   const router = useRouter();
   const createMutation = useCreateBlogMutation();
 
-  const [formData, setFormData] = useState({
-    title: '',
-    slug: '',
-    category: 'Care Guides',
-    author: 'Al Nader Pet Care Team',
-    readTime: '5 min read',
-    image: '',
-    excerpt: '',
-    content: '',
-    tags: 'Pet Care, Guides',
-  });
-
-  const [error, setError] = useState<string | null>(null);
   const [isUploadingInline, setIsUploadingInline] = useState(false);
   const [isDraggingOverContent, setIsDraggingOverContent] = useState(false);
   const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const inlineFileInputRef = useRef<HTMLInputElement>(null);
 
   const categoriesOptions = ['Care Guides', 'Cat Care', 'Dog Care', 'Nutrition', 'Reptiles', 'General'];
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<BlogFormData>({
+    resolver: zodResolver(blogSchema),
+    defaultValues: {
+      title: '',
+      slug: '',
+      category: 'Care Guides',
+      author: 'Al Nader Pet Care Team',
+      readTime: '5 min read',
+      image: '',
+      excerpt: '',
+      content: '',
+      tags: 'Pet Care, Guides',
+    },
+  });
+
+  const contentValue = watch('content') || '';
+  const categoryValue = watch('category') || '';
+
+  const validationErrors = Object.values(errors)
+    .map((e) => e?.message)
+    .filter(Boolean) as string[];
+
+  const formErrorList = submitError ? [submitError, ...validationErrors] : validationErrors;
 
   const uploadInlineFile = async (file: File) => {
     if (!file.type.startsWith('image/')) return;
@@ -53,14 +77,11 @@ export default function CreateBlogPage() {
 
       if (data.secure_url) {
         const imageMarkdown = `\n![${file.name.replace(/\.[^/.]+$/, '')}](${data.secure_url})\n`;
-        setFormData((prev) => ({
-          ...prev,
-          content: prev.content + imageMarkdown,
-        }));
+        setValue('content', contentValue + imageMarkdown, { shouldValidate: true, shouldDirty: true });
       }
     } catch (err: any) {
       console.error('Failed to upload inline image:', err);
-      setError('Failed to upload article inline image.');
+      setSubmitError('Failed to upload article inline image.');
     } finally {
       setIsUploadingInline(false);
     }
@@ -77,38 +98,33 @@ export default function CreateBlogPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.title.trim() || !formData.content.trim()) {
-      setError('Title and Content are required fields.');
-      return;
-    }
-
-    setError(null);
-    const tagsArray = formData.tags
-      ? formData.tags.split(',').map((t) => t.trim()).filter(Boolean)
+  const onSubmit = async (data: BlogFormData) => {
+    setSubmitError(null);
+    const tagsArray = data.tags
+      ? data.tags.split(',').map((t) => t.trim()).filter(Boolean)
       : ['Pet Care'];
 
     try {
       const res = await createMutation.mutateAsync({
-        title: formData.title,
-        slug: formData.slug || undefined,
-        category: formData.category,
-        author: formData.author,
-        readTime: formData.readTime,
-        image: formData.image,
-        excerpt: formData.excerpt,
-        content: formData.content,
+        title: data.title,
+        slug: data.slug || undefined,
+        category: data.category,
+        author: data.author,
+        readTime: data.readTime,
+        image: data.image || '',
+        excerpt: data.excerpt || '',
+        content: data.content,
         tags: tagsArray,
       });
 
       if (res.success) {
+        showToast('success', 'Blog article created successfully!');
         router.push('/admin/blogs');
       } else {
-        setError(res.message || 'Failed to publish article.');
+        setSubmitError(res.message || 'Failed to publish article.');
       }
     } catch (err: any) {
-      setError(err.message || 'An error occurred while publishing article.');
+      setSubmitError(err.message || 'An error occurred while publishing article.');
     }
   };
 
@@ -153,14 +169,27 @@ export default function CreateBlogPage() {
             </Link>
           </div>
 
-          {error && (
-            <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold rounded-2xl">
-              ⚠️ {error}
+          {/* Form Error Banner */}
+          {formErrorList.length > 0 && (
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-3 shadow-xs">
+              <i className="fa-solid fa-triangle-exclamation text-rose-500 text-base mt-0.5" />
+              <div>
+                <h4 className="text-xs font-extrabold text-rose-800 uppercase tracking-wider">
+                  Please fix the following validation errors:
+                </h4>
+                <ul className="mt-1 space-y-1">
+                  {formErrorList.map((msg, i) => (
+                    <li key={i} className="text-xs font-bold text-rose-700 flex items-center gap-1.5">
+                      <span>•</span> {msg}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Main Section (2 cols) */}
             <div className="lg:col-span-2 space-y-6 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs">
               <div>
@@ -169,12 +198,21 @@ export default function CreateBlogPage() {
                 </label>
                 <input
                   type="text"
-                  required
                   placeholder="e.g., Complete Syrian & Dwarf Hamster Care Guide"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  {...register('title')}
+                  className={cn(
+                    'w-full px-4 py-3 bg-slate-50 border rounded-2xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 transition-all',
+                    errors.title
+                      ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                      : 'border-slate-200 text-slate-800 focus:ring-purple-500'
+                  )}
                 />
+                {errors.title && (
+                  <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
+                    <i className="fa-solid fa-circle-exclamation text-rose-500" />
+                    {errors.title.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -184,10 +222,20 @@ export default function CreateBlogPage() {
                 <textarea
                   rows={3}
                   placeholder="Brief 2-3 sentence summary displayed on card previews..."
-                  value={formData.excerpt}
-                  onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  {...register('excerpt')}
+                  className={cn(
+                    'w-full px-4 py-3 bg-slate-50 border rounded-2xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 transition-all',
+                    errors.excerpt
+                      ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                      : 'border-slate-200 text-slate-700 focus:ring-purple-500'
+                  )}
                 />
+                {errors.excerpt && (
+                  <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
+                    <i className="fa-solid fa-circle-exclamation text-rose-500" />
+                    {errors.excerpt.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -206,15 +254,16 @@ export default function CreateBlogPage() {
                 >
                   <textarea
                     rows={14}
-                    required
                     placeholder="Write your article text here. You can drag and drop images directly into this area to upload and embed them!"
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl text-xs font-medium text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono transition-all ${
+                    {...register('content')}
+                    className={cn(
+                      'w-full px-4 py-3 bg-slate-50 border rounded-2xl text-xs font-medium leading-relaxed focus:outline-none focus:ring-2 font-mono transition-all',
                       isDraggingOverContent
                         ? 'border-2 border-dashed border-purple-500 bg-purple-50/50'
-                        : 'border-slate-200'
-                    }`}
+                        : errors.content
+                        ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                        : 'border-slate-200 text-slate-800 focus:ring-purple-500'
+                    )}
                   />
 
                   {isDraggingOverContent && (
@@ -233,6 +282,12 @@ export default function CreateBlogPage() {
                     </div>
                   )}
                 </div>
+                {errors.content && (
+                  <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
+                    <i className="fa-solid fa-circle-exclamation text-rose-500" />
+                    {errors.content.message}
+                  </p>
+                )}
                 <p className="text-[10px] text-slate-400 mt-1.5 flex items-center gap-1">
                   <i className="fa-solid fa-circle-info text-slate-400" />
                   Tip: Drag &amp; drop image files onto the text area to upload directly.
@@ -256,11 +311,7 @@ export default function CreateBlogPage() {
                       onClick={() => {
                         const nextState = !isCustomCategory;
                         setIsCustomCategory(nextState);
-                        if (nextState) {
-                          setFormData((prev) => ({ ...prev, category: '' }));
-                        } else {
-                          setFormData((prev) => ({ ...prev, category: categoriesOptions[0] }));
-                        }
+                        setValue('category', nextState ? '' : categoriesOptions[0], { shouldValidate: true });
                       }}
                       className="text-[11px] font-bold text-purple-600 hover:text-purple-800 transition-colors"
                     >
@@ -272,29 +323,44 @@ export default function CreateBlogPage() {
                     <input
                       type="text"
                       placeholder="Type custom category name..."
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      {...register('category')}
+                      className={cn(
+                        'w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl text-xs font-bold focus:outline-none focus:ring-2 transition-all',
+                        errors.category
+                          ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                          : 'border-slate-200 text-slate-700 focus:ring-purple-500'
+                      )}
                       autoFocus
                     />
                   ) : (
                     <select
-                      value={formData.category}
+                      value={categoryValue}
                       onChange={(e) => {
                         if (e.target.value === '__custom__') {
                           setIsCustomCategory(true);
-                          setFormData({ ...formData, category: '' });
+                          setValue('category', '', { shouldValidate: true });
                         } else {
-                          setFormData({ ...formData, category: e.target.value });
+                          setValue('category', e.target.value, { shouldValidate: true });
                         }
                       }}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className={cn(
+                        'w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl text-xs font-bold focus:outline-none focus:ring-2 transition-all',
+                        errors.category
+                          ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                          : 'border-slate-200 text-slate-700 focus:ring-purple-500'
+                      )}
                     >
                       {categoriesOptions.map((c) => (
                         <option key={c} value={c}>{c}</option>
                       ))}
                       <option value="__custom__">+ Type Custom Category...</option>
                     </select>
+                  )}
+                  {errors.category && (
+                    <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
+                      <i className="fa-solid fa-circle-exclamation text-rose-500" />
+                      {errors.category.message}
+                    </p>
                   )}
                 </div>
 
@@ -303,10 +369,20 @@ export default function CreateBlogPage() {
                   <input
                     type="text"
                     placeholder="Al Nader Pet Care Team"
-                    value={formData.author}
-                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    {...register('author')}
+                    className={cn(
+                      'w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 transition-all',
+                      errors.author
+                        ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                        : 'border-slate-200 focus:ring-purple-500'
+                    )}
                   />
+                  {errors.author && (
+                    <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
+                      <i className="fa-solid fa-circle-exclamation text-rose-500" />
+                      {errors.author.message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -314,10 +390,20 @@ export default function CreateBlogPage() {
                   <input
                     type="text"
                     placeholder="5 min read"
-                    value={formData.readTime}
-                    onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    {...register('readTime')}
+                    className={cn(
+                      'w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 transition-all',
+                      errors.readTime
+                        ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                        : 'border-slate-200 focus:ring-purple-500'
+                    )}
                   />
+                  {errors.readTime && (
+                    <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
+                      <i className="fa-solid fa-circle-exclamation text-rose-500" />
+                      {errors.readTime.message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -325,10 +411,20 @@ export default function CreateBlogPage() {
                   <input
                     type="text"
                     placeholder="e.g. hamster-care-guide"
-                    value={formData.slug}
-                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    {...register('slug')}
+                    className={cn(
+                      'w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 transition-all',
+                      errors.slug
+                        ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                        : 'border-slate-200 focus:ring-purple-500'
+                    )}
                   />
+                  {errors.slug && (
+                    <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
+                      <i className="fa-solid fa-circle-exclamation text-rose-500" />
+                      {errors.slug.message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -336,19 +432,37 @@ export default function CreateBlogPage() {
                   <input
                     type="text"
                     placeholder="Hamster, Care, Pet Tips"
-                    value={formData.tags}
-                    onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    {...register('tags')}
+                    className={cn(
+                      'w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 transition-all',
+                      errors.tags
+                        ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
+                        : 'border-slate-200 focus:ring-purple-500'
+                    )}
                   />
+                  {errors.tags && (
+                    <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
+                      <i className="fa-solid fa-circle-exclamation text-rose-500" />
+                      {errors.tags.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {/* Cover Image & Video Drag and Drop Uploader */}
+              {/* Cover Image Uploader with Cloud Toast error syncing */}
               <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
-                <ImageUploader
-                  label="Article Cover Image & Video"
-                  value={formData.image}
-                  onChange={(url) => setFormData({ ...formData, image: url })}
+                <Controller
+                  name="image"
+                  control={control}
+                  render={({ field }) => (
+                    <ImageUploader
+                      label="Article Cover Image"
+                      value={field.value || ''}
+                      onChange={(url) => field.onChange(url)}
+                      formErrorMessages={formErrorList}
+                      allowVideo={false}
+                    />
+                  )}
                 />
               </div>
 
@@ -363,10 +477,10 @@ export default function CreateBlogPage() {
 
                 <button
                   type="submit"
-                  disabled={createMutation.isPending}
+                  disabled={createMutation.isPending || isSubmitting}
                   className="flex-1 py-3 bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs rounded-2xl shadow-lg shadow-purple-600/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
                 >
-                  {createMutation.isPending ? 'Publishing...' : 'Publish Article'}
+                  {createMutation.isPending || isSubmitting ? 'Publishing...' : 'Publish Article'}
                 </button>
               </div>
             </div>

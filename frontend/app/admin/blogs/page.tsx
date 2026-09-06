@@ -6,32 +6,33 @@ import AdminLayout from '@/components/templates/AdminLayout';
 import AdminRoute from '@/components/guards/AdminRoute';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
+import ConfirmModal from '@/components/molecules/ConfirmModal';
 import { useBlogsQuery, useDeleteBlogMutation } from '@/hooks/useBlogs';
+import { showToast } from '@/utils/toast';
 import type { BlogPost } from '@/types';
 
 export default function AdminBlogsPage() {
   const [search, setSearch] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
 
   const { data: blogs = [], isLoading, error, refetch } = useBlogsQuery({
     search,
-    category: categoryFilter === 'All' ? undefined : categoryFilter,
   });
 
   const deleteMutation = useDeleteBlogMutation();
 
-  const handleDelete = async (post: BlogPost) => {
-    if (confirm(`Are you sure you want to delete the blog post "${post.title}"?`)) {
-      try {
-        await deleteMutation.mutateAsync(post.id);
-        refetch();
-      } catch (err: any) {
-        alert(err.message || 'Failed to delete blog post.');
-      }
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await deleteMutation.mutateAsync(deleteTarget.id);
+      showToast('success', 'Blog article deleted successfully!');
+      setDeleteTarget(null);
+      refetch();
+    } catch (err: any) {
+      showToast('error', err.message || 'Failed to delete blog article.');
+      setDeleteTarget(null);
     }
   };
-
-  const categoriesOptions = ['Care Guides', 'Cat Care', 'Dog Care', 'Nutrition', 'Reptiles', 'General'];
 
   return (
     <AdminRoute>
@@ -95,9 +96,9 @@ export default function AdminBlogsPage() {
             </div>
           </div>
 
-          {/* Search & Filters */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="relative w-full sm:w-80">
+          {/* Search Bar */}
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between gap-3">
+            <div className="relative w-full">
               <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs" />
               <input
                 type="text"
@@ -106,20 +107,6 @@ export default function AdminBlogsPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
-            </div>
-
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <span className="text-xs font-bold text-slate-500 whitespace-nowrap">Category:</span>
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 capitalize"
-              >
-                <option value="All">All Categories</option>
-                {categoriesOptions.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
             </div>
           </div>
 
@@ -140,7 +127,7 @@ export default function AdminBlogsPage() {
               <i className="fa-solid fa-newspaper text-4xl text-slate-300 mb-3" />
               <h3 className="text-base font-bold text-slate-800">No blog posts found</h3>
               <p className="text-xs text-slate-500 mt-1 mb-4">
-                Click "+ Create Article" above to publish your first blog article page.
+                Click &ldquo;+ Create Article&rdquo; above to publish your first blog article page.
               </p>
               <Link
                 href="/admin/blogs/new"
@@ -223,7 +210,7 @@ export default function AdminBlogsPage() {
                             </Link>
 
                             <button
-                              onClick={() => handleDelete(post)}
+                              onClick={() => setDeleteTarget(post)}
                               className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                               title="Delete Article"
                             >
@@ -239,6 +226,18 @@ export default function AdminBlogsPage() {
             </div>
           )}
         </div>
+
+        {/* Delete Confirmation Modal */}
+        <ConfirmModal
+          isOpen={!!deleteTarget}
+          onClose={() => setDeleteTarget(null)}
+          onConfirm={handleDelete}
+          title="Delete Blog Article?"
+          description={`Are you sure you want to permanently delete "${deleteTarget?.title}"? This action cannot be undone.`}
+          confirmLabel="Delete"
+          isDanger
+          isLoading={deleteMutation.isPending}
+        />
       </AdminLayout>
     </AdminRoute>
   );
