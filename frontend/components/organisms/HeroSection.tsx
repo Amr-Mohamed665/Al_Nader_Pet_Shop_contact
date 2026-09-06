@@ -1,9 +1,5 @@
-'use client';
-
-import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 interface TrustBadge {
   iconClass: string;
@@ -12,9 +8,6 @@ interface TrustBadge {
 }
 
 export default function HeroSection() {
-  const router = useRouter();
-  const [heroSearch, setHeroSearch] = useState('');
-
   const trustBadges: TrustBadge[] = [
     { iconClass: 'fa-solid fa-shield-halved', label: 'Health', sub: 'Guarantee' },
     { iconClass: 'fa-solid fa-award', label: 'Premium', sub: 'Quality' },
@@ -108,36 +101,6 @@ export default function HeroSection() {
           Discover premium companions, top-quality food, and everything your pet
           needs for a happy, healthy life — all in one place.
         </p>
-
-        {/* Search Bar */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (heroSearch.trim()) {
-              router.push(`/products?search=${encodeURIComponent(heroSearch.trim())}`);
-            } else {
-              router.push('/products');
-            }
-          }}
-          className="w-full max-w-lg mb-8 animate-fade-in-up"
-        >
-          <div className="relative flex items-center">
-            <i className="fa-solid fa-magnifying-glass absolute left-4 text-purple-300 text-sm pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Search products, food, toys, cages..."
-              value={heroSearch}
-              onChange={(e) => setHeroSearch(e.target.value)}
-              className="w-full pl-11 pr-24 py-3.5 bg-white/95 backdrop-blur-md text-slate-800 placeholder-slate-400 rounded-2xl shadow-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-400 border border-white/20 transition-all"
-            />
-            <button
-              type="submit"
-              className="absolute right-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white text-xs font-extrabold rounded-xl transition-all shadow-md"
-            >
-              Search
-            </button>
-          </div>
-        </form>
 
         {/* CTAs */}
         <div
