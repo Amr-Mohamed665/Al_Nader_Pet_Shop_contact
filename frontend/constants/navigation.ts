@@ -15,8 +15,8 @@ export const ADMIN_NAV_LINKS: NavLink[] = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'Manage Products', href: '/admin/products' },
   { label: 'Manage Categories', href: '/admin/categories' },
-  { label: 'Manage Orders', href: '/admin/orders' },
   { label: 'Manage Blogs', href: '/admin/blogs' },
+  { label: 'Manage Orders', href: '/admin/orders' },
 ];
 
 export const FOOTER_QUICK_LINKS: NavLink[] = [

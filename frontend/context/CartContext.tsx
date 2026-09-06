@@ -32,27 +32,35 @@ export function CartProvider({ children }: CartProviderProps) {
   const { user } = useAuth();
   const cartKey = user ? `pet-shop-cart-${user.id}` : 'pet-shop-cart-guest';
 
-  const [prevCartKey, setPrevCartKey] = useState<string | null>(null);
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
-  // Synchronize cart items from cookies when cartKey changes during render
-  if (prevCartKey !== cartKey) {
-    setPrevCartKey(cartKey);
-    try {
-      const saved = typeof window !== 'undefined' ? Cookies.get(cartKey) : null;
-      setItems(saved ? (JSON.parse(saved) as CartItem[]) : []);
-    } catch {
-      setItems([]);
-    }
-  }
-
-  // Persist items to cookies whenever items change (after key sync)
+  // Load cart from cookies post-hydration when cartKey changes
   useEffect(() => {
-    if (prevCartKey === cartKey) {
+    let savedItems: CartItem[] = [];
+    try {
+      const saved = Cookies.get(cartKey);
+      if (saved) {
+        savedItems = JSON.parse(saved) as CartItem[];
+      }
+    } catch {
+      savedItems = [];
+    }
+
+    // Schedule state update in microtask to prevent synchronous setState in effect warning & hydration mismatch
+    queueMicrotask(() => {
+      setItems(savedItems);
+      setLoadedKey(cartKey);
+    });
+  }, [cartKey]);
+
+  // Persist to cookies on every change (only if key matches the loaded key)
+  useEffect(() => {
+    if (loadedKey === cartKey) {
       Cookies.set(cartKey, JSON.stringify(items), { expires: 14 });
     }
-  }, [items, cartKey, prevCartKey]);
+  }, [items, cartKey, loadedKey]);
 
   const addItem = useCallback((product: Product, quantity = 1) => {
     setItems((prev) => {
