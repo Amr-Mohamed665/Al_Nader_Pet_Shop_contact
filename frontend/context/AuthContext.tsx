@@ -52,7 +52,10 @@ const getSavedUser = (): User | null => {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(getSavedUser);
   const [token, setToken] = useState<string | null>(getSavedToken);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return !!Cookies.get('pet-shop-token');
+  });
 
   const isAuthenticated = !!user && !!token;
   const isAdmin = user?.role === 'admin';
@@ -66,6 +69,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const savedUser = Cookies.get('pet-shop-user');
 
         if (savedToken) {
+          setLoading(true);
           if (savedUser) {
             try {
               const parsed = JSON.parse(savedUser) as User;
@@ -93,6 +97,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setToken(null);
           setUser(null);
         }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -111,15 +119,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
         input = arg1;
       }
 
-      const response = await authService.login(input);
-      if (response.success) {
-        const { user: userData, token: userToken } = response.data;
-        setUser(userData);
-        setToken(userToken);
-        Cookies.set('pet-shop-token', userToken, { expires: 7 });
-        Cookies.set('pet-shop-user', JSON.stringify(userData), { expires: 7 });
+      setLoading(true);
+      try {
+        const response = await authService.login(input);
+        if (response.success) {
+          const { user: userData, token: userToken } = response.data;
+          setUser(userData);
+          setToken(userToken);
+          Cookies.set('pet-shop-token', userToken, { expires: 7 });
+          Cookies.set('pet-shop-user', JSON.stringify(userData), { expires: 7 });
+        }
+        return response;
+      } finally {
+        setLoading(false);
       }
-      return response;
     },
     []
   );
@@ -140,15 +153,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
         input = arg1;
       }
 
-      const response = await authService.register(input);
-      if (response.success) {
-        const { user: userData, token: userToken } = response.data;
-        setUser(userData);
-        setToken(userToken);
-        Cookies.set('pet-shop-token', userToken, { expires: 7 });
-        Cookies.set('pet-shop-user', JSON.stringify(userData), { expires: 7 });
+      setLoading(true);
+      try {
+        const response = await authService.register(input);
+        if (response.success) {
+          const { user: userData, token: userToken } = response.data;
+          setUser(userData);
+          setToken(userToken);
+          Cookies.set('pet-shop-token', userToken, { expires: 7 });
+          Cookies.set('pet-shop-user', JSON.stringify(userData), { expires: 7 });
+        }
+        return response;
+      } finally {
+        setLoading(false);
       }
-      return response;
     },
     []
   );
@@ -156,6 +174,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = useCallback(() => {
     setUser(null);
     setToken(null);
+    setLoading(false);
     Cookies.remove('pet-shop-token');
     Cookies.remove('pet-shop-user');
     queryClient.clear(); // Clear all cached React Query queries to isolate data

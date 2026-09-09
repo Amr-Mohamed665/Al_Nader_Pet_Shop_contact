@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 import Logo from '@/components/atoms/Logo';
 import Avatar from '@/components/atoms/Avatar';
 import Button from '@/components/atoms/Button';
@@ -15,7 +16,10 @@ import type { Category } from '@/types';
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, isAdmin, logout } = useAuth();
+  const { user, token, isAuthenticated, isAdmin, loading, logout } = useAuth();
+  const hasSavedToken = typeof window !== 'undefined' ? !!Cookies.get('pet-shop-token') : false;
+  const isAlreadyLoggedIn = isAuthenticated || !!token || hasSavedToken;
+  const isAuthLoading = loading || (isAlreadyLoggedIn && !user);
   const { count } = useCart();
   const { data: categories = [] } = useCategoriesQuery();
   const { tree: accessoriesTree } = useAccessoriesTree();
@@ -274,8 +278,20 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* Auth Dropdown / Buttons */}
-              {isAuthenticated ? (
+              {/* Auth Dropdown / Buttons / Skeleton */}
+              {isAlreadyLoggedIn && isAuthLoading ? (
+                <div
+                  className="flex items-center gap-2 lg:gap-2.5"
+                  aria-hidden="true"
+                >
+                  <div className="inline-flex items-center justify-center px-3.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold !rounded-xl skeleton select-none border border-transparent shadow-xs">
+                    <span className="invisible">Login</span>
+                  </div>
+                  <div className="inline-flex items-center justify-center px-3.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold !rounded-xl skeleton select-none border border-transparent shadow-xs">
+                    <span className="invisible">Register</span>
+                  </div>
+                </div>
+              ) : isAuthenticated ? (
                 <div className="relative">
                   <button
                     onClick={() => setProfileDropdownOpen((prev) => !prev)}
@@ -527,7 +543,16 @@ export default function Navbar() {
 
               <hr className="border-slate-100 !my-3" />
 
-              {isAuthenticated ? (
+              {isAlreadyLoggedIn && isAuthLoading ? (
+                <div className="flex flex-col gap-2.5 pt-2" aria-hidden="true">
+                  <div className="w-full py-3 text-base font-bold !rounded-xl skeleton select-none border border-transparent text-center">
+                    <span className="invisible">Login</span>
+                  </div>
+                  <div className="w-full py-3 text-base font-extrabold !rounded-xl skeleton select-none border border-transparent text-center">
+                    <span className="invisible">Register</span>
+                  </div>
+                </div>
+              ) : isAuthenticated ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 px-3 py-2">
                     <Avatar name={user?.name} />
