@@ -327,13 +327,19 @@ export default function ImageUploader({
             )}
           </div>
         ) : (
-          <div className="space-y-3 bg-white p-3.5 rounded-xl border border-slate-200">
+        <div className="space-y-3 bg-white p-3.5 rounded-xl border border-slate-200">
             <div className="flex gap-2">
               <input
                 type="url"
                 placeholder="Paste image URL (e.g. https://...)"
                 value={imageUrlInput}
                 onChange={(e) => setImageUrlInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (imageUrlInput.trim()) handleValueChange(imageUrlInput.trim());
+                  }
+                }}
                 className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <button
@@ -348,6 +354,30 @@ export default function ImageUploader({
                 Apply Link
               </button>
             </div>
+
+            {/* Inline image preview after Apply */}
+            {isCurrentValueImage && value && (
+              <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-900 group">
+                <img
+                  src={value}
+                  alt="Preview"
+                  className="w-full object-cover max-h-52"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+                <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleValueChange('');
+                      setImageUrlInput('');
+                    }}
+                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -474,6 +504,12 @@ export default function ImageUploader({
                     placeholder="Paste video link (YouTube, Vimeo, Streamable, MP4)..."
                     value={videoUrlInput}
                     onChange={(e) => setVideoUrlInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (videoUrlInput.trim()) handleValueChange(videoUrlInput.trim());
+                      }
+                    }}
                     className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                   <button
@@ -488,6 +524,36 @@ export default function ImageUploader({
                     Apply Video Link
                   </button>
                 </div>
+
+                {/* Inline video preview after Apply */}
+                {isCurrentValueVideo && value && (
+                  <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-900 group">
+                    {isDirectVideo(value) ? (
+                      <video src={value} controls muted loop className="w-full max-h-52 object-cover" />
+                    ) : getEmbedInfo(value) ? (
+                      <iframe
+                        src={getEmbedInfo(value)?.embedUrl}
+                        className="w-full aspect-video"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <video src={value} controls className="w-full max-h-52 object-cover" />
+                    )}
+                    <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleValueChange('');
+                          setVideoUrlInput('');
+                        }}
+                        className="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all"
+                      >
+                        Remove Video
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
