@@ -11,8 +11,8 @@ export const registerSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
-export const productSchema = z.object({
-  name: z.string().min(2, 'Product name is required'),
+export const itemSchema = z.object({
+  name: z.string().min(2, 'Item name is required'),
   category: z.string().min(1, 'Category is required'),
   price: z.any().transform((val, ctx) => {
     if (val === '' || val === null || val === undefined) {
@@ -43,6 +43,8 @@ export const productSchema = z.object({
   image: z.string().url('Must be a valid URL starting with http:// or https://').or(z.literal('')),
   available: z.boolean().default(true),
 });
+
+export const productSchema = itemSchema;
 
 const UAE_EMIRATES = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'] as const;
 

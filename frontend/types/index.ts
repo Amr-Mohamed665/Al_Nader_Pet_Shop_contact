@@ -31,7 +31,7 @@ export interface Category {
   isAccessory?: boolean;
 }
 
-export interface Product {
+export interface Item {
   id: string;
   _id?: string;
   name: string;
@@ -48,6 +48,8 @@ export interface Product {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type Product = Item;
 
 export interface CartItem {
   id: string;
@@ -152,11 +154,13 @@ export interface RegisterInput {
   password: string;
 }
 
-export interface ProductFilters {
+export interface ItemFilters {
   search?: string;
   category?: string;
   all?: boolean;
 }
+
+export type ProductFilters = ItemFilters;
 
 export interface CreateOrderInput {
   items: OrderItem[];

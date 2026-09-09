@@ -8,7 +8,7 @@ import DashboardCharts from '@/components/organisms/DashboardCharts';
 import RecentOrders from '@/components/organisms/RecentOrders';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
-import { productsService } from '@/services/products.service';
+import { itemsService } from '@/services/items.service';
 import { ordersService } from '@/services/orders.service';
 import { blogsService } from '@/services/blogs.service';
 
@@ -77,18 +77,18 @@ export default function AdminDashboardPage() {
   const dashboardQuery = useQuery({
     queryKey: ['admin-dashboard-data'],
     queryFn: async () => {
-      const [productsRes, ordersRes, blogsRes] = await Promise.all([
-        productsService.getAll({ all: true }),
+      const [itemsRes, ordersRes, blogsRes] = await Promise.all([
+        itemsService.getAll({ all: true }),
         ordersService.getAll(),
         blogsService.getAll(),
       ]);
 
-      const productsData = (productsRes.success && productsRes.data) ? productsRes.data : [];
+      const itemsData = (itemsRes.success && itemsRes.data) ? itemsRes.data : [];
       const allOrders = (ordersRes.success && ordersRes.data) ? ordersRes.data : [];
       const allBlogs = (blogsRes.success && blogsRes.data) ? blogsRes.data : [];
 
       return {
-        productsCount: productsData.length,
+        productsCount: itemsData.length,
         ordersData: allOrders,
         blogsCount: allBlogs.length,
       };

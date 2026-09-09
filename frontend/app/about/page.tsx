@@ -31,9 +31,9 @@ export default function AboutPage() {
               onSubmit={(e) => {
                 e.preventDefault();
                 if (search.trim()) {
-                  router.push(`/products?search=${encodeURIComponent(search.trim())}`);
+                  router.push(`/items?search=${encodeURIComponent(search.trim())}`);
                 } else {
-                  router.push('/products');
+                  router.push('/items');
                 }
               }}
               className="pt-2 max-w-md mx-auto"
@@ -42,7 +42,7 @@ export default function AboutPage() {
                 <i className="fa-solid fa-magnifying-glass absolute left-4 text-slate-400 text-xs pointer-events-none" />
                 <input
                   type="text"
-                  placeholder="Search products, food, supplies..."
+                  placeholder="Search items, food, supplies..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-10 pr-20 py-3 bg-white text-slate-800 placeholder-slate-400 rounded-2xl shadow-md text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-400 border border-white/20 transition-all"

@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
-import Cookies from 'js-cookie';
 import { categoriesService } from '@/services/categories.service';
 import type { Category, CreateCategoryInput, UpdateCategoryInput, CategoryTreeNode } from '@/types';
 
@@ -54,28 +53,6 @@ export const DEFAULT_CATEGORIES: Category[] = [
   },
 ];
 
-const COOKIE_KEY = 'pet_shop_categories';
-const COOKIE_EXPIRES = 7; // days
-
-function getStoredCategories(): Category[] {
-  try {
-    const stored = Cookies.get(COOKIE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (Array.isArray(parsed) && parsed.length >= DEFAULT_CATEGORIES.length) {
-        return parsed.map((c: any) => ({ ...c, id: String(c.id || c._id) }));
-      }
-    }
-  } catch (_) {}
-  return DEFAULT_CATEGORIES;
-}
-
-function saveStoredCategories(cats: Category[]): void {
-  try {
-    Cookies.set(COOKIE_KEY, JSON.stringify(cats), { expires: COOKIE_EXPIRES });
-  } catch (_) {}
-}
-
 export function useCategoriesQuery(): UseQueryResult<Category[]> {
   return useQuery<Category[]>({
     queryKey: ['categories'],
@@ -83,15 +60,13 @@ export function useCategoriesQuery(): UseQueryResult<Category[]> {
       try {
         const res = await categoriesService.getAll();
         if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
-          const normalized = res.data.map((c: any) => ({
+          return res.data.map((c: any) => ({
             ...c,
             id: String(c.id || c._id),
           }));
-          saveStoredCategories(normalized);
-          return normalized;
         }
       } catch (err) {
-        console.warn('Categories API failed/404, using defaults:', err);
+        console.warn('Categories API failed, using default categories:', err);
       }
       return DEFAULT_CATEGORIES;
     },
@@ -111,10 +86,10 @@ export function useCreateCategory() {
           created = { ...res.data, id: String(res.data.id || res.data._id) };
         }
       } catch (err) {
-        console.warn('Backend create category failed, saving locally:', err);
+        console.warn('Backend create category failed, inserting into React Query cache:', err);
       }
 
-      const current = queryClient.getQueryData<Category[]>(['categories']) || getStoredCategories();
+      const current = queryClient.getQueryData<Category[]>(['categories']) || DEFAULT_CATEGORIES;
       if (!created) {
         const maxOrder = current.reduce((max, c) => Math.max(max, c.order ?? 0), -1);
         created = {
@@ -130,7 +105,6 @@ export function useCreateCategory() {
       }
 
       const updated = [...current, created];
-      saveStoredCategories(updated);
       queryClient.setQueryData(['categories'], updated);
       return created;
     },
@@ -152,10 +126,10 @@ export function useUpdateCategory() {
           updatedItem = { ...res.data, id: String(res.data.id || res.data._id) };
         }
       } catch (err) {
-        console.warn('Backend update category failed, updating locally:', err);
+        console.warn('Backend update category failed, updating React Query cache:', err);
       }
 
-      const current = queryClient.getQueryData<Category[]>(['categories']) || getStoredCategories();
+      const current = queryClient.getQueryData<Category[]>(['categories']) || DEFAULT_CATEGORIES;
       const updatedList = current.map((cat) => {
         if (String(cat.id || cat._id) === targetId) {
           return updatedItem || { ...cat, ...data, id: targetId };
@@ -163,9 +137,8 @@ export function useUpdateCategory() {
         return cat;
       });
 
-      saveStoredCategories(updatedList);
       queryClient.setQueryData(['categories'], updatedList);
-      return updatedItem || { ...data, id: targetId } as Category;
+      return updatedItem || ({ ...data, id: targetId } as Category);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['categories'] });
@@ -181,19 +154,19 @@ export function useDeleteCategory() {
       try {
         await categoriesService.delete(targetId);
       } catch (err) {
-        console.warn('Backend delete category failed, removing locally:', err);
+        console.warn('Backend delete category failed, removing from React Query cache:', err);
       }
 
-      const current = queryClient.getQueryData<Category[]>(['categories']) || getStoredCategories();
+      const current = queryClient.getQueryData<Category[]>(['categories']) || DEFAULT_CATEGORIES;
       const updatedList = current.filter((cat) => String(cat.id || cat._id) !== targetId);
 
-      saveStoredCategories(updatedList);
       queryClient.setQueryData(['categories'], updatedList);
       return { success: true };
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['categories'] });
-      void queryClient.invalidateQueries({ queryKey: ['products'] });
+      void queryClient.invalidateQueries({ queryKey: ['items'] });
+      void queryClient.invalidateQueries({ queryKey: ['admin-items'] });
     },
   });
 }
@@ -205,18 +178,17 @@ export function useReorderCategories() {
       try {
         await categoriesService.reorder(orderedIds);
       } catch (err) {
-        console.warn('Backend reorder categories failed, reordering locally:', err);
+        console.warn('Backend reorder categories failed, updating React Query cache:', err);
       }
 
-      const current = queryClient.getQueryData<Category[]>(['categories']) || getStoredCategories();
-      const reordered: Category[] = (orderedIds
-        .map((id, idx) => {
+      const current = queryClient.getQueryData<Category[]>(['categories']) || DEFAULT_CATEGORIES;
+      const reordered: Category[] = orderedIds
+        .map((id, idx): Category | null => {
           const item = current.find((c) => String(c.id || c._id) === String(id));
           return item ? { ...item, order: idx } : null;
         })
-        .filter((c): c is Category => c !== null)) as Category[];
+        .filter((c): c is Category => c !== null);
 
-      saveStoredCategories(reordered);
       queryClient.setQueryData(['categories'], reordered);
       return reordered;
     },

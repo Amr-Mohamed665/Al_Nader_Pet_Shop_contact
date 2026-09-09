@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { CONTACT_INFO } from '@/constants/navigation';
 
 export default function PrivacyPolicyPage() {
-  const lastUpdated = 'August 18, 2026';
+  const lastUpdated = 'August 18, 2018';
 
   return (
     <ShopLayout>

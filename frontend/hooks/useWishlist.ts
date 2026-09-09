@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { wishlistService } from '@/services/wishlist.service';
 import { useAuth } from '@/context/AuthContext';
-import type { Product } from '@/types';
+import type { Item } from '@/types';
 
 export function useWishlistQuery() {
   const { isAuthenticated } = useAuth();
-  return useQuery<Product[]>({
+  return useQuery<Item[]>({
     queryKey: ['wishlist'],
     queryFn: async () => {
       const res = await wishlistService.getAll();
@@ -18,12 +18,12 @@ export function useWishlistQuery() {
 export function useAddToWishlist() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (productId: string) => {
-      return await wishlistService.add(productId);
+    mutationFn: async (itemId: string) => {
+      return await wishlistService.add(itemId);
     },
-    onSuccess: (_, productId) => {
+    onSuccess: (_, itemId) => {
       void queryClient.invalidateQueries({ queryKey: ['wishlist'] });
-      void queryClient.invalidateQueries({ queryKey: ['wishlist', 'check', productId] });
+      void queryClient.invalidateQueries({ queryKey: ['wishlist', 'check', itemId] });
     },
   });
 }
@@ -31,25 +31,25 @@ export function useAddToWishlist() {
 export function useRemoveFromWishlist() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (productId: string) => {
-      return await wishlistService.remove(productId);
+    mutationFn: async (itemId: string) => {
+      return await wishlistService.remove(itemId);
     },
-    onSuccess: (_, productId) => {
+    onSuccess: (_, itemId) => {
       void queryClient.invalidateQueries({ queryKey: ['wishlist'] });
-      void queryClient.invalidateQueries({ queryKey: ['wishlist', 'check', productId] });
+      void queryClient.invalidateQueries({ queryKey: ['wishlist', 'check', itemId] });
     },
   });
 }
 
-export function useCheckWishlist(productId: string | null | undefined) {
+export function useCheckWishlist(itemId: string | null | undefined) {
   const { isAuthenticated } = useAuth();
   return useQuery<boolean>({
-    queryKey: ['wishlist', 'check', productId],
+    queryKey: ['wishlist', 'check', itemId],
     queryFn: async () => {
-      if (!productId) return false;
-      const res = await wishlistService.check(productId);
+      if (!itemId) return false;
+      const res = await wishlistService.check(itemId);
       return res.success ? (res.inWishlist ?? false) : false;
     },
-    enabled: isAuthenticated && !!productId,
+    enabled: isAuthenticated && !!itemId,
   });
 }

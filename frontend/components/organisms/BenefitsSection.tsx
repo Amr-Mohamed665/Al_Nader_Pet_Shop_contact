@@ -17,7 +17,7 @@ const BENEFITS: BenefitItem[] = [
   },
   {
     iconClass: 'fa-solid fa-shield-halved',
-    title: 'Quality Products',
+    title: 'Quality Items',
     description: 'Only the best for your beloved pets',
   },
   {

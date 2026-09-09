@@ -22,8 +22,8 @@ export default function CartPage() {
             title="Your cart is empty"
             description="Looks like you haven't added anything to your cart yet. Explore our catalog and find the perfect supplies for your pet!"
             icon="🛒"
-            actionLabel="Browse Products"
-            actionHref="/products"
+            actionLabel="Browse Items"
+            actionHref="/items"
           />
         </div>
       </ShopLayout>
@@ -65,7 +65,7 @@ export default function CartPage() {
                   <div className="flex-grow min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
                     {/* Info */}
                     <div className="space-y-1 sm:space-y-2 flex-grow min-w-0">
-                      <Link href={`/products/${item.id}`} className="text-sm font-bold text-slate-800 hover:text-teal-600 transition-colors line-clamp-1">
+                      <Link href={`/items/${item.id}`} className="text-sm font-bold text-slate-800 hover:text-teal-600 transition-colors line-clamp-1">
                         {item.name}
                       </Link>
                       <div className="flex items-center gap-3">
@@ -130,7 +130,7 @@ export default function CartPage() {
                     Login to Checkout
                   </Button>
                 )}
-                <Button variant="outline" href="/products" className="w-full py-3 font-bold text-xs">
+                <Button variant="outline" href="/items" className="w-full py-3 font-bold text-xs">
                   ← Continue Shopping
                 </Button>
               </div>

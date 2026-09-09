@@ -155,7 +155,7 @@ export default function CreateBlogPage() {
                 <span className="text-slate-700 font-bold">New Article</span>
               </div>
               <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                <i className="fa-solid fa-pen-to-square text-purple-600" />
+                <i className="fa-solid fa-pen text-purple-600" />
                 Create New Article
               </h1>
             </div>
@@ -402,27 +402,6 @@ export default function CreateBlogPage() {
                     <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
                       <i className="fa-solid fa-circle-exclamation text-rose-500" />
                       {errors.readTime.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Custom Slug (Optional)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. hamster-care-guide"
-                    {...register('slug')}
-                    className={cn(
-                      'w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 transition-all',
-                      errors.slug
-                        ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:ring-rose-500'
-                        : 'border-slate-200 focus:ring-purple-500'
-                    )}
-                  />
-                  {errors.slug && (
-                    <p className="text-xs font-bold text-rose-600 mt-1.5 flex items-center gap-1.5">
-                      <i className="fa-solid fa-circle-exclamation text-rose-500" />
-                      {errors.slug.message}
                     </p>
                   )}
                 </div>

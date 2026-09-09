@@ -107,7 +107,7 @@ export default function HeroSection() {
           className="flex flex-wrap items-center justify-center gap-4 mb-14 animate-fade-in-up"
         >
           <Link
-            href="/products"
+            href="/items"
             id="hero-shop-now"
             className="group inline-flex items-center gap-2 px-8 py-3.5 text-sm sm:text-base font-bold text-white rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(124,77,219,0.6)] bg-gradient-to-br from-[#7C4DDB] to-[#581C87] shadow-[0_4px_20px_rgba(124,77,219,0.4)]"
           >

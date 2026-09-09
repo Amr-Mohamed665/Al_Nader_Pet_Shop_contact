@@ -104,21 +104,23 @@ function SortableCategoryCard({ category, categories, onEdit, onDelete, isFirst,
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 px-3 py-2.5 bg-white border-b border-slate-100 transition-colors ${isDragging ? 'bg-teal-50/40' : ''}`}
+      className={`flex items-center gap-3 px-3 py-2.5 bg-white border-b border-slate-100 hover:bg-slate-50/70 transition-colors ${
+        isDragging ? 'bg-purple-50 border-purple-300 ring-2 ring-purple-300 shadow-lg' : ''
+      }`}
     >
       <CategoryImage category={category} size="sm" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <p className="text-xs font-extrabold text-slate-900 truncate">{category.name}</p>
           {category.isAccessory && (
-            <span className="text-[8px] font-extrabold text-purple-600 bg-purple-50 border border-purple-100 rounded-full px-1.5 py-0.5">
+            <span className="inline-block px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-extrabold capitalize whitespace-nowrap">
               Pet&apos;s Accessory
             </span>
           )}
         </div>
-        {category.description && <p className="text-[10px] text-slate-400 truncate">{category.description}</p>}
+        {category.description && <p className="text-xs text-slate-500 font-medium truncate mt-0.5">{category.description}</p>}
       </div>
-      <div className="flex items-center gap-1.5 flex-shrink-0">
+      <div className="flex items-center gap-1 flex-shrink-0">
         <button onClick={() => onEdit(category)} className="p-2 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all" aria-label="Edit">
           <i className="fa-solid fa-pen text-[15px]" />
         </button>
@@ -132,7 +134,7 @@ function SortableCategoryCard({ category, categories, onEdit, onDelete, isFirst,
         <button
           onClick={() => onMoveUp(category.id || category._id)}
           disabled={isFirst}
-          className="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-teal-500 hover:border-teal-300 disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all active:scale-90"
+          className="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50 disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:cursor-not-allowed transition-all active:scale-90"
           title="Move up"
         >
           <i className="fa-solid fa-chevron-up text-[10px]" />
@@ -140,7 +142,7 @@ function SortableCategoryCard({ category, categories, onEdit, onDelete, isFirst,
         <button
           onClick={() => onMoveDown(category.id || category._id)}
           disabled={isLast}
-          className="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-teal-500 hover:border-teal-300 disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:cursor-not-allowed transition-all active:scale-90"
+          className="w-7 h-7 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-purple-600 hover:border-purple-300 hover:bg-purple-50 disabled:opacity-30 disabled:hover:text-slate-400 disabled:hover:border-slate-200 disabled:hover:bg-white disabled:cursor-not-allowed transition-all active:scale-90"
           title="Move down"
         >
           <i className="fa-solid fa-chevron-down text-[10px]" />
@@ -167,11 +169,11 @@ function SortableCategoryRow({ category, categories, onEdit, onDelete, isDragOve
       ref={setNodeRef}
       style={style}
       className={`border-b border-slate-100 transition-colors group ${
-        isDragging ? 'bg-teal-50/40' : 'hover:bg-slate-50/60'
-      } ${isDragOverlay ? 'shadow-2xl rounded-xl bg-white ring-2 ring-teal-400/40' : ''}`}
+        isDragging ? 'bg-purple-50 shadow-md ring-1 ring-purple-300' : 'hover:bg-slate-50/70'
+      } ${isDragOverlay ? 'shadow-2xl rounded-xl bg-white ring-2 ring-purple-400/40' : ''}`}
     >
       <td className="pl-4 py-3 w-10">
-        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1.5 text-slate-300 hover:text-slate-500 rounded-lg hover:bg-slate-100 transition-all touch-none" aria-label="Drag to reorder">
+        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1.5 text-slate-300 hover:text-purple-600 rounded-lg hover:bg-slate-100 transition-all touch-none" aria-label="Drag to reorder">
           <i className="fa-solid fa-grip-vertical text-[14px]" />
         </button>
       </td>
@@ -180,17 +182,21 @@ function SortableCategoryRow({ category, categories, onEdit, onDelete, isDragOve
         <div className="flex items-center gap-2">
           <span>{category.name}</span>
           {category.isAccessory && (
-            <span className="text-[9px] font-extrabold text-purple-600 bg-purple-50 border border-purple-100 rounded-full px-1.5 py-0.5 whitespace-nowrap">
+            <span className="inline-block px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-extrabold capitalize whitespace-nowrap">
               Pet&apos;s Accessory
             </span>
           )}
         </div>
       </td>
-      <td className="px-4 py-3 text-slate-500 text-xs max-w-[240px] truncate">{category.description || <span className="italic text-slate-300">—</span>}</td>
+      <td className="px-4 py-3 text-slate-500 text-xs font-medium min-w-[320px] max-w-2xl line-clamp-2">{category.description || <span className="italic text-slate-300 font-normal">—</span>}</td>
       <td className="px-4 py-3 text-right">
         <div className="flex items-center justify-end gap-2">
-          <button onClick={() => onEdit(category)} className="px-3 py-1.5 text-[11px] font-bold text-slate-600 border border-slate-200 hover:border-purple-300 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all">Edit</button>
-          <button onClick={() => onDelete(category)} className="px-3 py-1.5 text-[11px] font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 rounded-lg transition-all">Delete</button>
+          <button onClick={() => onEdit(category)} className="p-2 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all" aria-label="Edit">
+            <i className="fa-solid fa-pen text-[15px]" />
+          </button>
+          <button onClick={() => onDelete(category)} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all" aria-label="Delete">
+            <i className="fa-solid fa-trash text-[15px]" />
+          </button>
         </div>
       </td>
     </tr>
@@ -265,7 +271,7 @@ function CategoryFormPage({ initial, onBack, onSave, existingSlugs, isSubmitting
           <i className="fa-solid fa-arrow-left text-[15px]" />
         </button>
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
             {isEdit ? 'Edit Category' : 'Add New Category'}
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -278,7 +284,7 @@ function CategoryFormPage({ initial, onBack, onSave, existingSlugs, isSubmitting
       <form onSubmit={handleSubmit} className="bg-white border border-slate-200/80 rounded-2xl shadow-sm p-6 space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
               Category Name <span className="text-rose-500">*</span>
             </label>
             <input
@@ -287,14 +293,14 @@ function CategoryFormPage({ initial, onBack, onSave, existingSlugs, isSubmitting
               value={form.name}
               onChange={(e) => set('name', e.target.value)}
               placeholder="e.g. Dog Accessories"
-              className={`w-full px-3 py-2.5 text-sm border rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${errors.name ? 'border-rose-400' : 'border-slate-200'}`}
+              className={`w-full px-3 py-2.5 text-xs font-semibold text-slate-800 border rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${errors.name ? 'border-rose-400' : 'border-slate-200'}`}
             />
             {errors.name && <p className="text-[10px] text-rose-500 mt-1 font-semibold">{errors.name}</p>}
             {errors.slug && <p className="text-[10px] text-rose-500 mt-1 font-semibold">{errors.slug}</p>}
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
               Description
             </label>
             <input
@@ -303,7 +309,7 @@ function CategoryFormPage({ initial, onBack, onSave, existingSlugs, isSubmitting
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
               placeholder="e.g. Collars, leads, toys..."
-              className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+              className="w-full px-3 py-2.5 text-xs font-semibold text-slate-800 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
             />
           </div>
         </div>
@@ -477,7 +483,7 @@ export default function AdminCategoriesPage() {
   return (
     <AdminRoute>
       <AdminLayout>
-        <div className="space-y-4 animate-fade-in">
+        <div className="space-y-6 animate-fade-in">
           {/* Header */}
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -495,11 +501,15 @@ export default function AdminCategoriesPage() {
             </Button>
           </div>
 
-          {/* DnD hint */}
+          {/* Drag & Drop Reordering Tip Banner */}
           {!isLoading && !error && categories.length > 1 && (
-            <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 w-fit">
-              <i className="fa-solid fa-grip-vertical text-slate-300 text-[12px]" />
-              <span>Drag the <strong className="text-slate-500">grip handle</strong> to reorder</span>
+            <div className="space-y-2">
+              <div className="bg-purple-50/70 border border-purple-100 rounded-xl px-4 py-2.5 flex items-center gap-2 text-xs font-semibold text-purple-800">
+                <i className="fa-solid fa-hand text-purple-600"></i>
+                <span>
+                  <strong>Drag & Drop tip:</strong> Grab the <i className="fa-solid fa-grip-vertical text-purple-600"></i> handle to reorder categories.
+                </span>
+              </div>
             </div>
           )}
 
@@ -542,15 +552,15 @@ export default function AdminCategoriesPage() {
                 <div className="hidden md:block w-full rounded-2xl border border-slate-200/80 shadow-sm bg-white overflow-hidden">
                   <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-200/80">
-                        <th className="pl-4 py-3.5 w-10"><i className="fa-solid fa-arrows-up-down text-slate-300 text-[12px]" /></th>
-                        <th className="px-4 py-4">Image</th>
-                        <th className="px-4 py-4">Name</th>
-                        <th className="px-4 py-4">Description</th>
-                        <th className="px-4 py-4 text-right">Actions</th>
+                      <tr className="bg-slate-50/80 border-b border-slate-100 text-[10px] uppercase tracking-wider font-extrabold text-slate-400">
+                        <th className="pl-4 py-3 w-10"><i className="fa-solid fa-arrows-up-down text-slate-300 text-[12px]" /></th>
+                        <th className="px-4 py-3 w-16">Image</th>
+                        <th className="px-4 py-3 w-48">Name</th>
+                        <th className="px-4 py-3 w-auto">Description</th>
+                        <th className="px-4 py-3 text-right w-24">Actions</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
                       {categories.map((cat: Category) => (
                         <SortableCategoryRow
                           key={cat.id || cat._id || cat.slug}

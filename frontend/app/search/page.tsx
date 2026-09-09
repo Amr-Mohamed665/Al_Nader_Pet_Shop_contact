@@ -3,11 +3,11 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import ShopLayout from '@/components/templates/ShopLayout';
-import ProductGrid from '@/components/organisms/ProductGrid';
+import ItemGrid from '@/components/organisms/ItemGrid';
 import SearchBar from '@/components/molecules/SearchBar';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
-import useProducts from '@/hooks/useProducts';
+import useItems from '@/hooks/useItems';
 
 function SearchResults() {
   const searchParams = useSearchParams();
@@ -16,11 +16,11 @@ function SearchResults() {
   const [search, setSearch] = useState(query);
 
   const {
-    products,
+    items,
     loading,
     error,
     refetch,
-  } = useProducts({ search: search || query });
+  } = useItems({ search: search || query });
 
   const handleSearch = (term: string) => {
     setSearch(term);
@@ -41,7 +41,7 @@ function SearchResults() {
         </p>
       </div>
 
-      {/* Search Bar - Above Products */}
+      {/* Search Bar - Above Items */}
       <div className="flex justify-end">
         <SearchBar onSearch={handleSearch} initialValue={search || query} placeholder="Refine your search..." className="w-full max-w-xs" />
       </div>
@@ -50,14 +50,14 @@ function SearchResults() {
       {loading ? (
         <div className="py-20 flex flex-col items-center gap-3">
           <Spinner size="md" />
-          <span className="text-xs text-slate-400 font-bold tracking-wide">Searching products...</span>
+          <span className="text-xs text-slate-400 font-bold tracking-wide">Searching items...</span>
         </div>
       ) : error ? (
         <div className="py-12">
           <ErrorState onRetry={refetch} description={error} />
         </div>
       ) : (
-        <ProductGrid products={products} />
+        <ItemGrid items={items} />
       )}
     </div>
   );

@@ -36,10 +36,10 @@ export default function MyOrdersPage() {
           ) : orders.length === 0 ? (
             <EmptyState
               title="No orders yet"
-              description="You haven't placed any orders yet. Browse our products and make your first purchase!"
+              description="You haven't placed any orders yet. Browse our items and make your first purchase!"
               icon="📦"
               actionLabel="Shop Now"
-              actionHref="/products"
+              actionHref="/items"
             />
           ) : (
             <div className="space-y-4">

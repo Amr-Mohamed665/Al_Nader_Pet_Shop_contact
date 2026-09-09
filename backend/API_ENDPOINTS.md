@@ -150,7 +150,7 @@ Valid values: `pending`, `preparing`, `completed`, `cancelled`.
 
 ## Reminders from the Technical Requirements
 
-- Store the token in `localStorage` and attach it automatically with an **Axios
+- Store the token in `Cookies` (`js-cookie`) and attach it automatically with an **Axios
   request interceptor** — don't add the header manually in every call.
 - The landing page and menu browsing work with **no token at all** — only wrap
   the order/checkout flow and the admin dashboard in a `ProtectedRoute`.

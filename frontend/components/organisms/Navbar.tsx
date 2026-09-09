@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Logo from '@/components/atoms/Logo';
@@ -24,21 +24,37 @@ export default function Navbar() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
 
   // Mobile accordions state
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
   const [mobileAccessoriesOpen, setMobileAccessoriesOpen] = useState(false);
   const [mobileGroupsOpen, setMobileGroupsOpen] = useState<Record<string, boolean>>({});
 
-  // Close mobile menu when route changes (during render to avoid cascading renders)
+  // Close mobile menu & dropdowns when route changes
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (prevPathname !== pathname) {
     setPrevPathname(pathname);
     setMenuOpen(false);
+    setProfileDropdownOpen(false);
+    setCategoriesDropdownOpen(false);
     setMobileCategoriesOpen(false);
     setMobileAccessoriesOpen(false);
     setMobileGroupsOpen({});
   }
+
+  // Close categories dropdown on click outside
+  useEffect(() => {
+    if (!categoriesDropdownOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.categories-dropdown-container')) {
+        setCategoriesDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [categoriesDropdownOpen]);
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
@@ -110,10 +126,10 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+            <div className="hidden md:flex items-center space-x-3 lg:space-x-6 xl:space-x-8">
               <Link
                 href="/"
-                className={`text-sm font-bold transition-colors whitespace-nowrap ${
+                className={`text-xs md:text-sm font-bold transition-colors whitespace-nowrap ${
                   isActive('/') ? 'text-purple-600 font-extrabold' : 'text-slate-600 hover:text-purple-500'
                 }`}
               >
@@ -121,34 +137,43 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/about"
-                className={`text-sm font-bold transition-colors whitespace-nowrap ${
+                className={`text-xs md:text-sm font-bold transition-colors whitespace-nowrap ${
                   isActive('/about') ? 'text-purple-600 font-extrabold' : 'text-slate-600 hover:text-purple-500'
                 }`}
               >
                 About Us
               </Link>
 
-              {/* Categories Dropdown Menu (Clean Text Only) */}
-              <div className="relative group py-4">
+              {/* Categories Dropdown Menu */}
+              <div className="relative group py-4 categories-dropdown-container">
                 <button
-                  className={`text-sm font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer select-none ${
-                    isActive('/products') || isActive('/category') || isActive('/accessories')
+                  type="button"
+                  onClick={() => setCategoriesDropdownOpen((prev) => !prev)}
+                  className={`text-xs md:text-sm font-bold transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer select-none ${
+                    isActive('/items') || isActive('/category') || isActive('/accessories')
                       ? 'text-purple-600 font-extrabold'
                       : 'text-slate-600 hover:text-purple-500'
                   }`}
                 >
                   <span>Categories</span>
-                  <i className="fa-solid fa-chevron-down text-[10px] transition-transform group-hover:rotate-180 duration-200" />
+                  <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-200 ${
+                    categoriesDropdownOpen ? 'rotate-180 text-purple-600' : 'group-hover:rotate-180'
+                  }`} />
                 </button>
 
                 {/* Dropdown Menu */}
-                <div className="absolute top-full left-0 mt-1 w-60 max-h-[82vh] overflow-y-auto bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2 animate-scale-in">
-                  {/* All Products */}
+                <div className={`absolute top-full left-0 mt-1 w-60 max-h-[82vh] overflow-y-auto bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-2xl shadow-xl transition-all duration-200 z-50 p-2 animate-scale-in ${
+                  categoriesDropdownOpen
+                    ? 'opacity-100 visible pointer-events-auto'
+                    : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'
+                }`}>
+                  {/* All Items */}
                   <Link
-                    href="/products"
+                    href="/items"
+                    onClick={() => setCategoriesDropdownOpen(false)}
                     className="block px-3.5 py-2.5 rounded-xl text-sm font-extrabold text-purple-600 hover:bg-purple-50 transition-colors"
                   >
-                    All Products
+                    All Items
                   </Link>
 
                   <div className="border-t border-slate-100 my-1" />
@@ -159,6 +184,7 @@ export default function Navbar() {
                       <Link
                         key={cat.id}
                         href={`/category/${cat.slug}`}
+                        onClick={() => setCategoriesDropdownOpen(false)}
                         className="block px-3.5 py-2 rounded-xl text-sm font-bold text-slate-700 hover:text-purple-600 hover:bg-slate-50 transition-colors"
                       >
                         {cat.name}
@@ -171,6 +197,7 @@ export default function Navbar() {
                   {/* Accessories */}
                   <Link
                     href="/accessories"
+                    onClick={() => setCategoriesDropdownOpen(false)}
                     className="block px-3.5 py-2.5 rounded-xl text-sm font-bold text-slate-800 hover:text-purple-600 hover:bg-slate-50 transition-colors"
                   >
                     Accessories
@@ -187,6 +214,7 @@ export default function Navbar() {
                           <Link
                             key={group.id}
                             href={`/accessories/${group.slug}`}
+                            onClick={() => setCategoriesDropdownOpen(false)}
                             className="block px-3.5 py-1.5 text-xs font-semibold text-slate-500 hover:text-purple-600 hover:bg-purple-50/50 rounded-lg transition-colors capitalize"
                           >
                             {displayName}
@@ -200,7 +228,7 @@ export default function Navbar() {
 
               <Link
                 href="/blog"
-                className={`text-sm font-bold transition-colors whitespace-nowrap ${
+                className={`text-xs md:text-sm font-bold transition-colors whitespace-nowrap ${
                   isActive('/blog') ? 'text-purple-600 font-extrabold' : 'text-slate-600 hover:text-purple-500'
                 }`}
               >
@@ -208,7 +236,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/contact"
-                className={`text-sm font-bold transition-colors whitespace-nowrap ${
+                className={`text-xs md:text-sm font-bold transition-colors whitespace-nowrap ${
                   isActive('/contact') ? 'text-purple-600 font-extrabold' : 'text-slate-600 hover:text-purple-500'
                 }`}
               >
@@ -217,7 +245,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Action Buttons */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden md:flex items-center justify-end gap-2 lg:gap-3 flex-shrink-0 min-w-[270px]">
               {/* Wishlist Button */}
               <Link
                 href="/wishlist"
@@ -248,7 +276,10 @@ export default function Navbar() {
 
               {/* Auth Dropdown / Buttons */}
               {loading ? (
-                <div className="h-8 w-20 bg-slate-100 rounded-xl animate-pulse" />
+                <div className="flex items-center gap-2.5">
+                  <div className="h-[38px] w-[74px] bg-slate-200/60 rounded-xl animate-pulse" />
+                  <div className="h-[38px] w-[90px] bg-slate-200/60 rounded-xl animate-pulse" />
+                </div>
               ) : isAuthenticated ? (
                 <div className="relative">
                   <button
@@ -333,7 +364,7 @@ export default function Navbar() {
             </div>
 
             {/* Mobile: Wishlist + Cart + Hamburger */}
-            <div className="lg:hidden flex items-center gap-1">
+            <div className="md:hidden flex items-center gap-1">
 
               {/* Wishlist Icon */}
               <Link
@@ -381,10 +412,10 @@ export default function Navbar() {
       {menuOpen && (
         <>
           <div
-            className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+            className="fixed inset-0 z-40 bg-black/30 md:hidden"
             onClick={() => setMenuOpen(false)}
           />
-          <div className="fixed top-16 left-0 right-0 bottom-0 z-40 lg:hidden bg-white overflow-y-auto animate-fade-in">
+          <div className="fixed top-[84px] left-0 right-0 bottom-0 z-50 md:hidden bg-white overflow-y-auto animate-fade-in">
             <div className="px-4 py-4 space-y-1">
               <Link
                 href="/"
@@ -410,7 +441,7 @@ export default function Navbar() {
                 <button
                   onClick={() => setMobileCategoriesOpen(!mobileCategoriesOpen)}
                   className={`w-full flex items-center justify-between px-3 py-3 text-sm font-bold rounded-lg transition-all ${
-                    isActive('/products') || isActive('/category') || isActive('/accessories')
+                    isActive('/items') || isActive('/category') || isActive('/accessories')
                       ? 'bg-purple-50 text-purple-600 font-extrabold'
                       : 'text-slate-600 hover:bg-slate-50'
                   }`}
@@ -425,13 +456,13 @@ export default function Navbar() {
 
                 {mobileCategoriesOpen && (
                   <div className="pl-3 pr-2 space-y-1 mt-1 bg-slate-50/70 rounded-xl p-2 border border-slate-100">
-                    {/* All Products */}
+                    {/* All Items */}
                     <Link
-                      href="/products"
+                      href="/items"
                       onClick={() => setMenuOpen(false)}
                       className="block px-3 py-2 text-xs font-extrabold text-purple-600 hover:bg-purple-50 rounded-lg"
                     >
-                      All Products
+                      All Items
                     </Link>
 
                     {/* Top Categories: Hamster, Dogs, Cats, Birds, Reptiles */}
@@ -502,7 +533,10 @@ export default function Navbar() {
               <hr className="border-slate-100 !my-3" />
 
               {loading ? (
-                <div className="h-16 w-full bg-slate-100 rounded-xl animate-pulse" />
+                <div className="flex flex-col gap-2.5 pt-2">
+                  <div className="h-[46px] w-full bg-slate-100 rounded-xl animate-pulse" />
+                  <div className="h-[46px] w-full bg-slate-100 rounded-xl animate-pulse" />
+                </div>
               ) : isAuthenticated ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 px-3 py-2">

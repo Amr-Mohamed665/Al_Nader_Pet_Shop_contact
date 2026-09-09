@@ -106,7 +106,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
 
             {/* Subtle Footer Note */}
             <div className="relative z-10 pt-4 border-t border-white/10 text-xs text-purple-200/80">
-              © {new Date().getFullYear()} Al Nader Pets & Accessories. All rights reserved.
+              © 2018 Al Nader Pets & Accessories. All rights reserved.
             </div>
           </div>
 

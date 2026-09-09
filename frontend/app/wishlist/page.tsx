@@ -3,7 +3,7 @@
 import ShopLayout from '@/components/templates/ShopLayout';
 import ProtectedRoute from '@/components/guards/ProtectedRoute';
 
-import ProductGrid from '@/components/organisms/ProductGrid';
+import ItemGrid from '@/components/organisms/ItemGrid';
 import Spinner from '@/components/atoms/Spinner';
 import EmptyState from '@/components/molecules/EmptyState';
 import { useWishlistQuery } from '@/hooks/useWishlist';
@@ -26,7 +26,7 @@ export default function WishlistPage() {
               My Wishlist
             </h1>
             <p className="text-sm text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
-              Keep track of products and accessories you love.
+              Keep track of items and accessories you love.
             </p>
           </div>
 
@@ -44,7 +44,7 @@ export default function WishlistPage() {
                 description="Add your favorite pets and accessories to your wishlist to keep track of them."
                 icon="❤️"
                 actionLabel="Start Shopping"
-                actionHref="/products"
+                actionHref="/items"
               />
             </div>
           ) : (
@@ -54,7 +54,7 @@ export default function WishlistPage() {
                   Saved Items ({(wishlistItems as any[]).length})
                 </h2>
               </div>
-              <ProductGrid products={wishlistItems as any[]} />
+              <ItemGrid items={wishlistItems as any[]} />
             </div>
           )}
         </div>

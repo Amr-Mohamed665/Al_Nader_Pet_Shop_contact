@@ -1,21 +1,19 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
-import Cookies from 'js-cookie';
-import { useAuth } from '@/context/AuthContext';
 import { showToast } from '@/utils/toast';
 import { playSound, getSoundForCategory } from '@/lib/sounds';
-import type { CartItem, Product } from '@/types';
+import type { CartItem, Item } from '@/types';
 
 interface CartContextValue {
   items: CartItem[];
   count: number;
   total: number;
   isOpen: boolean;
-  addItem: (product: Product, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  addItem: (item: Item, quantity?: number) => void;
+  removeItem: (itemId: string) => void;
+  updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: (showNotification?: boolean) => void;
   openCart: () => void;
   closeCart: () => void;
@@ -29,91 +27,61 @@ interface CartProviderProps {
 }
 
 export function CartProvider({ children }: CartProviderProps) {
-  const { user } = useAuth();
-  const cartKey = user ? `pet-shop-cart-${user.id}` : 'pet-shop-cart-guest';
-
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
-  // Load cart from cookies post-hydration when cartKey changes
-  useEffect(() => {
-    let savedItems: CartItem[] = [];
-    try {
-      const saved = Cookies.get(cartKey);
-      if (saved) {
-        savedItems = JSON.parse(saved) as CartItem[];
-      }
-    } catch {
-      savedItems = [];
-    }
-
-    // Schedule state update in microtask to prevent synchronous setState in effect warning & hydration mismatch
-    queueMicrotask(() => {
-      setItems(savedItems);
-      setLoadedKey(cartKey);
-    });
-  }, [cartKey]);
-
-  // Persist to cookies on every change (only if key matches the loaded key)
-  useEffect(() => {
-    if (loadedKey === cartKey) {
-      Cookies.set(cartKey, JSON.stringify(items), { expires: 14 });
-    }
-  }, [items, cartKey, loadedKey]);
-
-  const addItem = useCallback((product: Product, quantity = 1) => {
+  const addItem = useCallback((item: Item, quantity = 1) => {
     setItems((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
+      const existing = prev.find((i) => i.id === item.id);
       if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
+        return prev.map((i) =>
+          i.id === item.id
+            ? { ...i, quantity: i.quantity + quantity }
+            : i
         );
       }
       return [
         ...prev,
         {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.image,
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          image: item.image,
           quantity,
         },
       ];
     });
-    showToast('success', `${product.name} added to cart!`);
-    const categorySound = getSoundForCategory(product.category || product.categorySlug || product.name);
+    showToast('success', `${item.name} added to cart!`);
+    const categorySound = getSoundForCategory(item.category || item.categorySlug || item.name);
     playSound(categorySound);
   }, []);
 
-  const removeItem = useCallback((productId: string) => {
+  const removeItem = useCallback((itemId: string) => {
     setItems((prev) => {
-      const item = prev.find((i) => i.id === productId);
+      const item = prev.find((i) => i.id === itemId);
       if (item) {
         showToast('info', `${item.name} removed from cart`);
         playSound('cart-remove');
       }
-      return prev.filter((i) => i.id !== productId);
+      return prev.filter((i) => i.id !== itemId);
     });
   }, []);
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
+  const updateQuantity = useCallback((itemId: string, quantity: number) => {
     if (quantity <= 0) {
       setItems((prev) => {
-        const item = prev.find((i) => i.id === productId);
+        const item = prev.find((i) => i.id === itemId);
         if (item) {
           showToast('info', `${item.name} removed from cart`);
           playSound('cart-remove');
         }
-        return prev.filter((i) => i.id !== productId);
+        return prev.filter((i) => i.id !== itemId);
       });
       return;
     }
     setItems((prev) =>
       prev.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
+        item.id === itemId ? { ...item, quantity } : item
       )
     );
   }, []);

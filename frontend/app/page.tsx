@@ -4,13 +4,13 @@ import { useEffect, useState, useCallback } from 'react';
 import ShopLayout from '@/components/templates/ShopLayout';
 import HeroSection from '@/components/organisms/HeroSection';
 import CategoryShowcase from '@/components/organisms/CategoryShowcase';
-import FeaturedProducts from '@/components/organisms/FeaturedProducts';
+import FeaturedItems from '@/components/organisms/FeaturedItems';
 import AboutSection from '@/components/organisms/AboutSection';
 import CustomerCarousel from '@/components/organisms/CustomerCarousel';
 import BenefitsSection from '@/components/organisms/BenefitsSection';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
-import { productsService } from '@/services/products.service';
+import { itemsService } from '@/services/items.service';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -26,19 +26,19 @@ export default function Home() {
   const [msgIndex, setMsgIndex] = useState(0);
 
   const featuredQuery = useQuery({
-    queryKey: ['featured-homepage-products'],
+    queryKey: ['featured-homepage-items'],
     queryFn: async (): Promise<any[]> => {
-      const [productsRes, featuredRes] = await Promise.all([
-        productsService.getAll(),
-        productsService.getFeaturedIds(),
+      const [itemsRes, featuredRes] = await Promise.all([
+        itemsService.getAll(),
+        itemsService.getFeaturedIds(),
       ]);
 
-      if (!productsRes.success || !productsRes.data) {
-        throw new Error(productsRes.message || 'Failed to load products.');
+      if (!itemsRes.success || !itemsRes.data) {
+        throw new Error(itemsRes.message || 'Failed to load items.');
       }
 
-      const allProducts = productsRes.data || [];
-      const allAvailable = allProducts.filter((p: any) => p.available !== false);
+      const allItems = itemsRes.data || [];
+      const allAvailable = allItems.filter((p: any) => p.available !== false);
 
       let featuredList: any[] = [];
       const featuredData = (featuredRes.success && featuredRes.data) ? featuredRes.data : [];
@@ -48,7 +48,7 @@ export default function Home() {
           .filter(Boolean);
       }
 
-      // Fill up to 8 products if available
+      // Fill up to 8 items if available
       if (featuredList.length < 8) {
         const filled = [...featuredList];
         const filledIds = new Set(filled.map((p: any) => p.id));
@@ -67,7 +67,7 @@ export default function Home() {
     staleTime: 1000 * 60 * 10, // 10 minutes client memory cache
   });
 
-  const featuredProducts = featuredQuery.data ?? [];
+  const featuredItems = featuredQuery.data ?? [];
   const loading = featuredQuery.isLoading;
   const error = featuredQuery.error ? (featuredQuery.error.message || 'Failed to fetch catalog.') : null;
   const handleRetry = useCallback(() => {
@@ -91,7 +91,7 @@ export default function Home() {
       {/* Shop by Category */}
       <CategoryShowcase />
 
-      {/* Featured Products */}
+      {/* Featured Items */}
       {loading ? (
         <div className="py-16 flex flex-col items-center justify-center gap-6">
           {/* Animated paw print orb */}
@@ -124,7 +124,7 @@ export default function Home() {
           <ErrorState onRetry={handleRetry} description={error} />
         </div>
       ) : (
-        <FeaturedProducts products={featuredProducts} />
+        <FeaturedItems items={featuredItems} />
       )}
 
       {/* About Al Nader */}

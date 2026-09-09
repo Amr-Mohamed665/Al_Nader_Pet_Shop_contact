@@ -40,8 +40,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         )}
       >
         {/* Brand area with Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800 flex-shrink-0">
-          <div className="bg-white rounded-xl p-1 shadow-sm border border-white/20 flex items-center justify-center">
+        <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800 flex-shrink-0">
+          <div className="bg-white rounded-xl px-4 py-1.5 shadow-sm border border-white/20 flex items-center justify-center">
             <Logo href="/admin" className="h-8 w-32" />
           </div>
           {/* Mobile close button */}
@@ -74,7 +74,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               {link.label === 'Dashboard' && (
                 <i className={cn('fa-solid fa-chart-simple mr-2.5 w-4 text-center text-[13px]', isActive(link.href) ? 'text-white' : 'text-slate-500')}></i>
               )}
-              {link.label === 'Manage Products' && (
+              {link.label === 'Manage Items' && (
                 <i className={cn('fa-solid fa-bone mr-2.5 w-4 text-center text-[13px]', isActive(link.href) ? 'text-white' : 'text-slate-500')}></i>
               )}
               {link.label === 'Manage Categories' && (

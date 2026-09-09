@@ -3,7 +3,7 @@ import type { NavLink, ContactInfo } from '@/types';
 export const SHOP_NAV_LINKS: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Blog', href: '/blog' },
-  { label: 'All Products', href: '/products' },
+  { label: 'All Items', href: '/items' },
   { label: 'Dogs', href: '/category/dogs' },
   { label: 'Cats', href: '/category/cats' },
   { label: 'Birds', href: '/category/birds' },
@@ -13,7 +13,7 @@ export const SHOP_NAV_LINKS: NavLink[] = [
 
 export const ADMIN_NAV_LINKS: NavLink[] = [
   { label: 'Dashboard', href: '/admin' },
-  { label: 'Manage Products', href: '/admin/products' },
+  { label: 'Manage Items', href: '/admin/items' },
   { label: 'Manage Categories', href: '/admin/categories' },
   { label: 'Manage Blogs', href: '/admin/blogs' },
   { label: 'Manage Orders', href: '/admin/orders' },
@@ -22,7 +22,7 @@ export const ADMIN_NAV_LINKS: NavLink[] = [
 export const FOOTER_QUICK_LINKS: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Pet Blog', href: '/blog' },
-  { label: 'All Products', href: '/products' },
+  { label: 'All Items', href: '/items' },
   { label: 'Dogs', href: '/category/dogs' },
   { label: 'Cats', href: '/category/cats' },
   { label: 'Birds', href: '/category/birds' },

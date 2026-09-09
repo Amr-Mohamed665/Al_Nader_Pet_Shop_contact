@@ -1,28 +1,28 @@
 import api from './api';
-import type { ApiResponse, Product } from '@/types';
+import type { ApiResponse, Item } from '@/types';
 
-interface WishlistCheckResponse extends ApiResponse<Product> {
+interface WishlistCheckResponse extends ApiResponse<Item> {
   inWishlist?: boolean;
 }
 
 export const wishlistService = {
-  async getAll(): Promise<ApiResponse<Product[]>> {
-    const { data } = await api.get<ApiResponse<Product[]>>('/wishlist');
+  async getAll(): Promise<ApiResponse<Item[]>> {
+    const { data } = await api.get<ApiResponse<Item[]>>('/wishlist');
     return data;
   },
 
-  async add(productId: string): Promise<ApiResponse<Product>> {
-    const { data } = await api.post<ApiResponse<Product>>(`/wishlist/${productId}`);
+  async add(itemId: string): Promise<ApiResponse<Item>> {
+    const { data } = await api.post<ApiResponse<Item>>(`/wishlist/${itemId}`);
     return data;
   },
 
-  async remove(productId: string): Promise<ApiResponse<void>> {
-    const { data } = await api.delete<ApiResponse<void>>(`/wishlist/${productId}`);
+  async remove(itemId: string): Promise<ApiResponse<void>> {
+    const { data } = await api.delete<ApiResponse<void>>(`/wishlist/${itemId}`);
     return data;
   },
 
-  async check(productId: string): Promise<WishlistCheckResponse> {
-    const { data } = await api.get<WishlistCheckResponse>(`/wishlist/${productId}/check`);
+  async check(itemId: string): Promise<WishlistCheckResponse> {
+    const { data } = await api.get<WishlistCheckResponse>(`/wishlist/${itemId}/check`);
     return data;
   },
 

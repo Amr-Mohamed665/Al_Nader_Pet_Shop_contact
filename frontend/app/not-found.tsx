@@ -73,11 +73,11 @@ export default function NotFound() {
             <i className="fa-solid fa-house"></i> Back to Home
           </Button>
           <Button
-            href="/products"
+            href="/items"
             variant="outline"
             className="w-full sm:w-auto px-6 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs uppercase font-extrabold tracking-wider rounded-2xl cursor-pointer flex items-center justify-center gap-2"
           >
-            <i className="fa-solid fa-bag-shopping"></i> Browse Products
+            <i className="fa-solid fa-bag-shopping"></i> Browse Items
           </Button>
         </div>
       </div>

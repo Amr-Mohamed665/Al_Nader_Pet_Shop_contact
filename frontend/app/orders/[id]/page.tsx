@@ -185,7 +185,7 @@ export default function OrderDetailPage() {
             <Button variant="outline" onClick={() => router.push('/orders')} className="font-bold text-xs">
               ← All Orders
             </Button>
-            <Button variant="primary" onClick={() => router.push('/products')} className="font-bold text-xs">
+            <Button variant="primary" onClick={() => router.push('/items')} className="font-bold text-xs">
               Continue Shopping 🛒
             </Button>
           </div>

@@ -74,18 +74,21 @@ export default function DashboardStats({
         </span>
       </StatCard>
 
-      {/* Products Card */}
-      <StatCard
-        icon="fa-solid fa-bone"
-        iconBgClass="bg-purple-50"
-        iconColorClass="text-purple-500"
-        label="Active Catalog"
-        subLabel="Items in the database"
-      >
-        <span className="text-2xl font-extrabold text-slate-900 tracking-tight">
-          {productsCount}
-        </span>
-      </StatCard>
+      {/* Items Card */}
+      <Link href="/admin/items">
+        <StatCard
+          icon="fa-solid fa-bone"
+          iconBgClass="bg-purple-50"
+          iconColorClass="text-purple-500"
+          label="Active Catalog"
+          subLabel="Click to manage items"
+        >
+          <span className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center justify-between">
+            {productsCount}
+            <i className="fa-solid fa-arrow-right text-xs text-purple-500" />
+          </span>
+        </StatCard>
+      </Link>
 
       {/* Blog Articles Card */}
       <Link href="/admin/blogs">

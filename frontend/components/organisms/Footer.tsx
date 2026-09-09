@@ -27,7 +27,7 @@ export default function Footer() {
     }));
 
   const categoryLinks: FooterLink[] = [
-    { label: 'All Products', href: '/products' },
+    { label: 'All Items', href: '/items' },
     ...animalCategories,
     { label: 'Accessories', href: '/accessories' },
   ];
@@ -196,7 +196,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col gap-2 items-center md:items-start">
             <span className="text-xs text-purple-300/80 text-center md:text-left">
-              © {new Date().getFullYear()} Al Nader Pets & Accessories Trading L.L.C. All Rights Reserved.
+              © 2018 Al Nader Pets & Accessories Trading L.L.C. All Rights Reserved.
             </span>
           </div>
 
