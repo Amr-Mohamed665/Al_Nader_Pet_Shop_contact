@@ -15,7 +15,7 @@ import type { Category } from '@/types';
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, isAdmin, logout, loading } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { count } = useCart();
   const { data: categories = [] } = useCategoriesQuery();
   const { tree: accessoriesTree } = useAccessoriesTree();
@@ -245,7 +245,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Action Buttons */}
-            <div className="hidden md:flex items-center justify-end gap-2 lg:gap-3 flex-shrink-0 min-w-[270px]">
+            <div className="hidden md:flex items-center justify-end gap-2 lg:gap-3 flex-shrink-0">
               {/* Wishlist Button */}
               <Link
                 href="/wishlist"
@@ -275,12 +275,7 @@ export default function Navbar() {
               </Link>
 
               {/* Auth Dropdown / Buttons */}
-              {loading ? (
-                <div className="flex items-center gap-2.5">
-                  <div className="h-[38px] w-[74px] bg-slate-200/60 rounded-xl animate-pulse" />
-                  <div className="h-[38px] w-[90px] bg-slate-200/60 rounded-xl animate-pulse" />
-                </div>
-              ) : isAuthenticated ? (
+              {isAuthenticated ? (
                 <div className="relative">
                   <button
                     onClick={() => setProfileDropdownOpen((prev) => !prev)}
@@ -342,12 +337,12 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2 lg:gap-2.5">
                   <Button
                     variant="outline"
                     size="md"
                     href="/login"
-                    className="px-5 py-2 text-sm font-extrabold text-purple-700 border-purple-200 hover:bg-purple-50 hover:border-purple-300 rounded-xl transition-all shadow-xs"
+                    className="px-3.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold text-purple-700 border-purple-200 hover:bg-purple-50 hover:border-purple-300 rounded-xl transition-all shadow-xs"
                   >
                     Login
                   </Button>
@@ -355,7 +350,7 @@ export default function Navbar() {
                     variant="primary"
                     size="md"
                     href="/register"
-                    className="px-5 py-2 text-sm font-extrabold text-white bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 rounded-xl shadow-md shadow-purple-600/25 transition-all hover:scale-102"
+                    className="px-3.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold text-white bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 rounded-xl shadow-md shadow-purple-600/25 transition-all hover:scale-102"
                   >
                     Register
                   </Button>
@@ -532,12 +527,7 @@ export default function Navbar() {
 
               <hr className="border-slate-100 !my-3" />
 
-              {loading ? (
-                <div className="flex flex-col gap-2.5 pt-2">
-                  <div className="h-[46px] w-full bg-slate-100 rounded-xl animate-pulse" />
-                  <div className="h-[46px] w-full bg-slate-100 rounded-xl animate-pulse" />
-                </div>
-              ) : isAuthenticated ? (
+              {isAuthenticated ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 px-3 py-2">
                     <Avatar name={user?.name} />

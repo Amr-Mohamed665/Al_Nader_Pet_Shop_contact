@@ -31,28 +31,56 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const getSavedToken = (): string | null => {
+  if (typeof window === 'undefined') return null;
+  return Cookies.get('pet-shop-token') || null;
+};
+
+const getSavedUser = (): User | null => {
+  if (typeof window === 'undefined') return null;
+  const saved = Cookies.get('pet-shop-user');
+  if (saved) {
+    try {
+      return JSON.parse(saved) as User;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+};
+
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(getSavedUser);
+  const [token, setToken] = useState<string | null>(getSavedToken);
+  const [loading, setLoading] = useState(false);
 
   const isAuthenticated = !!user && !!token;
   const isAdmin = user?.role === 'admin';
 
-  // Restore auth on mount
+  // Verify/refresh auth on mount in background without blocking initial UI
   useEffect(() => {
+    let isMounted = true;
     const restoreAuth = async () => {
       try {
         const savedToken = Cookies.get('pet-shop-token');
         const savedUser = Cookies.get('pet-shop-user');
 
-        if (savedToken && savedUser) {
-          setToken(savedToken);
-          setUser(JSON.parse(savedUser) as User);
+        if (savedToken) {
+          if (savedUser) {
+            try {
+              const parsed = JSON.parse(savedUser) as User;
+              if (isMounted) {
+                setUser((curr) => curr || parsed);
+                setToken((curr) => curr || savedToken);
+              }
+            } catch {
+              // ignore parse error
+            }
+          }
 
-          // Verify token is still valid
+          // Verify token is still valid in background
           const { data } = await authService.getMe();
-          if (data) {
+          if (isMounted && data) {
             setUser(data);
             Cookies.set('pet-shop-user', JSON.stringify(data), { expires: 7 });
           }
@@ -61,14 +89,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Token expired or invalid
         Cookies.remove('pet-shop-token');
         Cookies.remove('pet-shop-user');
-        setToken(null);
-        setUser(null);
-      } finally {
-        setLoading(false);
+        if (isMounted) {
+          setToken(null);
+          setUser(null);
+        }
       }
     };
 
     void restoreAuth();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = useCallback(
