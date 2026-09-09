@@ -55,13 +55,13 @@ export default function ImageUploader({
 
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [showCloudReminder, setShowCloudReminder] = useState(false);
-  const [saveErrorMessages, setSaveErrorMessages] = useState<string[] | null>(null);
+  const [dismissedErrors, setDismissedErrors] = useState(false);
 
-  useEffect(() => {
-    if (formErrorMessages && formErrorMessages.length > 0) {
-      setSaveErrorMessages(formErrorMessages);
-    }
-  }, [formErrorMessages]);
+  // Compute active error messages directly from props (no derived state needed)
+  const saveErrorMessages =
+    !dismissedErrors && formErrorMessages && formErrorMessages.length > 0
+      ? formErrorMessages
+      : null;
 
   const imageFileInputRef = useRef<HTMLInputElement>(null);
   const videoFileInputRef = useRef<HTMLInputElement>(null);
@@ -70,47 +70,18 @@ export default function ImageUploader({
     onChange(newUrl);
     if (newUrl) {
       setShowCloudReminder(true);
-      setSaveErrorMessages(null);
+      setDismissedErrors(false);
     } else {
       setShowCloudReminder(false);
     }
   };
 
   const handleSaveNow = () => {
-    setSaveErrorMessages(null);
+    setDismissedErrors(true);
     const submitBtn = document.querySelector<HTMLButtonElement>('button[type="submit"]');
     if (!submitBtn) return;
 
     submitBtn.click();
-
-    setTimeout(() => {
-      const form = submitBtn.closest("form") || document;
-      const errorSelectors = [
-        "p.text-red-500",
-        "p.text-rose-500",
-        "p.text-rose-600",
-        "span.text-red-500",
-        "span.text-rose-500",
-        "span.text-rose-600",
-        '[role="alert"]',
-        ".field-error",
-      ];
-      const errorEls = form.querySelectorAll(errorSelectors.join(","));
-      const messages: string[] = [];
-
-      errorEls.forEach((el) => {
-        if (el.closest(".fixed")) return;
-        const raw = (el as HTMLElement).innerText || (el as HTMLElement).textContent || "";
-        const cleanText = raw.replace(/[\s\u00A0\u200B]+/g, " ").trim();
-        if (cleanText.length > 0 && !messages.includes(cleanText)) {
-          messages.push(cleanText);
-        }
-      });
-
-      if (messages.length > 0) {
-        setSaveErrorMessages(messages);
-      }
-    }, 350);
   };
 
   // Image Upload Handler
@@ -119,13 +90,11 @@ export default function ImageUploader({
     if (!isImageFile) {
       const msg = "Only image files (PNG, JPG, JPEG, WEBP) are allowed here.";
       setUploadError(msg);
-      setSaveErrorMessages([msg]);
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
       const msg = "Image size must be less than 10MB.";
       setUploadError(msg);
-      setSaveErrorMessages([msg]);
       return;
     }
 
@@ -148,7 +117,6 @@ export default function ImageUploader({
       console.error("Cloudinary upload error:", err);
       const msg = err.message || "Error uploading image. Please try again.";
       setUploadError(msg);
-      setSaveErrorMessages([msg]);
     } finally {
       setIsUploadingImage(false);
     }
@@ -160,13 +128,11 @@ export default function ImageUploader({
     if (!isVideoFile) {
       const msg = "Only video files (MP4, WEBM, MOV) are allowed here.";
       setUploadError(msg);
-      setSaveErrorMessages([msg]);
       return;
     }
     if (file.size > 100 * 1024 * 1024) {
       const msg = "Video size must be less than 100MB.";
       setUploadError(msg);
-      setSaveErrorMessages([msg]);
       return;
     }
 
@@ -189,7 +155,6 @@ export default function ImageUploader({
       console.error("Cloudinary video upload error:", err);
       const msg = err.message || "Error uploading video. Please try again.";
       setUploadError(msg);
-      setSaveErrorMessages([msg]);
     } finally {
       setIsUploadingVideo(false);
     }
@@ -610,7 +575,7 @@ export default function ImageUploader({
               type="button"
               onClick={() => {
                 setShowCloudReminder(false);
-                setSaveErrorMessages(null);
+                setDismissedErrors(true);
               }}
               className="w-6 h-6 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 text-white transition-all shrink-0"
               title="Close"
