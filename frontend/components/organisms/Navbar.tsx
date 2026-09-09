@@ -111,9 +111,9 @@ export default function Navbar() {
     <>
       <nav className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex min-h-[80px] py-2 justify-between items-center">
+          <div className="relative flex min-h-[80px] py-2 justify-between items-center">
             {/* Logo & Fancy Handwritten Slogan Underneath */}
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center z-10 flex-shrink-0">
               <div className="flex-shrink-0 bg-white rounded-xl px-2 py-1 border border-slate-200/80 shadow-sm">
                 <Logo />
               </div>
@@ -125,8 +125,8 @@ export default function Navbar() {
               </span>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-3 lg:space-x-6 xl:space-x-8">
+            {/* Desktop Navigation - Absolute Centered so it NEVER moves on the X-axis */}
+            <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 space-x-3 lg:space-x-6 xl:space-x-8 z-20">
               <Link
                 href="/"
                 className={`text-xs md:text-sm font-bold transition-colors whitespace-nowrap ${
@@ -245,7 +245,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Action Buttons */}
-            <div className="hidden md:flex items-center justify-end gap-2 lg:gap-3 flex-shrink-0">
+            <div className="hidden md:flex items-center justify-end gap-2 lg:gap-3 flex-shrink-0 ml-auto z-10">
               {/* Wishlist Button */}
               <Link
                 href="/wishlist"
