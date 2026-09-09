@@ -10,6 +10,7 @@ import ErrorState from '@/components/molecules/ErrorState';
 import useItem from '@/hooks/useItem';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { itemsService } from '@/services/items.service';
+import type { Item } from '@/types';
 
 export default function EditItemPage() {
   const { id } = useParams<{ id: string }>();
@@ -23,13 +24,24 @@ export default function EditItemPage() {
     mutationFn: (data: any) => itemsService.update(id!, data),
     onSuccess: async (response) => {
       if (response.success) {
+        if (response.data) {
+          const updatedItem = response.data;
+          // Immediately update React Query cache with edited item
+          queryClient.setQueryData<Item[]>(['admin-items'], (old) =>
+            old ? old.map((it) => (it.id === id ? { ...it, ...updatedItem } : it)) : [updatedItem]
+          );
+          queryClient.setQueryData(['item', id], updatedItem);
+        }
+
         await Promise.all([
-          queryClient.invalidateQueries({ queryKey: ['items'] }),
-          queryClient.invalidateQueries({ queryKey: ['admin-items'] }),
-          queryClient.invalidateQueries({ queryKey: ['item', id] }),
-          queryClient.invalidateQueries({ queryKey: ['featured-homepage-items'] }),
+          queryClient.invalidateQueries({ queryKey: ['admin-items'], refetchType: 'all' }),
+          queryClient.invalidateQueries({ queryKey: ['items'], refetchType: 'all' }),
+          queryClient.invalidateQueries({ queryKey: ['item', id], refetchType: 'all' }),
+          queryClient.invalidateQueries({ queryKey: ['featured-homepage-items'], refetchType: 'all' }),
         ]);
+
         router.push('/admin/items');
+        router.refresh();
       } else {
         setSubmitError(response.message || 'Failed to update item.');
       }

@@ -358,6 +358,7 @@ export default function AdminItemsPage() {
       return response.data;
     },
     refetchOnMount: 'always',
+    staleTime: 0,
   });
 
   // Fetch featured item IDs

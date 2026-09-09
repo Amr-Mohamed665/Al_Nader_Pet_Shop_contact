@@ -6,9 +6,21 @@ export const itemsService = {
     const params: Record<string, string | boolean> = {};
     if (filters.search) params.search = filters.search;
     if (filters.category) params.category = filters.category;
-    if (filters.all) params.all = filters.all;
+    if (filters.all) {
+      params.all = filters.all;
+      params._t = Date.now().toString();
+    }
     try {
-      const res = await api.get<ApiResponse<Item[]>>('/menu', { params });
+      const res = await api.get<ApiResponse<Item[]>>('/menu', {
+        params,
+        headers: filters.all
+          ? {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              Pragma: 'no-cache',
+              Expires: '0',
+            }
+          : undefined,
+      });
       return res.data;
     } catch (err) {
       return { success: false, data: [], message: (err as Error).message };

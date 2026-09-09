@@ -8,6 +8,9 @@ export function getMenu(req: Request, res: Response): void {
   const { search, category, all } = req.query as Record<string, string | undefined>;
   const availableOnly = all !== 'true';
   const items = menuItemsStore.getAll({ search, category, availableOnly });
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(200).json({ success: true, count: items.length, data: items });
 }
 

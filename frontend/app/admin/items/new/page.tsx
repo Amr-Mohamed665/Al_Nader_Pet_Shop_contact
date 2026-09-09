@@ -7,6 +7,7 @@ import AdminRoute from '@/components/guards/AdminRoute';
 import ItemForm from '@/components/organisms/ItemForm';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { itemsService } from '@/services/items.service';
+import type { Item } from '@/types';
 
 export default function NewItemPage() {
   const router = useRouter();
@@ -17,12 +18,23 @@ export default function NewItemPage() {
     mutationFn: (data: any) => itemsService.create(data),
     onSuccess: async (response) => {
       if (response.success) {
+        if (response.data) {
+          // Immediately populate React Query cache with the new item
+          queryClient.setQueryData<Item[]>(['admin-items'], (old) => {
+            if (!old) return [response.data];
+            const exists = old.some((it) => it.id === response.data.id);
+            return exists ? old : [...old, response.data];
+          });
+        }
+
         await Promise.all([
-          queryClient.invalidateQueries({ queryKey: ['items'] }),
-          queryClient.invalidateQueries({ queryKey: ['admin-items'] }),
-          queryClient.invalidateQueries({ queryKey: ['featured-homepage-items'] }),
+          queryClient.invalidateQueries({ queryKey: ['admin-items'], refetchType: 'all' }),
+          queryClient.invalidateQueries({ queryKey: ['items'], refetchType: 'all' }),
+          queryClient.invalidateQueries({ queryKey: ['featured-homepage-items'], refetchType: 'all' }),
         ]);
+
         router.push('/admin/items');
+        router.refresh();
       } else {
         setError(response.message || 'Failed to create item.');
       }
