@@ -71,7 +71,8 @@ export function useCategoriesQuery(): UseQueryResult<Category[]> {
       return DEFAULT_CATEGORIES;
     },
     placeholderData: DEFAULT_CATEGORIES,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 
@@ -108,8 +109,12 @@ export function useCreateCategory() {
       queryClient.setQueryData(['categories'], updated);
       return created;
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['categories'] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['categories'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['admin-items'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['items'], refetchType: 'all' }),
+      ]);
     },
   });
 }
@@ -140,8 +145,12 @@ export function useUpdateCategory() {
       queryClient.setQueryData(['categories'], updatedList);
       return updatedItem || ({ ...data, id: targetId } as Category);
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['categories'] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['categories'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['admin-items'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['items'], refetchType: 'all' }),
+      ]);
     },
   });
 }
@@ -163,10 +172,12 @@ export function useDeleteCategory() {
       queryClient.setQueryData(['categories'], updatedList);
       return { success: true };
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['categories'] });
-      void queryClient.invalidateQueries({ queryKey: ['items'] });
-      void queryClient.invalidateQueries({ queryKey: ['admin-items'] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['categories'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['items'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['admin-items'], refetchType: 'all' }),
+      ]);
     },
   });
 }
@@ -192,8 +203,8 @@ export function useReorderCategories() {
       queryClient.setQueryData(['categories'], reordered);
       return reordered;
     },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['categories'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['categories'], refetchType: 'all' });
     },
   });
 }

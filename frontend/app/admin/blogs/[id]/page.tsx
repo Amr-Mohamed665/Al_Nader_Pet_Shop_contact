@@ -152,6 +152,7 @@ export default function EditBlogPage({ params }: PageProps) {
       if (res.success) {
         showToast('success', 'Blog article updated successfully!');
         router.push('/admin/blogs');
+        router.refresh();
       } else {
         setSubmitError(res.message || 'Failed to update article.');
       }

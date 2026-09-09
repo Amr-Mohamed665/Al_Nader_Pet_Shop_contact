@@ -120,6 +120,7 @@ export default function CreateBlogPage() {
       if (res.success) {
         showToast('success', 'Blog article created successfully!');
         router.push('/admin/blogs');
+        router.refresh();
       } else {
         setSubmitError(res.message || 'Failed to publish article.');
       }

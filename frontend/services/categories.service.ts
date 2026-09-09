@@ -4,7 +4,14 @@ import type { ApiResponse, Category, CreateCategoryInput, UpdateCategoryInput } 
 export const categoriesService = {
   async getAll(): Promise<ApiResponse<Category[]>> {
     try {
-      const { data } = await api.get<ApiResponse<Category[]>>('/categories');
+      const { data } = await api.get<ApiResponse<Category[]>>('/categories', {
+        params: { _t: Date.now().toString() },
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      });
       return data;
     } catch (_) {
       return { success: false, data: [] };

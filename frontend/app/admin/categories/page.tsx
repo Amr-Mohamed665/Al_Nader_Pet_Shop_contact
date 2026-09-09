@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   DndContext,
   closestCenter,
@@ -28,6 +29,7 @@ import ConfirmModal from '@/components/molecules/ConfirmModal';
 import Spinner from '@/components/atoms/Spinner';
 import ErrorState from '@/components/molecules/ErrorState';
 import ImageUploader from '@/components/molecules/ImageUploader';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   useCategoriesQuery,
   useCreateCategory,
@@ -355,6 +357,8 @@ function CategoryFormPage({ initial, onBack, onSave, existingSlugs, isSubmitting
 
 // ─── Main Page ──────────────────────────────────────────────────────────────
 export default function AdminCategoriesPage() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: categories = [], isLoading, error, refetch } = useCategoriesQuery();
 
   const createMutation = useCreateCategory();
@@ -389,7 +393,15 @@ export default function AdminCategoriesPage() {
         await updateMutation.mutateAsync({ id: targetId, data: form });
         showToast('success', 'Category updated successfully!');
       }
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['categories'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['admin-items'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['items'], refetchType: 'all' }),
+      ]);
+
       setView('list');
+      router.refresh();
     } catch (err: any) {
       showToast('error', err.response?.data?.message || err.message || 'Failed to save category.');
     }
@@ -402,6 +414,14 @@ export default function AdminCategoriesPage() {
       await deleteMutation.mutateAsync(targetId);
       showToast('success', 'Category deleted successfully!');
       setDeleteTarget(null);
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['categories'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['admin-items'], refetchType: 'all' }),
+        queryClient.invalidateQueries({ queryKey: ['items'], refetchType: 'all' }),
+      ]);
+
+      router.refresh();
     } catch (err: any) {
       showToast('error', err.response?.data?.message || err.message || 'Failed to delete category.');
     }

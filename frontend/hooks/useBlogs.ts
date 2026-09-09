@@ -12,7 +12,8 @@ export function useBlogsQuery(params?: { search?: string; category?: string }): 
       }
       return [];
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 
@@ -25,6 +26,8 @@ export function useBlogQuery(slugOrId: string): UseQueryResult<BlogPost | null> 
       return res.success && res.data ? res.data : null;
     },
     enabled: Boolean(slugOrId),
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 
@@ -32,8 +35,13 @@ export function useCreateBlogMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: CreateBlogPostInput) => blogsService.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blogs'] });
+    onSuccess: (res) => {
+      if (res?.success && res.data) {
+        queryClient.setQueryData<BlogPost[]>(['blogs', '', ''], (old) =>
+          old ? [res.data, ...old] : [res.data]
+        );
+      }
+      void queryClient.invalidateQueries({ queryKey: ['blogs'], refetchType: 'all' });
     },
   });
 }
@@ -42,9 +50,15 @@ export function useUpdateBlogMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateBlogPostInput }) => blogsService.update(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['blogs'] });
-      queryClient.invalidateQueries({ queryKey: ['blog', variables.id] });
+    onSuccess: (res, variables) => {
+      if (res?.success && res.data) {
+        queryClient.setQueryData<BlogPost[]>(['blogs', '', ''], (old) =>
+          old ? old.map((b) => (b.id === variables.id ? { ...b, ...res.data } : b)) : [res.data]
+        );
+        queryClient.setQueryData(['blog', variables.id], res.data);
+      }
+      void queryClient.invalidateQueries({ queryKey: ['blogs'], refetchType: 'all' });
+      void queryClient.invalidateQueries({ queryKey: ['blog', variables.id], refetchType: 'all' });
     },
   });
 }
@@ -53,8 +67,11 @@ export function useDeleteBlogMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => blogsService.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['blogs'] });
+    onSuccess: (_, id) => {
+      queryClient.setQueryData<BlogPost[]>(['blogs', '', ''], (old) =>
+        old ? old.filter((b) => b.id !== id) : []
+      );
+      void queryClient.invalidateQueries({ queryKey: ['blogs'], refetchType: 'all' });
     },
   });
 }

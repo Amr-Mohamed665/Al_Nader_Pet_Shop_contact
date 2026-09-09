@@ -8,17 +8,38 @@ export const ordersService = {
   },
 
   async getMyOrders(): Promise<ApiResponse<Order[]>> {
-    const { data } = await api.get<ApiResponse<Order[]>>('/orders/my');
+    const { data } = await api.get<ApiResponse<Order[]>>('/orders/my', {
+      params: { _t: Date.now().toString() },
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    });
     return data;
   },
 
   async getAll(): Promise<ApiResponse<Order[]>> {
-    const { data } = await api.get<ApiResponse<Order[]>>('/orders');
+    const { data } = await api.get<ApiResponse<Order[]>>('/orders', {
+      params: { _t: Date.now().toString() },
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    });
     return data;
   },
 
   async getById(id: string): Promise<ApiResponse<Order>> {
-    const { data } = await api.get<ApiResponse<Order>>(`/orders/${id}`);
+    const { data } = await api.get<ApiResponse<Order>>(`/orders/${id}`, {
+      params: { _t: Date.now().toString() },
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+      },
+    });
     return data;
   },
 

@@ -4,7 +4,17 @@ import type { ApiResponse, BlogPost, CreateBlogPostInput, UpdateBlogPostInput } 
 export const blogsService = {
   async getAll(params?: { search?: string; category?: string }): Promise<ApiResponse<BlogPost[]>> {
     try {
-      const { data } = await api.get<ApiResponse<BlogPost[]>>('/blogs', { params });
+      const { data } = await api.get<ApiResponse<BlogPost[]>>('/blogs', {
+        params: {
+          ...params,
+          _t: Date.now().toString(),
+        },
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      });
       return data;
     } catch (_) {
       return { success: false, data: [] };

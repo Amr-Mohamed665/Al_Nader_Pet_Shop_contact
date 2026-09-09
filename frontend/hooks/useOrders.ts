@@ -34,6 +34,8 @@ export default function useOrders(isAdmin = false): UseOrdersReturn {
       throw new Error(response.message || 'Failed to fetch orders.');
     },
     enabled: isAuthenticated,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const deleteMutation = useMutation({
@@ -60,7 +62,7 @@ export default function useOrders(isAdmin = false): UseOrdersReturn {
     },
     onSettled: () => {
       // Refetch after mutation to ensure server state consistency
-      void queryClient.invalidateQueries({ queryKey });
+      void queryClient.invalidateQueries({ queryKey, refetchType: 'all' });
     },
   });
 
@@ -86,7 +88,7 @@ export default function useOrders(isAdmin = false): UseOrdersReturn {
       }
     },
     onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey });
+      void queryClient.invalidateQueries({ queryKey, refetchType: 'all' });
     },
   });
 

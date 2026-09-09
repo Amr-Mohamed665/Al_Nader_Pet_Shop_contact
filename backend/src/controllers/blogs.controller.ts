@@ -9,6 +9,9 @@ export function getBlogs(req: Request, res: Response): void {
     search: search ? String(search) : undefined,
     category: category ? String(category) : undefined,
   });
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(200).json({ success: true, count: blogs.length, data: blogs });
 }
 
@@ -19,6 +22,9 @@ export function getBlog(req: Request, res: Response, next: NextFunction): void {
     next(new ApiError(404, `Blog post '${req.params['slugOrId']}' was not found.`));
     return;
   }
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(200).json({ success: true, data: blog });
 }
 

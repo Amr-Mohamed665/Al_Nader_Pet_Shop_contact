@@ -19,12 +19,18 @@ export function createOrder(req: Request, res: Response, next: NextFunction): vo
 /** GET /api/orders/my  (any logged-in user — their own order history) */
 export function getMyOrders(req: Request, res: Response): void {
   const orders = ordersStore.getByUser(req.user!.id);
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(200).json({ success: true, count: orders.length, data: orders });
 }
 
 /** GET /api/orders  (admin only — every order, from every customer) */
 export function getAllOrders(req: Request, res: Response): void {
   const orders = ordersStore.getAll();
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(200).json({ success: true, count: orders.length, data: orders });
 }
 
@@ -39,6 +45,9 @@ export function getOrder(req: Request, res: Response, next: NextFunction): void 
     next(new ApiError(403, 'You can only view your own orders.'));
     return;
   }
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(200).json({ success: true, data: order });
 }
 

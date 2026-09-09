@@ -16,6 +16,9 @@ function isAccessoriesDescendant(parentId: string): boolean {
 /** GET /api/categories  (public) */
 export function getCategories(req: Request, res: Response): void {
   const categories = categoriesStore.getAll();
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(200).json({ success: true, count: categories.length, data: categories });
 }
 
@@ -29,6 +32,9 @@ export function getCategory(req: Request, res: Response, next: NextFunction): vo
     next(new ApiError(404, `Category with id or slug '${req.params['id']}' was not found.`));
     return;
   }
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.status(200).json({ success: true, data: category });
 }
 
