@@ -115,7 +115,7 @@ export default function AdminUsersPage() {
       <AdminLayout>
         <div className="space-y-6 animate-fade-in">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                 Manage Users
@@ -124,7 +124,7 @@ export default function AdminUsersPage() {
                 View, promote, demote, or remove registered accounts.
               </p>
             </div>
-            <div className="flex items-center gap-2 text-xs flex-shrink-0">
+            <div className="flex items-center gap-2 text-xs self-start sm:self-auto flex-shrink-0">
               <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 font-bold text-slate-500">
                 <i className="fa-solid fa-users text-slate-400 text-[12px]" />
                 <span>{counts.all} registered account{counts.all !== 1 ? 's' : ''}</span>
@@ -134,9 +134,9 @@ export default function AdminUsersPage() {
 
           {/* Search + Filter Row */}
           {!usersQuery.isLoading && !usersQuery.isError && (
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               {/* Search */}
-              <div className="relative flex-1 max-w-sm">
+              <div className="relative flex-1 w-full sm:max-w-xs">
                 <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[12px] pointer-events-none" />
                 <input
                   id="users-search"
@@ -144,12 +144,12 @@ export default function AdminUsersPage() {
                   placeholder="Search by name or email…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 text-xs font-semibold text-slate-800 bg-white border border-slate-200/80 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder:text-slate-400"
+                  className="w-full pl-9 pr-8 py-2.5 text-xs font-semibold text-slate-800 bg-white border border-slate-200/80 rounded-xl focus:outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder:text-slate-400"
                 />
                 {search && (
                   <button
                     onClick={() => setSearch('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1"
                   >
                     <i className="fa-solid fa-xmark text-[11px]" />
                   </button>
@@ -165,7 +165,7 @@ export default function AdminUsersPage() {
                     <button
                       key={tab.value}
                       onClick={() => setRoleFilter(tab.value)}
-                      className={`px-3.5 py-2 rounded-xl text-[11px] font-bold transition-all duration-150 flex items-center gap-1.5 ${
+                      className={`px-3 py-2 rounded-xl text-[11px] font-bold transition-all duration-150 flex items-center gap-1.5 ${
                         isActive
                           ? 'bg-teal-500 text-white shadow-md shadow-teal-500/15'
                           : 'bg-white text-slate-500 border border-slate-200/80 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50/40'
@@ -214,168 +214,316 @@ export default function AdminUsersPage() {
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/60">
-                    <th className="text-left px-5 py-3.5 font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                      Account
-                    </th>
-                    <th className="text-left px-4 py-3.5 font-bold text-slate-500 uppercase tracking-wider hidden sm:table-cell">
-                      Email
-                    </th>
-                    <th className="text-left px-4 py-3.5 font-bold text-slate-500 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th className="text-left px-4 py-3.5 font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">
-                      Joined
-                    </th>
-                    <th className="text-right px-5 py-3.5 font-bold text-slate-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {users.map((user) => {
-                    const isSelf = user.id === currentUser?.id;
-                    const isConfirmingDelete = confirmDeleteId === user.id;
-                    const isConfirmingRole = confirmRoleId === user.id;
-                    const newRole: UserRole = user.role === 'admin' ? 'user' : 'admin';
-                    const isDeletingThis = deleteMutation.isPending && confirmDeleteId === user.id;
-                    const isUpdatingRole = roleMutation.isPending && confirmRoleId === user.id;
+            <>
+              {/* Mobile Cards View (hidden on sm+) */}
+              <div className="block sm:hidden space-y-3">
+                {users.map((user) => {
+                  const isSelf = user.id === currentUser?.id;
+                  const isConfirmingDelete = confirmDeleteId === user.id;
+                  const isConfirmingRole = confirmRoleId === user.id;
+                  const newRole: UserRole = user.role === 'admin' ? 'user' : 'admin';
+                  const isDeletingThis = deleteMutation.isPending && confirmDeleteId === user.id;
+                  const isUpdatingRole = roleMutation.isPending && confirmRoleId === user.id;
 
-                    return (
-                      <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
-                        {/* Avatar + Name */}
-                        <td className="px-5 py-4">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-extrabold flex-shrink-0 ${
-                                user.role === 'admin'
-                                  ? 'bg-teal-100 text-teal-700'
-                                  : 'bg-slate-100 text-slate-600'
-                              }`}
-                            >
-                              {getInitials(user.name)}
+                  return (
+                    <div key={user.id} className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-3">
+                      {/* Top row: Avatar, Name & Role Badge */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-extrabold flex-shrink-0 ${
+                              user.role === 'admin'
+                                ? 'bg-teal-100 text-teal-700'
+                                : 'bg-slate-100 text-slate-600'
+                            }`}
+                          >
+                            {getInitials(user.name)}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-slate-800 text-sm truncate flex items-center gap-1.5 flex-wrap">
+                              <span>{user.name}</span>
+                              {isSelf && (
+                                <span className="text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-1.5 py-0.5 rounded-full flex-shrink-0">
+                                  You
+                                </span>
+                              )}
                             </div>
-                            <div className="min-w-0">
-                              <div className="font-bold text-slate-800 truncate">
-                                {user.name}
-                                {isSelf && (
-                                  <span className="ml-1.5 text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-1.5 py-0.5 rounded-full">
-                                    You
-                                  </span>
-                                )}
-                              </div>
-                              <div className="text-[11px] text-slate-400 truncate sm:hidden">
-                                {user.email}
-                              </div>
+                            <div className="text-xs text-slate-500 font-medium truncate flex items-center gap-1.5 mt-0.5">
+                              <i className="fa-solid fa-envelope text-[10px] text-slate-400 flex-shrink-0" />
+                              <span className="truncate">{user.email}</span>
                             </div>
                           </div>
-                        </td>
+                        </div>
 
-                        {/* Email */}
-                        <td className="px-4 py-4 hidden sm:table-cell">
-                          <span className="text-slate-600 font-medium">{user.email}</span>
-                        </td>
+                        <Badge variant={user.role === 'admin' ? 'primary' : 'slate'}>
+                          {user.role === 'admin' ? (
+                            <><i className="fa-solid fa-shield-halved mr-1 text-[9px]" />Admin</>
+                          ) : (
+                            <><i className="fa-solid fa-user mr-1 text-[9px]" />User</>
+                          )}
+                        </Badge>
+                      </div>
 
-                        {/* Role Badge */}
-                        <td className="px-4 py-4">
-                          <Badge variant={user.role === 'admin' ? 'primary' : 'slate'}>
-                            {user.role === 'admin' ? (
-                              <><i className="fa-solid fa-shield-halved mr-1 text-[9px]" />Admin</>
-                            ) : (
-                              <><i className="fa-solid fa-user mr-1 text-[9px]" />User</>
-                            )}
-                          </Badge>
-                        </td>
+                      {/* Info row: Joined Date */}
+                      <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-100">
+                        <span className="flex items-center gap-1.5 font-medium">
+                          <i className="fa-solid fa-calendar-days text-[11px]" />
+                          Joined {formatDate(user.createdAt)}
+                        </span>
+                      </div>
 
-                        {/* Joined Date */}
-                        <td className="px-4 py-4 hidden md:table-cell">
-                          <span className="text-slate-400 font-medium">{formatDate(user.createdAt)}</span>
-                        </td>
-
-                        {/* Actions */}
-                        <td className="px-5 py-4">
-                          <div className="flex items-center justify-end gap-2">
-                            {/* Role toggle */}
-                            {!isSelf && (
-                              isConfirmingRole ? (
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-[10px] text-slate-500 font-semibold whitespace-nowrap">
-                                    Make {newRole}?
-                                  </span>
-                                  <button
-                                    onClick={() => handleRoleToggle(user)}
-                                    disabled={isUpdatingRole}
-                                    className="px-2.5 py-1.5 rounded-lg bg-teal-500 text-white text-[10px] font-bold hover:bg-teal-600 transition-colors disabled:opacity-50 whitespace-nowrap"
-                                  >
-                                    {isUpdatingRole ? 'Saving…' : 'Confirm'}
-                                  </button>
-                                  <button
-                                    onClick={() => setConfirmRoleId(null)}
-                                    className="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold hover:bg-slate-200 transition-colors"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              ) : (
+                      {/* Action section */}
+                      {!isSelf && (
+                        <div className="pt-2 border-t border-slate-100">
+                          {isConfirmingRole ? (
+                            <div className="bg-teal-50/70 border border-teal-200/80 rounded-xl p-3 space-y-2">
+                              <p className="text-xs font-bold text-teal-900">
+                                Change role of <span className="font-extrabold">{user.name}</span> to <span className="uppercase text-teal-700">{newRole}</span>?
+                              </p>
+                              <div className="flex items-center gap-2">
                                 <button
-                                  onClick={() => setConfirmRoleId(user.id)}
-                                  title={`Change role to ${newRole}`}
-                                  className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-slate-200 text-slate-500 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50/50 transition-all whitespace-nowrap"
+                                  onClick={() => handleRoleToggle(user)}
+                                  disabled={isUpdatingRole}
+                                  className="flex-1 py-2 rounded-lg bg-teal-500 text-white text-xs font-bold hover:bg-teal-600 transition-colors disabled:opacity-50"
                                 >
-                                  <i className={`fa-solid ${newRole === 'admin' ? 'fa-shield-halved' : 'fa-user'} mr-1`} />
-                                  Make {newRole}
+                                  {isUpdatingRole ? 'Saving…' : 'Confirm'}
                                 </button>
-                              )
-                            )}
-
-                            {/* Delete */}
-                            {!isSelf && (
-                              isConfirmingDelete ? (
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-[10px] text-rose-500 font-semibold whitespace-nowrap">
-                                    Delete?
-                                  </span>
-                                  <button
-                                    onClick={() => deleteMutation.mutate(user.id)}
-                                    disabled={isDeletingThis}
-                                    className="px-2.5 py-1.5 rounded-lg bg-rose-500 text-white text-[10px] font-bold hover:bg-rose-600 transition-colors disabled:opacity-50 whitespace-nowrap"
-                                  >
-                                    {isDeletingThis ? 'Deleting…' : 'Yes, delete'}
-                                  </button>
-                                  <button
-                                    onClick={() => setConfirmDeleteId(null)}
-                                    className="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold hover:bg-slate-200 transition-colors"
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              ) : (
                                 <button
-                                  onClick={() => setConfirmDeleteId(user.id)}
-                                  title="Delete user"
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                                  onClick={() => setConfirmRoleId(null)}
+                                  className="flex-1 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition-colors"
                                 >
-                                  <i className="fa-solid fa-trash text-[12px]" />
+                                  Cancel
                                 </button>
-                              )
-                            )}
+                              </div>
+                            </div>
+                          ) : isConfirmingDelete ? (
+                            <div className="bg-rose-50/70 border border-rose-200/80 rounded-xl p-3 space-y-2">
+                              <p className="text-xs font-bold text-rose-900">
+                                Delete account for <span className="font-extrabold">{user.name}</span>?
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => deleteMutation.mutate(user.id)}
+                                  disabled={isDeletingThis}
+                                  className="flex-1 py-2 rounded-lg bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-colors disabled:opacity-50"
+                                >
+                                  {isDeletingThis ? 'Deleting…' : 'Yes, Delete'}
+                                </button>
+                                <button
+                                  onClick={() => setConfirmDeleteId(null)}
+                                  className="flex-1 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => {
+                                  setConfirmDeleteId(null);
+                                  setConfirmRoleId(user.id);
+                                }}
+                                className="flex-1 px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-600 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50/50 transition-all flex items-center justify-center gap-1.5"
+                              >
+                                <i className={`fa-solid ${newRole === 'admin' ? 'fa-shield-halved' : 'fa-user'} text-[11px]`} />
+                                Make {newRole}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setConfirmRoleId(null);
+                                  setConfirmDeleteId(user.id);
+                                }}
+                                className="px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 text-rose-500 hover:border-rose-200 hover:bg-rose-50 transition-all flex items-center justify-center gap-1.5"
+                                title="Delete user"
+                              >
+                                <i className="fa-solid fa-trash text-[11px]" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
-                            {isSelf && (
-                              <span className="text-[10px] text-slate-400 font-medium italic pr-1">
-                                Your account
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                      {isSelf && (
+                        <div className="pt-2 border-t border-slate-100 text-center">
+                          <span className="text-xs text-slate-400 font-medium italic">
+                            Logged in as your account
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop & Tablet Table View (hidden on sm-) */}
+              <div className="hidden sm:block overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 bg-slate-50/60">
+                      <th className="text-left px-5 py-3.5 font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                        Account
+                      </th>
+                      <th className="text-left px-4 py-3.5 font-bold text-slate-500 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="text-left px-4 py-3.5 font-bold text-slate-500 uppercase tracking-wider">
+                        Role
+                      </th>
+                      <th className="text-left px-4 py-3.5 font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">
+                        Joined
+                      </th>
+                      <th className="text-right px-5 py-3.5 font-bold text-slate-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {users.map((user) => {
+                      const isSelf = user.id === currentUser?.id;
+                      const isConfirmingDelete = confirmDeleteId === user.id;
+                      const isConfirmingRole = confirmRoleId === user.id;
+                      const newRole: UserRole = user.role === 'admin' ? 'user' : 'admin';
+                      const isDeletingThis = deleteMutation.isPending && confirmDeleteId === user.id;
+                      const isUpdatingRole = roleMutation.isPending && confirmRoleId === user.id;
+
+                      return (
+                        <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
+                          {/* Avatar + Name */}
+                          <td className="px-5 py-4">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-extrabold flex-shrink-0 ${
+                                  user.role === 'admin'
+                                    ? 'bg-teal-100 text-teal-700'
+                                    : 'bg-slate-100 text-slate-600'
+                                }`}
+                              >
+                                {getInitials(user.name)}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="font-bold text-slate-800 truncate">
+                                  {user.name}
+                                  {isSelf && (
+                                    <span className="ml-1.5 text-[10px] font-bold text-teal-600 bg-teal-50 border border-teal-100 px-1.5 py-0.5 rounded-full">
+                                      You
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Email */}
+                          <td className="px-4 py-4">
+                            <span className="text-slate-600 font-medium truncate block max-w-[200px] lg:max-w-none">{user.email}</span>
+                          </td>
+
+                          {/* Role Badge */}
+                          <td className="px-4 py-4">
+                            <Badge variant={user.role === 'admin' ? 'primary' : 'slate'}>
+                              {user.role === 'admin' ? (
+                                <><i className="fa-solid fa-shield-halved mr-1 text-[9px]" />Admin</>
+                              ) : (
+                                <><i className="fa-solid fa-user mr-1 text-[9px]" />User</>
+                              )}
+                            </Badge>
+                          </td>
+
+                          {/* Joined Date */}
+                          <td className="px-4 py-4 hidden md:table-cell">
+                            <span className="text-slate-400 font-medium">{formatDate(user.createdAt)}</span>
+                          </td>
+
+                          {/* Actions */}
+                          <td className="px-5 py-4">
+                            <div className="flex items-center justify-end gap-2">
+                              {/* Role toggle */}
+                              {!isSelf && (
+                                isConfirmingRole ? (
+                                  <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 p-1.5 rounded-xl">
+                                    <span className="text-[10px] text-slate-600 font-bold whitespace-nowrap px-1">
+                                      Make {newRole}?
+                                    </span>
+                                    <button
+                                      onClick={() => handleRoleToggle(user)}
+                                      disabled={isUpdatingRole}
+                                      className="px-2.5 py-1 rounded-lg bg-teal-500 text-white text-[10px] font-bold hover:bg-teal-600 transition-colors disabled:opacity-50 whitespace-nowrap"
+                                    >
+                                      {isUpdatingRole ? 'Saving…' : 'Confirm'}
+                                    </button>
+                                    <button
+                                      onClick={() => setConfirmRoleId(null)}
+                                      className="px-2 py-1 rounded-lg bg-white border border-slate-200 text-slate-600 text-[10px] font-bold hover:bg-slate-100 transition-colors"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => {
+                                      setConfirmDeleteId(null);
+                                      setConfirmRoleId(user.id);
+                                    }}
+                                    title={`Change role to ${newRole}`}
+                                    className="px-3 py-1.5 rounded-lg text-[10px] font-bold border border-slate-200 text-slate-600 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50/50 transition-all whitespace-nowrap"
+                                  >
+                                    <i className={`fa-solid ${newRole === 'admin' ? 'fa-shield-halved' : 'fa-user'} mr-1`} />
+                                    Make {newRole}
+                                  </button>
+                                )
+                              )}
+
+                              {/* Delete */}
+                              {!isSelf && (
+                                isConfirmingDelete ? (
+                                  <div className="flex items-center gap-1.5 bg-rose-50 border border-rose-200/80 p-1.5 rounded-xl">
+                                    <span className="text-[10px] text-rose-600 font-bold whitespace-nowrap px-1">
+                                      Delete?
+                                    </span>
+                                    <button
+                                      onClick={() => deleteMutation.mutate(user.id)}
+                                      disabled={isDeletingThis}
+                                      className="px-2.5 py-1 rounded-lg bg-rose-500 text-white text-[10px] font-bold hover:bg-rose-600 transition-colors disabled:opacity-50 whitespace-nowrap"
+                                    >
+                                      {isDeletingThis ? 'Deleting…' : 'Yes'}
+                                    </button>
+                                    <button
+                                      onClick={() => setConfirmDeleteId(null)}
+                                      className="px-2 py-1 rounded-lg bg-white border border-slate-200 text-slate-600 text-[10px] font-bold hover:bg-slate-100 transition-colors"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={() => {
+                                      setConfirmRoleId(null);
+                                      setConfirmDeleteId(user.id);
+                                    }}
+                                    title="Delete user"
+                                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-all"
+                                  >
+                                    <i className="fa-solid fa-trash text-[12px]" />
+                                  </button>
+                                )
+                              )}
+
+                              {isSelf && (
+                                <span className="text-[10px] text-slate-400 font-medium italic pr-1">
+                                  Your account
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
       </AdminLayout>
