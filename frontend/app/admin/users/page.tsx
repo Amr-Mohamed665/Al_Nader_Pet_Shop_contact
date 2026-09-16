@@ -236,12 +236,6 @@ export default function AdminUsersPage() {
                 >
                   {isAllVisibleSelected ? 'Deselect Visible' : 'Select All Visible'}
                 </button>
-                <button
-                  onClick={handleSelectAllVisible}
-                  className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-[11px] font-bold border border-teal-500 transition-colors shadow-sm"
-                >
-                  Apply
-                </button>
               </div>
 
               {/* Actions for Selected Emails */}
