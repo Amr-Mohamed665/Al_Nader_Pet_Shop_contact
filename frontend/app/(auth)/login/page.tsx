@@ -84,14 +84,24 @@ export default function LoginPage() {
               type="email"
             />
 
-            <FormField
-              id="password"
-              label="Password"
-              register={register}
-              error={errors.password?.message}
-              placeholder="••••••••"
-              type="password"
-            />
+            <div>
+              <FormField
+                id="password"
+                label="Password"
+                register={register}
+                error={errors.password?.message}
+                placeholder="••••••••"
+                type="password"
+              />
+              <div className="flex justify-end mt-1.5">
+                <Link
+                  href="/forgot-password"
+                  className="text-xs font-bold text-[#7C4DDB] hover:text-[#581C87] hover:underline transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            </div>
 
             <Button
               type="submit"

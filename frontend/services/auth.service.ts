@@ -24,4 +24,21 @@ export const authService = {
     });
     return data;
   },
+
+  async forgotPassword(email: string): Promise<ApiResponse> {
+    const { data } = await api.post<ApiResponse>('/auth/forgot-password', { email });
+    return data;
+  },
+
+  async resetPassword(token: string, password: string): Promise<ApiResponse> {
+    const { data } = await api.post<ApiResponse>('/auth/reset-password', { token, password });
+    return data;
+  },
+
+  async adminResetUserPassword(userId: string, newPassword: string): Promise<ApiResponse> {
+    const { data } = await api.patch<ApiResponse>(`/auth/users/${userId}/reset-password`, {
+      newPassword,
+    });
+    return data;
+  },
 };

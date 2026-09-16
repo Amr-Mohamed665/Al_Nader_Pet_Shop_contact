@@ -1,9 +1,10 @@
 import type { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import * as usersStore from '../data/usersStore';
 import ApiError from '../utils/ApiError';
 import { signToken } from '../utils/jwt';
-import { sendMail } from '../utils/mailer';
+import { sendMail, sendPasswordResetEmail } from '../utils/mailer';
 
 /** POST /api/auth/register
  *  Always creates a "user" role account — role is never trusted from
@@ -243,6 +244,114 @@ export async function sendBulkEmail(req: Request, res: Response, next: NextFunct
         mock: isMock,
       },
       message: `Successfully processed ${successCount} email(s).`,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/** POST /api/auth/forgot-password */
+export async function forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { email } = req.body as { email: string };
+    if (!email) {
+      next(new ApiError(400, 'Email address is required.'));
+      return;
+    }
+
+    const user = usersStore.getByEmailWithPassword(email);
+    if (!user) {
+      res.status(200).json({
+        success: true,
+        message: 'If an account exists with this email, a password reset link has been sent.',
+      });
+      return;
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
+
+    usersStore.saveResetToken(email, resetToken, expires);
+
+    const clientOrigin = req.headers.origin || process.env.CLIENT_URL || 'http://localhost:3000';
+    const resetUrl = `${clientOrigin}/reset-password?token=${resetToken}`;
+
+    await sendPasswordResetEmail(user.email, user.name, resetUrl);
+
+    res.status(200).json({
+      success: true,
+      message: 'If an account exists with this email, a password reset link has been sent.',
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/** POST /api/auth/reset-password */
+export async function resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { token, password } = req.body as { token: string; password: string };
+    if (!token || !password) {
+      next(new ApiError(400, 'Reset token and new password are required.'));
+      return;
+    }
+
+    if (password.length < 6) {
+      next(new ApiError(400, 'Password must be at least 6 characters.'));
+      return;
+    }
+
+    const user = usersStore.getByResetToken(token);
+    if (!user) {
+      next(new ApiError(400, 'Invalid or expired password reset token. Please request a new one.'));
+      return;
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const success = await usersStore.resetPasswordWithToken(token, passwordHash);
+
+    if (!success) {
+      next(new ApiError(400, 'Failed to reset password. Token may have expired.'));
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successfully! You can now log in with your new password.',
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/** PATCH /api/auth/users/:id/reset-password (Admin only) */
+export async function adminResetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body as { newPassword: string };
+
+    if (!newPassword || newPassword.length < 6) {
+      next(new ApiError(400, 'New password must be at least 6 characters long.'));
+      return;
+    }
+
+    const user = usersStore.getById(id);
+    if (!user) {
+      next(new ApiError(404, 'User account not found.'));
+      return;
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    const success = await usersStore.updatePassword(id, passwordHash);
+
+    if (!success) {
+      next(new ApiError(500, 'Failed to update user password.'));
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Successfully reset password for ${user.name} (${user.email}).`,
     });
   } catch (err) {
     next(err);

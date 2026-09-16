@@ -154,4 +154,43 @@ export async function createAdmin({ name, email, password }: Omit<CreateUserData
   return toPublicUser(admin);
 }
 
+export function saveResetToken(email: string, token: string, expiresIso: string): boolean {
+  const users = readAll();
+  const index = users.findIndex((u) => u.email.toLowerCase() === email.toLowerCase());
+  if (index === -1) return false;
+
+  users[index].resetPasswordToken = token;
+  users[index].resetPasswordExpires = expiresIso;
+  writeAll(users);
+  return true;
+}
+
+export function getByResetToken(token: string): UserRecord | undefined {
+  if (!token) return undefined;
+  const users = readAll();
+  return users.find(
+    (u) =>
+      u.resetPasswordToken === token &&
+      u.resetPasswordExpires &&
+      new Date(u.resetPasswordExpires) > new Date()
+  );
+}
+
+export async function resetPasswordWithToken(token: string, newPasswordHash: string): Promise<boolean> {
+  const users = readAll();
+  const index = users.findIndex(
+    (u) =>
+      u.resetPasswordToken === token &&
+      u.resetPasswordExpires &&
+      new Date(u.resetPasswordExpires) > new Date()
+  );
+  if (index === -1) return false;
+
+  users[index].password = newPasswordHash;
+  delete users[index].resetPasswordToken;
+  delete users[index].resetPasswordExpires;
+  writeAll(users);
+  return true;
+}
+
 export { toPublicUser };
