@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1786321266851",
+    "name": "Amr Rashidy",
+    "email": "amr.rashidy77@gmail.com",
+    "password": "$2a$10$lucVEKdOOokPIcDeiSO2aeiXKXtn0A8ct1IBuHqjR9YSMGrB22fPW",
+    "role": "user",
+    "createdAt": "2026-08-10T00:21:06.851Z"
+  },
+  {
+    "id": "1786355025045",
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "$2a$10$ky1geak8xlTi4MGgVI44tOAzpfzcjktBmgxqe7Vs/3byldNV.YRjC",
+    "role": "user",
+    "createdAt": "2026-08-10T09:43:45.045Z"
+  },
+  {
+    "id": "1786359653866",
+    "name": "Amr Mohamed Ali",
+    "email": "amr.rashidy79@gmail.com",
+    "password": "$2a$10$S99UdsYggb80zEV4x/Z56OIcd1NhxatgAwG9tXExbohnsO49TtuE.",
+    "role": "user",
+    "createdAt": "2026-08-10T11:00:53.866Z"
+  },
+  {
+    "id": "1787428250683",
+    "name": "Amr Rashidy",
+    "email": "amr.rashidy123@gmail.com",
+    "password": "$2a$10$71P.0vFD/sXSYFYV7TWDCOWL/88BFmRLamqPlzhHioMdWU2C1X1CO",
+    "role": "user",
+    "createdAt": "2026-08-22T19:50:50.683Z"
+  },
+  {
+    "id": "1787779811153",
+    "name": "Pet Shop Admin",
+    "email": "admin@techmaster.com",
+    "password": "$2a$10$M0n/4PGWXc.TnqH8/pH4aOEutGnrXD/Y8PY9r/8PfAdC5Ym2zWrsu",
+    "role": "admin",
+    "createdAt": "2026-08-26T21:30:11.153Z"
+  }
+]

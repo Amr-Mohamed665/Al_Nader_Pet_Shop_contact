@@ -1,0 +1,54 @@
+[
+  {
+    "id": "blog-1",
+    "title": "The Ultimate Syrian & Dwarf Hamster Care Guide",
+    "slug": "ultimate-hamster-care-guide",
+    "excerpt": "Everything you need to know about housing, diet, enrichment, and daily routine for happy hamsters.",
+    "content": "Hamsters are delightful, inquisitive pocket pets that make wonderful companions when provided with proper care. Whether you have a Syrian hamster or a small Dwarf hamster, understanding their natural instincts is key to their health and happiness.\n\n### 1. Housing & Space Requirements\n\nHamsters need spacious enclosures to roam, burrow, and explore. A minimum habitat size of 4000 square centimeters (approx 100cm x 50cm) is recommended. Ensure the bedding is at least 15-20cm deep using safe paper-based bedding so they can satisfy their innate digging instincts.\n\n### 2. Balanced Nutrition & Treats\n\nA high-quality seed mix supplemented with laboratory pellets forms the foundation of a healthy diet. Fresh vegetables like broccoli, cucumber, and carrots can be offered 2-3 times a week in small amounts. Always provide fresh water in a clean bottle or shallow ceramic dish.\n\n### 3. Exercise & Enrichment\n\nA solid-surface running wheel (minimum 28cm diameter for Syrians, 20cm for Dwarfs) is vital to protect their spines while exercising. Add wooden chews, hideouts, and sand baths filled with reptile-safe calcium-free sand for grooming.",
+    "category": "Care Guides",
+    "image": "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?q=80&w=1076&auto=format&fit=crop",
+    "author": "Al Nader Pet Care Team",
+    "readTime": "5 min read",
+    "publishedAt": "2026-08-25T10:00:00.000Z",
+    "tags": ["Hamster", "Pet Care", "Guides"]
+  },
+  {
+    "id": "blog-2",
+    "title": "Top 10 Tips for Keeping Your Indoor Cat Happy & Active",
+    "slug": "top-10-tips-indoor-cat-care",
+    "excerpt": "Keep your feline friend mentally stimulated, physically fit, and purring with joy indoors.",
+    "content": "Indoor cats live safer and longer lives, but they require daily mental and physical enrichment to prevent boredom. Here are 10 expert tips to create a paradise for your cat:\n\n1. **Vertical Territory**: Cat trees and wall shelves satisfy their instinct to observe from high perches.\n2. **Interactive Play**: Spend 15-20 minutes daily using feather wands and laser pointers.\n3. **Scratching Options**: Offer both vertical sisal posts and horizontal cardboard scratchers.\n4. **Window Perches**: Give your cat a front-row seat to outdoor bird watching.\n5. **Puzzle Feeders**: Challenge their problem-solving skills during mealtimes.\n6. **Fresh Cat Grass**: Provides safe green chewing and digestion aid.\n7. **Clean Litter Boxes**: Follow the N+1 rule (one box per cat plus one extra).\n8. **Hydration Stations**: Cat fountains encourage healthy water intake.\n9. **Cozy Hideaways**: Covered cat beds offer privacy during nap times.\n10. **Regular Grooming**: Brushing reduces hairballs and strengthens your bond.",
+    "category": "Cat Care",
+    "image": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1043&auto=format&fit=crop",
+    "author": "Dr. Sarah Jenkins",
+    "readTime": "6 min read",
+    "publishedAt": "2026-08-28T14:30:00.000Z",
+    "tags": ["Cats", "Indoor Pets", "Wellness"]
+  },
+  {
+    "id": "blog-3",
+    "title": "Complete Canine Nutrition: What Every Dog Owner Should Know",
+    "slug": "complete-canine-nutrition-guide",
+    "excerpt": "Learn how to choose premium kibble, fresh foods, and dietary supplements tailored to your dog's stage of life.",
+    "content": "Optimal nutrition is the foundation of a long, energetic life for your dog. From energetic puppies to calm senior companions, dietary needs evolve across different life stages.\n\n### Understanding Essential Nutrients\nDogs require a balanced combination of animal proteins, healthy fats, complex carbohydrates, vitamins, and minerals. High-quality meat sources (like chicken, lamb, or salmon) should always be the top ingredients listed on your pet food label.\n\n### Puppy vs. Adult Requirements\n- **Puppies**: Require higher protein and calorie density to support rapid bone and tissue growth.\n- **Adult Dogs**: Focus on maintaining lean muscle mass, joint health, and shiny coats.\n- **Seniors**: Benefit from glucosamine, omega-3 fatty acids, and lower calories to support joint longevity.",
+    "category": "Nutrition",
+    "image": "https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1074&auto=format&fit=crop",
+    "author": "Al Nader Pet Care Team",
+    "readTime": "4 min read",
+    "publishedAt": "2026-09-01T09:15:00.000Z",
+    "tags": ["Dogs", "Nutrition", "Health"]
+  },
+  {
+    "id": "blog-4",
+    "title": "Creating the Perfect Reptile Terrarium Lighting & Heating Setup",
+    "slug": "reptile-terrarium-lighting-heating-guide",
+    "excerpt": "Master UVB lighting, thermal gradients, and humidity controls for exotic reptiles and amphibians.",
+    "content": "Reptiles are ectothermic animals, meaning they rely entirely on external heat sources to regulate their body temperature and metabolism. Providing an accurate thermal gradient inside their terrarium is vital.\n\n### The Importance of Proper UVB\nUVB light enables reptiles to synthesize Vitamin D3, essential for absorbing calcium and preventing Metabolic Bone Disease (MBD). Linear T5 UVB tubes are recommended over compact coil bulbs for uniform enclosure coverage.\n\n### Thermal Gradients\nCreate a warm basking area at one end of the terrarium and a cooler refuge at the opposite side. Always use accurate digital thermometers and thermostats to monitor temperatures continuous day and night.",
+    "category": "Reptiles",
+    "image": "https://images.unsplash.com/photo-1504450874802-0ba2bcd9b5ae?q=80&w=880&auto=format&fit=crop",
+    "author": "Mark Vance, Exotic Pet Specialist",
+    "readTime": "7 min read",
+    "publishedAt": "2026-09-03T11:00:00.000Z",
+    "tags": ["Reptiles", "Terrarium", "Guides"]
+  }
+]
