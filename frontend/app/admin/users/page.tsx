@@ -7,6 +7,7 @@ import AdminRoute from '@/components/guards/AdminRoute';
 import Spinner from '@/components/atoms/Spinner';
 import Badge from '@/components/atoms/Badge';
 import ErrorState from '@/components/molecules/ErrorState';
+import BulkEmailModal from '@/components/molecules/BulkEmailModal';
 import { usersService } from '@/services/users.service';
 import { showToast } from '@/utils/toast';
 import { useAuth } from '@/context/AuthContext';
@@ -47,6 +48,11 @@ export default function AdminUsersPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [confirmRoleId, setConfirmRoleId] = useState<string | null>(null);
 
+  // ─── Selection & Bulk Email State ──────────────────────────────────────────
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+  const [customCount, setCustomCount] = useState<string>('5');
+  const [isBulkEmailOpen, setIsBulkEmailOpen] = useState(false);
+
   // ─── Data Fetching ─────────────────────────────────────────────────────────
   const usersQuery = useQuery({
     queryKey: ['admin-users'],
@@ -64,6 +70,69 @@ export default function AdminUsersPage() {
   }, [usersQuery.data, roleFilter, search]);
 
   const allUsers: User[] = (usersQuery.data?.success && usersQuery.data.data) ? usersQuery.data.data : [];
+
+  // Selected User Objects
+  const selectedUsers: User[] = useMemo(() => {
+    return allUsers.filter((u) => selectedUserIds.includes(u.id));
+  }, [allUsers, selectedUserIds]);
+
+  // Selection Handlers
+  const handleToggleUser = (id: string) => {
+    setSelectedUserIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const isAllVisibleSelected = useMemo(() => {
+    if (users.length === 0) return false;
+    return users.every((u) => selectedUserIds.includes(u.id));
+  }, [users, selectedUserIds]);
+
+  const handleSelectAllVisible = () => {
+    const visibleIds = users.map((u) => u.id);
+    if (isAllVisibleSelected) {
+      setSelectedUserIds((prev) => prev.filter((id) => !visibleIds.includes(id)));
+    } else {
+      setSelectedUserIds((prev) => Array.from(new Set([...prev, ...visibleIds])));
+    }
+  };
+
+  const handleSelectCount = (count: number) => {
+    if (count <= 0) return;
+    const subset = users.slice(0, count).map((u) => u.id);
+    setSelectedUserIds(subset);
+    showToast('info', `Selected top ${subset.length} account(s).`);
+  };
+
+  const handleCopyEmails = () => {
+    if (selectedUsers.length === 0) return;
+    const emailList = selectedUsers.map((u) => u.email).join(', ');
+    navigator.clipboard.writeText(emailList);
+    showToast('success', `Copied ${selectedUsers.length} email address(es) to clipboard!`);
+  };
+
+  const handleExportCSV = () => {
+    if (selectedUsers.length === 0) return;
+    const headers = ['ID', 'Name', 'Email', 'Role', 'Joined Date'];
+    const rows = selectedUsers.map((u) => [
+      u.id,
+      `"${u.name.replace(/"/g, '""')}"`,
+      u.email,
+      u.role,
+      formatDate(u.createdAt),
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `al_nader_registered_emails_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('success', `Exported ${selectedUsers.length} user(s) to CSV!`);
+  };
 
   // ─── Mutations ─────────────────────────────────────────────────────────────
   const roleMutation = useMutation({
@@ -117,11 +186,14 @@ export default function AdminUsersPage() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                Manage Users
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                <span>Manage Users</span>
+                <span className="text-xs font-bold text-teal-600 bg-teal-50 border border-teal-100 px-2.5 py-0.5 rounded-full">
+                  Email Collector Active
+                </span>
               </h1>
               <p className="text-xs text-slate-400 mt-0.5">
-                View, promote, demote, or remove registered accounts.
+                View, filter, select, export registered emails, or send bulk email campaigns.
               </p>
             </div>
             <div className="flex items-center gap-2 text-xs self-start sm:self-auto flex-shrink-0">
@@ -131,6 +203,114 @@ export default function AdminUsersPage() {
               </div>
             </div>
           </div>
+
+          {/* Email Collection & Quick Selection Toolbar */}
+          {!usersQuery.isLoading && !usersQuery.isError && allUsers.length > 0 && (
+            <div className="bg-slate-900 text-white rounded-2xl p-4 shadow-md space-y-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-xs">
+                    <i className="fa-solid fa-envelope-open-text" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-slate-100">Registered Email Collector</h3>
+                    <p className="text-[10px] text-slate-400">Select users by count or checkboxes to perform bulk email actions</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-xs font-bold text-teal-400 bg-slate-800 px-3 py-1 rounded-xl border border-slate-700">
+                    {selectedUserIds.length} of {allUsers.length} selected
+                  </span>
+                  {selectedUserIds.length > 0 && (
+                    <button
+                      onClick={() => setSelectedUserIds([])}
+                      className="text-[10px] font-bold text-rose-400 hover:text-rose-300 underline"
+                    >
+                      Clear selection
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Selection Controls */}
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1">
+                  Quick Select:
+                </span>
+                <button
+                  onClick={handleSelectAllVisible}
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold border border-slate-700 transition-colors"
+                >
+                  {isAllVisibleSelected ? 'Deselect Visible' : 'Select All Visible'}
+                </button>
+                <button
+                  onClick={() => handleSelectCount(5)}
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold border border-slate-700 transition-colors"
+                >
+                  First 5
+                </button>
+                <button
+                  onClick={() => handleSelectCount(10)}
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold border border-slate-700 transition-colors"
+                >
+                  First 10
+                </button>
+                <button
+                  onClick={() => handleSelectCount(25)}
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold border border-slate-700 transition-colors"
+                >
+                  First 25
+                </button>
+
+                {/* Custom count picker */}
+                <div className="flex items-center gap-1.5 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1">
+                  <span className="text-[10px] text-slate-400 font-bold">Custom:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={allUsers.length}
+                    value={customCount}
+                    onChange={(e) => setCustomCount(e.target.value)}
+                    className="w-10 bg-slate-900 text-teal-300 font-bold text-xs text-center border border-slate-700 rounded focus:outline-none"
+                  />
+                  <button
+                    onClick={() => handleSelectCount(Number(customCount) || 1)}
+                    className="text-[10px] font-extrabold text-teal-400 hover:text-teal-300 uppercase"
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+
+              {/* Actions for Selected Emails */}
+              {selectedUserIds.length > 0 && (
+                <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center gap-2 animate-fade-in">
+                  <button
+                    onClick={handleCopyEmails}
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5 transition-colors"
+                  >
+                    <i className="fa-solid fa-copy text-teal-400 text-[11px]" />
+                    <span>Copy Emails ({selectedUserIds.length})</span>
+                  </button>
+                  <button
+                    onClick={handleExportCSV}
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5 transition-colors"
+                  >
+                    <i className="fa-solid fa-file-csv text-emerald-400 text-[11px]" />
+                    <span>Export CSV</span>
+                  </button>
+                  <button
+                    onClick={() => setIsBulkEmailOpen(true)}
+                    className="px-4 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-600 text-white text-xs font-extrabold shadow-md shadow-teal-500/20 flex items-center gap-1.5 transition-all"
+                  >
+                    <i className="fa-solid fa-paper-plane text-[11px]" />
+                    <span>Send Bulk Email to ({selectedUserIds.length})</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Search + Filter Row */}
           {!usersQuery.isLoading && !usersQuery.isError && (
@@ -219,6 +399,7 @@ export default function AdminUsersPage() {
               <div className="block sm:hidden space-y-3">
                 {users.map((user) => {
                   const isSelf = user.id === currentUser?.id;
+                  const isSelected = selectedUserIds.includes(user.id);
                   const isConfirmingDelete = confirmDeleteId === user.id;
                   const isConfirmingRole = confirmRoleId === user.id;
                   const newRole: UserRole = user.role === 'admin' ? 'user' : 'admin';
@@ -226,12 +407,25 @@ export default function AdminUsersPage() {
                   const isUpdatingRole = roleMutation.isPending && confirmRoleId === user.id;
 
                   return (
-                    <div key={user.id} className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm space-y-3">
-                      {/* Top row: Avatar, Name & Role Badge */}
+                    <div
+                      key={user.id}
+                      className={`bg-white border rounded-2xl p-4 shadow-sm space-y-3 transition-all ${
+                        isSelected ? 'border-teal-500 ring-2 ring-teal-500/10 bg-teal-50/10' : 'border-slate-200/80'
+                      }`}
+                    >
+                      {/* Top row: Checkbox, Avatar, Name & Role Badge */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-3 min-w-0">
+                          {/* Checkbox */}
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleToggleUser(user.id)}
+                            className="w-4 h-4 rounded text-teal-500 focus:ring-teal-500/20 border-slate-300 cursor-pointer flex-shrink-0"
+                          />
+
                           <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-extrabold flex-shrink-0 ${
+                            className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-extrabold flex-shrink-0 ${
                               user.role === 'admin'
                                 ? 'bg-teal-100 text-teal-700'
                                 : 'bg-slate-100 text-slate-600'
@@ -362,6 +556,15 @@ export default function AdminUsersPage() {
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/60">
+                      <th className="text-center px-4 py-3.5 w-10">
+                        <input
+                          type="checkbox"
+                          checked={isAllVisibleSelected}
+                          onChange={handleSelectAllVisible}
+                          className="w-4 h-4 rounded text-teal-500 focus:ring-teal-500/20 border-slate-300 cursor-pointer"
+                          title="Select all visible users"
+                        />
+                      </th>
                       <th className="text-left px-5 py-3.5 font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
                         Account
                       </th>
@@ -382,6 +585,7 @@ export default function AdminUsersPage() {
                   <tbody className="divide-y divide-slate-100">
                     {users.map((user) => {
                       const isSelf = user.id === currentUser?.id;
+                      const isSelected = selectedUserIds.includes(user.id);
                       const isConfirmingDelete = confirmDeleteId === user.id;
                       const isConfirmingRole = confirmRoleId === user.id;
                       const newRole: UserRole = user.role === 'admin' ? 'user' : 'admin';
@@ -389,7 +593,22 @@ export default function AdminUsersPage() {
                       const isUpdatingRole = roleMutation.isPending && confirmRoleId === user.id;
 
                       return (
-                        <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
+                        <tr
+                          key={user.id}
+                          className={`transition-colors group ${
+                            isSelected ? 'bg-teal-50/30' : 'hover:bg-slate-50/50'
+                          }`}
+                        >
+                          {/* Selection Checkbox */}
+                          <td className="px-4 py-4 text-center">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleToggleUser(user.id)}
+                              className="w-4 h-4 rounded text-teal-500 focus:ring-teal-500/20 border-slate-300 cursor-pointer"
+                            />
+                          </td>
+
                           {/* Avatar + Name */}
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-3">
@@ -525,6 +744,13 @@ export default function AdminUsersPage() {
               </div>
             </>
           )}
+
+          {/* Bulk Email Modal */}
+          <BulkEmailModal
+            isOpen={isBulkEmailOpen}
+            onClose={() => setIsBulkEmailOpen(false)}
+            selectedUsers={selectedUsers}
+          />
         </div>
       </AdminLayout>
     </AdminRoute>

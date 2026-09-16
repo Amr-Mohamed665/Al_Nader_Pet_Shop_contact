@@ -16,4 +16,14 @@ export const usersService = {
     const { data } = await api.delete<ApiResponse>(`/auth/users/${id}`);
     return data;
   },
+
+  async sendBulkEmail(payload: {
+    recipients: string[];
+    subject: string;
+    message: string;
+  }): Promise<ApiResponse<{ sentCount: number; failedCount: number; totalTargeted: number; mock?: boolean }>> {
+    const { data } = await api.post('/auth/users/bulk-email', payload);
+    return data;
+  },
 };
+

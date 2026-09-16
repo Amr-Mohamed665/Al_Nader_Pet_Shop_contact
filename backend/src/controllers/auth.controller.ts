@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import * as usersStore from '../data/usersStore';
 import ApiError from '../utils/ApiError';
 import { signToken } from '../utils/jwt';
+import { sendMail } from '../utils/mailer';
 
 /** POST /api/auth/register
  *  Always creates a "user" role account — role is never trusted from
@@ -169,3 +170,82 @@ export function deleteUser(req: Request, res: Response, next: NextFunction): voi
     next(err);
   }
 }
+
+/** POST /api/auth/users/bulk-email  (admin only) */
+export async function sendBulkEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { recipients, subject, message } = req.body as {
+      recipients?: string[];
+      subject?: string;
+      message?: string;
+    };
+
+    if (!Array.isArray(recipients) || recipients.length === 0) {
+      next(new ApiError(400, 'At least one recipient email address is required.'));
+      return;
+    }
+
+    if (!subject || !subject.trim()) {
+      next(new ApiError(400, 'Email subject is required.'));
+      return;
+    }
+
+    if (!message || !message.trim()) {
+      next(new ApiError(400, 'Email message content is required.'));
+      return;
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+    let isMock = false;
+
+    // Safe HTML formatting with linebreaks
+    const safeMsg = message.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
+    const formattedHtml = `
+      <div style="font-family: Arial, sans-serif; color: #334155; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h1 style="color: #0d9488; font-size: 20px; margin: 0; font-weight: 800;">Al Nader Pet Shop 🐾</h1>
+          <p style="color: #94a3b8; font-size: 12px; margin-top: 4px;">Official Announcement & Update</p>
+        </div>
+        <hr style="border: none; border-top: 1px solid #f1f5f9; margin-bottom: 20px;" />
+        <div style="font-size: 14px; line-height: 1.6; color: #1e293b;">
+          ${safeMsg}
+        </div>
+        <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 24px 0 16px 0;" />
+        <p style="font-size: 11px; color: #94a3b8; text-align: center; margin: 0;">
+          Sent from Al Nader Pet Shop Admin • Dubai, UAE
+        </p>
+      </div>
+    `;
+
+    for (const email of recipients) {
+      const result = await sendMail({
+        to: email,
+        subject,
+        text: message,
+        html: formattedHtml,
+      });
+
+      if (result.success) {
+        successCount++;
+        if (result.mock) isMock = true;
+      } else {
+        failCount++;
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        sentCount: successCount,
+        failedCount: failCount,
+        totalTargeted: recipients.length,
+        mock: isMock,
+      },
+      message: `Successfully processed ${successCount} email(s).`,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+

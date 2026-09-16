@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 
 const WHATSAPP_NUMBER = '971506767915'; // Al Nader WhatsApp number (no + or spaces)
@@ -32,10 +33,17 @@ export function buildWhatsAppUrl(cartItems: { name: string; quantity: number }[]
 
 /**
  * Floating WhatsApp button shown site-wide.
- * When the cart has items, it pre-fills a message mentioning each item.
+ * Hidden on admin dashboard routes.
  */
 export default function WhatsAppButton() {
+  const pathname = usePathname();
   const { items } = useCart();
+
+  // Hide WhatsApp button on dashboard/admin routes
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   const hasItems = items.length > 0;
   const url = buildWhatsAppUrl(items);
 

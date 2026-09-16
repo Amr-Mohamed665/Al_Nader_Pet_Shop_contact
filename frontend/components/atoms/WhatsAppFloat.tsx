@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 
 const WHATSAPP_NUMBER = '971506767915'; // Al Nader Pet Shop
@@ -33,9 +34,16 @@ export function buildWhatsAppUrl(cartItems: { name: string; quantity: number }[]
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-/** Floating WhatsApp button — shown site-wide, cart-aware pre-filled message. */
+/** Floating WhatsApp button — shown site-wide, cart-aware pre-filled message. Hidden on dashboard/admin routes. */
 export default function WhatsAppFloat() {
+  const pathname = usePathname();
   const { items } = useCart();
+
+  // Hide WhatsApp floating button on dashboard/admin routes
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   const hasItems = items.length > 0;
   const url = buildWhatsAppUrl(items);
 
