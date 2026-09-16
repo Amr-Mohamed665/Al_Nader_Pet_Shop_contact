@@ -50,7 +50,6 @@ export default function AdminUsersPage() {
 
   // ─── Selection & Bulk Email State ──────────────────────────────────────────
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
-  const [customCount, setCustomCount] = useState<string>('5');
   const [isBulkEmailOpen, setIsBulkEmailOpen] = useState(false);
 
   // ─── Data Fetching ─────────────────────────────────────────────────────────
@@ -95,13 +94,6 @@ export default function AdminUsersPage() {
     } else {
       setSelectedUserIds((prev) => Array.from(new Set([...prev, ...visibleIds])));
     }
-  };
-
-  const handleSelectCount = (count: number) => {
-    if (count <= 0) return;
-    const subset = users.slice(0, count).map((u) => u.id);
-    setSelectedUserIds(subset);
-    showToast('info', `Selected top ${subset.length} account(s).`);
   };
 
   const handleCopyEmails = () => {
@@ -245,42 +237,11 @@ export default function AdminUsersPage() {
                   {isAllVisibleSelected ? 'Deselect Visible' : 'Select All Visible'}
                 </button>
                 <button
-                  onClick={() => handleSelectCount(5)}
-                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold border border-slate-700 transition-colors"
+                  onClick={handleSelectAllVisible}
+                  className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-[11px] font-bold border border-teal-500 transition-colors shadow-sm"
                 >
-                  First 5
+                  Apply
                 </button>
-                <button
-                  onClick={() => handleSelectCount(10)}
-                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold border border-slate-700 transition-colors"
-                >
-                  First 10
-                </button>
-                <button
-                  onClick={() => handleSelectCount(25)}
-                  className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold border border-slate-700 transition-colors"
-                >
-                  First 25
-                </button>
-
-                {/* Custom count picker */}
-                <div className="flex items-center gap-1.5 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1">
-                  <span className="text-[10px] text-slate-400 font-bold">Custom:</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max={allUsers.length}
-                    value={customCount}
-                    onChange={(e) => setCustomCount(e.target.value)}
-                    className="w-10 bg-slate-900 text-teal-300 font-bold text-xs text-center border border-slate-700 rounded focus:outline-none"
-                  />
-                  <button
-                    onClick={() => handleSelectCount(Number(customCount) || 1)}
-                    className="text-[10px] font-extrabold text-teal-400 hover:text-teal-300 uppercase"
-                  >
-                    Apply
-                  </button>
-                </div>
               </div>
 
               {/* Actions for Selected Emails */}
