@@ -10,7 +10,7 @@ interface RouteProps {
 }
 
 export default function GuestRoute({ children }: RouteProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const mounted = useRef(false);
 
@@ -20,9 +20,13 @@ export default function GuestRoute({ children }: RouteProps) {
 
   useEffect(() => {
     if (mounted.current && !loading && isAuthenticated) {
-      router.replace('/');
+      if (user?.role === 'admin') {
+        router.replace('/admin');
+      } else {
+        router.replace('/');
+      }
     }
-  }, [isAuthenticated, loading, router]);
+  }, [isAuthenticated, user, loading, router]);
 
   if (loading) {
     return (

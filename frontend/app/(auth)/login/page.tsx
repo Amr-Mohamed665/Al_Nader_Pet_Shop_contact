@@ -37,7 +37,11 @@ export default function LoginPage() {
     try {
       const response = await login(values);
       if (response.success) {
-        router.replace('/');
+        if (response.data?.user?.role === 'admin') {
+          router.replace('/admin');
+        } else {
+          router.replace('/');
+        }
       } else {
         setFormError(response.message || 'Login failed. Please check your credentials.');
       }
