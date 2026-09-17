@@ -65,7 +65,7 @@ export default function CartDrawer() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🛒</span>
+            <i className="fa-solid fa-cart-shopping text-purple-600 text-lg" />
             <h2 className="text-lg font-bold text-slate-900">Your Shopping Cart</h2>
             <span className="bg-teal-50 text-teal-700 text-xs font-bold px-2 py-0.5 rounded-full border border-teal-100">
               {count} {count === 1 ? 'item' : 'items'}
@@ -73,9 +73,9 @@ export default function CartDrawer() {
           </div>
           <button
             onClick={closeCart}
-            className="p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-50 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors"
           >
-            ✕
+            <i className="fa-solid fa-xmark text-base" />
           </button>
         </div>
 
@@ -92,7 +92,7 @@ export default function CartDrawer() {
             ))
           ) : (
             <div className="flex flex-col items-center justify-center text-center h-full py-12">
-              <span className="text-5xl mb-3 select-none">🐾</span>
+              <i className="fa-solid fa-paw text-purple-300 text-5xl mb-3" />
               <h3 className="text-sm font-bold text-slate-800 mb-1">Your cart is empty</h3>
               <p className="text-xs text-slate-400 max-w-[200px] mb-6">
                 Add items to your cart to get started with your purchase.
@@ -118,9 +118,11 @@ export default function CartDrawer() {
 
             <div className="grid grid-cols-2 gap-3 pt-2">
               <Button variant="outline" className="w-full py-3 text-xs font-bold" href="/cart" onClick={closeCart}>
+                <i className="fa-solid fa-cart-shopping mr-1.5" />
                 View Cart
               </Button>
               <Button variant="primary" className="w-full py-3 text-xs font-bold shadow-md shadow-teal-500/10" href="/checkout" onClick={closeCart}>
+                <i className="fa-solid fa-credit-card mr-1.5" />
                 Checkout
               </Button>
             </div>

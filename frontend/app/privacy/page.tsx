@@ -80,8 +80,8 @@ export default function PrivacyPolicyPage() {
                 <h4 className="font-bold text-xs text-amber-900 mb-1">🔒 Security &amp; Fraud Prevention</h4>
                 <p className="text-xs text-slate-600">Protecting user accounts and verifying transaction authenticity.</p>
               </div>
-              <div className="p-3.5 rounded-2xl bg-blue-50/50 border border-blue-100/80">
-                <h4 className="font-bold text-xs text-blue-900 mb-1">✨ Experience Improvement</h4>
+              <div className="p-3.5 rounded-2xl bg-purple-50/50 border border-purple-100/80">
+                <h4 className="font-bold text-xs text-purple-900 mb-1">✨ Experience Improvement</h4>
                 <p className="text-xs text-slate-600">Optimizing website performance, catalog navigation, and personalized recommendations.</p>
               </div>
             </div>
@@ -131,9 +131,9 @@ export default function PrivacyPolicyPage() {
             <p>If you have any questions or concerns regarding our privacy practices, please contact us:</p>
             <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs space-y-2 font-medium">
               <p><strong>Al Nader Pets &amp; Accessories Trading L.L.C</strong></p>
-              <p>📍 {CONTACT_INFO.address}</p>
-              <p>📞 Phone: <a href={`tel:${CONTACT_INFO.phone.replace(/\s+/g, '')}`} className="text-purple-600 font-bold hover:underline">{CONTACT_INFO.phone}</a></p>
-              <p>✉️ Email: <a href={`mailto:${CONTACT_INFO.email}`} className="text-purple-600 font-bold hover:underline">{CONTACT_INFO.email}</a></p>
+              <p><i className="fa-solid fa-location-dot text-purple-600 mr-1.5" /> {CONTACT_INFO.address}</p>
+              <p><i className="fa-solid fa-phone text-purple-600 mr-1.5" /> Phone: <a href={`tel:${CONTACT_INFO.phone.replace(/\s+/g, '')}`} className="text-purple-600 font-bold hover:underline">{CONTACT_INFO.phone}</a></p>
+              <p><i className="fa-solid fa-envelope text-purple-600 mr-1.5" /> Email: <a href={`mailto:${CONTACT_INFO.email}`} className="text-purple-600 font-bold hover:underline">{CONTACT_INFO.email}</a></p>
             </div>
           </div>
         </div>

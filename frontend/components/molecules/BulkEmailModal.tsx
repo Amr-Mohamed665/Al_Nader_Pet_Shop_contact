@@ -259,6 +259,7 @@ export default function BulkEmailModal({ isOpen, onClose, selectedUsers }: BulkE
             onClick={onClose}
             className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-100 transition-colors"
           >
+            <i className="fa-solid fa-xmark mr-1.5" />
             Cancel
           </button>
           <button

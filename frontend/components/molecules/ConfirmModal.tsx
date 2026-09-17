@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Button from '@/components/atoms/Button';
+import { cn } from '@/utils/cn';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -53,7 +54,7 @@ export default function ConfirmModal({
         <div className="text-center space-y-2">
           {isDanger && (
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto text-xl font-bold">
-              🗑️
+              <i className="fa-solid fa-trash-can text-rose-600 text-xl" />
             </div>
           )}
           <h3 className="text-base font-extrabold text-slate-900">{title}</h3>
@@ -67,6 +68,7 @@ export default function ConfirmModal({
             onClick={onClose}
             className="flex-1 py-2 text-xs font-bold"
           >
+            <i className="fa-solid fa-xmark mr-1.5" />
             {cancelLabel}
           </Button>
           <Button
@@ -77,6 +79,7 @@ export default function ConfirmModal({
               isDanger ? 'bg-rose-600 hover:bg-rose-500 border-none' : ''
             }`}
           >
+            <i className={cn('mr-1.5', isDanger ? 'fa-solid fa-trash-can' : 'fa-solid fa-check')} />
             {confirmLabel}
           </Button>
         </div>

@@ -15,11 +15,11 @@ import { itemsService } from '@/services/items.service';
 import { useQuery } from '@tanstack/react-query';
 
 const LOADING_MESSAGES = [
-  { icon: '🐾', text: 'Connecting to server...' },
-  { icon: '⏳', text: 'Almost there, hang tight...' },
-  { icon: '🐶', text: 'Waking up the pet shop...' },
-  { icon: '🐱', text: 'Loading our furry friends...' },
-  { icon: '✨', text: 'Just a few more seconds...' },
+  { icon: <i className="fa-solid fa-paw text-2xl text-white animate-bounce-subtle" />, text: 'Connecting to server...' },
+  { icon: <i className="fa-solid fa-hourglass-half text-2xl text-white animate-bounce-subtle" />, text: 'Almost there, hang tight...' },
+  { icon: <i className="fa-solid fa-dog text-2xl text-white animate-bounce-subtle" />, text: 'Waking up the pet shop...' },
+  { icon: <i className="fa-solid fa-cat text-2xl text-white animate-bounce-subtle" />, text: 'Loading our furry friends...' },
+  { icon: <i className="fa-solid fa-star text-2xl text-white animate-bounce-subtle" />, text: 'Just a few more seconds...' },
 ];
 
 export default function Home() {
@@ -98,9 +98,7 @@ export default function Home() {
           <div className="relative flex items-center justify-center">
             <div className="absolute w-20 h-20 rounded-full bg-teal-400/20 animate-ping" />
             <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-lg shadow-teal-500/30">
-              <span className="text-2xl animate-bounce-subtle">
-                {LOADING_MESSAGES[msgIndex].icon}
-              </span>
+              {LOADING_MESSAGES[msgIndex].icon}
             </div>
           </div>
 

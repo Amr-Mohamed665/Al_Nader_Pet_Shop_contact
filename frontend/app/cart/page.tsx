@@ -43,7 +43,7 @@ export default function CartPage() {
             </p>
           </div>
           <Button variant="ghost" size="sm" onClick={clearCart} className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 font-bold text-xs">
-            🗑️ Clear Cart
+            <i className="fa-solid fa-trash-can text-rose-500 mr-1.5" /> Clear Cart
           </Button>
         </div>
 

@@ -63,17 +63,6 @@ export default function AccessoriesPage() {
     return `${animalName} Accessories`;
   };
 
-  const getEmoji = (name: string) => {
-    const lower = name.toLowerCase();
-    if (lower.includes('dog')) return '🐶';
-    if (lower.includes('cat')) return '🐱';
-    if (lower.includes('bird')) return '🐦';
-    if (lower.includes('hamster')) return '🐹';
-    if (lower.includes('reptil')) return '🦎';
-    if (lower.includes('fish')) return '🐠';
-    if (lower.includes('rabbit')) return '🐰';
-    return '🐾';
-  };
 
   return (
     <ShopLayout>
@@ -132,7 +121,6 @@ export default function AccessoriesPage() {
                         : 'bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100'
                     }`}
                   >
-                    <span>{getEmoji(tab.name)}</span>
                     <span className="capitalize">{tab.name}</span>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
                       activeTab === String(tab.id || tab._id)
@@ -149,7 +137,7 @@ export default function AccessoriesPage() {
             {/* Product Listing */}
             {displayedAccessories.length === 0 ? (
               <div className="py-20 text-center bg-white rounded-3xl border border-slate-200/80 shadow-sm">
-                <div className="text-4xl mb-3">📦</div>
+                <i className="fa-solid fa-box-open text-purple-300 text-4xl mb-3 block" />
                 <p className="text-sm font-bold text-slate-500">No accessories found.</p>
                 <p className="text-xs text-slate-400 mt-1">We are adding new accessories to this category soon.</p>
               </div>

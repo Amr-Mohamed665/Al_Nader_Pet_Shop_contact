@@ -86,7 +86,7 @@ export default function ItemDetailPage() {
           onClick={() => router.back()}
           className="text-xs font-bold text-slate-500 hover:text-teal-600 flex items-center gap-1.5 transition-colors cursor-pointer"
         >
-          ← Back
+          <i className="fa-solid fa-arrow-left text-slate-400" /> Back
         </button>
 
         {/* Item Layout Grid */}
@@ -102,7 +102,7 @@ export default function ItemDetailPage() {
               priority
               fallback={
                 <div className="h-full w-full flex items-center justify-center text-slate-400 font-extrabold text-5xl select-none">
-                  🐾
+                  <i className="fa-solid fa-paw text-purple-300 text-5xl" />
                 </div>
               }
             />
@@ -162,7 +162,7 @@ export default function ItemDetailPage() {
                     onClick={handleAddToCart}
                     className="flex-1 py-3.5 font-extrabold shadow-md shadow-teal-500/10 text-xs uppercase tracking-wider"
                   >
-                    Add {quantity} to Cart 🛒
+                    Add {quantity} to Cart <i className="fa-solid fa-cart-shopping ml-1.5" />
                   </Button>
 
                   <WishlistButton
@@ -183,7 +183,7 @@ export default function ItemDetailPage() {
                     className="flex-1 py-3 bg-[#25D366] hover:bg-[#1ebe5a] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                   >
                     <i className="fa-brands fa-whatsapp text-lg" />
-                    Inquire on WhatsApp 🐾
+                    Inquire on WhatsApp
                   </a>
 
                   <WishlistButton

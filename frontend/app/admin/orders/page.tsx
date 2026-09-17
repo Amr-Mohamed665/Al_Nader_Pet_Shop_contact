@@ -114,15 +114,15 @@ export default function AdminOrdersPage() {
             </div>
           ) : sortedOrders.length === 0 ? (
             <div className="py-12 text-center rounded-2xl border border-dashed border-slate-200 bg-white">
-              <p className="text-2xl mb-2">🔍</p>
+              <i className="fa-solid fa-magnifying-glass text-slate-300 text-2xl mb-2 block" />
               <p className="text-sm font-bold text-slate-500">
                 No orders with status &quot;{FILTER_TABS.find((t) => t.value === activeFilter)?.label}&quot;
               </p>
               <button
                 onClick={() => setActiveFilter('all')}
-                className="text-xs font-bold text-teal-600 hover:text-teal-700 mt-2 transition-colors"
+                className="text-xs font-bold text-teal-600 hover:text-teal-700 mt-2 transition-colors inline-flex items-center gap-1"
               >
-                Clear filter →
+                Clear filter <i className="fa-solid fa-arrow-right text-[10px]" />
               </button>
             </div>
           ) : (

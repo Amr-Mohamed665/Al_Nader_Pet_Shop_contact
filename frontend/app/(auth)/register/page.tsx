@@ -29,10 +29,11 @@ export default function RegisterPage() {
       name: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
-  const onSubmit = async (values: RegisterInput) => {
+  const onSubmit = async ({ confirmPassword: _, ...values }: RegisterInput) => {
     setLoading(true);
     setFormError('');
     try {
@@ -55,18 +56,27 @@ export default function RegisterPage() {
     <GuestRoute>
       <AuthLayout>
         <div className="space-y-6">
-          <div className="space-y-1">
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Create Account
-            </h2>
-            <p className="text-sm text-slate-500 font-medium">
-              Join Al Nader Pets to shop products and track your orders.
-            </p>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Create Account
+              </h2>
+              <p className="text-sm text-slate-500 font-medium">
+                Join Al Nader Pets to shop products and track your orders.
+              </p>
+            </div>
+            <Link
+              href="/"
+              className="inline-flex items-center text-xs font-bold text-slate-400 hover:text-purple-600 transition-colors bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/80"
+            >
+              <i className="fa-solid fa-arrow-left text-xs mr-1.5" />
+              Shop
+            </Link>
           </div>
 
           {formError && (
             <div className="bg-rose-50 border border-rose-200 text-xs text-rose-700 p-3.5 rounded-xl font-semibold flex items-center gap-2">
-              <span>⚠️</span>
+              <i className="fa-solid fa-triangle-exclamation text-rose-500 text-sm" />
               <span>{formError}</span>
             </div>
           )}
@@ -98,13 +108,22 @@ export default function RegisterPage() {
               type="password"
             />
 
+            <FormField
+              id="confirmPassword"
+              label="Confirm Password"
+              register={register}
+              error={errors.confirmPassword?.message}
+              placeholder="••••••••"
+              type="password"
+            />
+
             <Button
               type="submit"
               variant="primary"
               isLoading={loading}
               className="w-full py-3.5 font-extrabold text-xs sm:text-sm uppercase tracking-wider mt-2 bg-gradient-to-br from-[#7C4DDB] to-[#581C87] hover:opacity-95 text-white rounded-2xl shadow-[0_4px_20px_rgba(124,77,219,0.4)] hover:shadow-[0_0_30px_rgba(124,77,219,0.6)] hover:-translate-y-0.5 transition-all duration-300 border-0"
             >
-              Sign Up 📝
+              Sign Up <i className="fa-solid fa-user-plus ml-1.5" />
             </Button>
           </form>
 
@@ -112,8 +131,9 @@ export default function RegisterPage() {
 
           <p className="text-center text-xs text-slate-500">
             Already have an account?{' '}
-            <Link href="/login" className="font-bold text-[#7C4DDB] hover:text-[#581C87] hover:underline">
-              Login here
+            <Link href="/login" className="font-bold text-[#7C4DDB] hover:text-[#581C87] hover:underline inline-flex items-center gap-1">
+              <span>Login here</span>
+              <i className="fa-solid fa-arrow-right text-[10px]" />
             </Link>
           </p>
         </div>

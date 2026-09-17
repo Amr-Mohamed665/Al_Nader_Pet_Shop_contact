@@ -113,7 +113,9 @@ export default function CategoryShowcase() {
                     unoptimized
                   />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center text-xs text-slate-400 font-bold">🐾</div>
+                  <div className="h-full w-full flex items-center justify-center text-xs text-slate-400 font-bold">
+                    <i className="fa-solid fa-paw text-purple-300 text-xs" />
+                  </div>
                 )}
               </div>
 

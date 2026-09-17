@@ -368,6 +368,7 @@ export default function Navbar() {
                     href="/login"
                     className="px-3.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold text-purple-700 border-purple-200 hover:bg-purple-50 hover:border-purple-300 rounded-xl transition-all shadow-xs"
                   >
+                    <i className="fa-solid fa-right-to-bracket mr-1.5" />
                     Login
                   </Button>
                   <Button
@@ -376,6 +377,7 @@ export default function Navbar() {
                     href="/register"
                     className="px-3.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold text-white bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 rounded-xl shadow-md shadow-purple-600/25 transition-all hover:scale-102"
                   >
+                    <i className="fa-solid fa-user-plus mr-1.5" />
                     Register
                   </Button>
                 </div>
@@ -614,6 +616,7 @@ export default function Navbar() {
                     href="/login"
                     onClick={() => setMenuOpen(false)}
                   >
+                    <i className="fa-solid fa-right-to-bracket mr-2" />
                     Login
                   </Button>
                   <Button
@@ -623,6 +626,7 @@ export default function Navbar() {
                     href="/register"
                     onClick={() => setMenuOpen(false)}
                   >
+                    <i className="fa-solid fa-user-plus mr-2" />
                     Register
                   </Button>
                 </div>

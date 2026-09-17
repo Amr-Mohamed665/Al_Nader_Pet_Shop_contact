@@ -194,6 +194,7 @@ export default function ItemForm({
           isLoading={isLoading}
           className="px-6 py-3 font-extrabold shadow-md shadow-teal-500/10 text-xs uppercase tracking-wider"
         >
+          <i className="fa-solid fa-floppy-disk mr-1.5" />
           Save Item Details
         </Button>
       </div>

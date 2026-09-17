@@ -32,7 +32,7 @@ export default function MediaRenderer({
   if (!src) {
     return (fallback as any) || (
       <div className={`h-full w-full flex items-center justify-center text-slate-400 font-extrabold text-3xl select-none ${containerClassName}`}>
-        🐾
+        <i className="fa-solid fa-paw text-purple-300 text-3xl" />
       </div>
     );
   }
@@ -91,7 +91,7 @@ export function MediaThumbnail({ src, alt, className = '' }: MediaThumbnailProps
   if (!src) {
     return (
       <div className={`h-full w-full flex items-center justify-center text-slate-400 font-bold text-xl select-none ${className}`}>
-        🐾
+        <i className="fa-solid fa-paw text-purple-300 text-xl" />
       </div>
     );
   }

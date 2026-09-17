@@ -75,12 +75,24 @@ export default function ProfilePage() {
             {/* Avatar Banner */}
             <div className="flex items-center gap-4 pb-6 border-b border-slate-100">
               <div className="h-16 w-16 rounded-full bg-teal-100 text-teal-800 border-2 border-teal-200 flex items-center justify-center font-bold text-xl select-none">
-                {user?.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) || '👤'}
+                {user?.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) || (
+                  <i className="fa-solid fa-user text-teal-700 text-xl" />
+                )}
               </div>
               <div className="space-y-1">
                 <h2 className="text-lg font-extrabold text-slate-900">{user?.name || 'User'}</h2>
                 <Badge variant={user?.role === 'admin' ? 'secondary' : 'primary'}>
-                  {user?.role === 'admin' ? '⚡ Administrator' : '🛒 Customer'}
+                  {user?.role === 'admin' ? (
+                    <>
+                      <i className="fa-solid fa-bolt text-amber-500 mr-1" />
+                      Administrator
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa-solid fa-cart-shopping text-purple-600 mr-1" />
+                      Customer
+                    </>
+                  )}
                 </Badge>
               </div>
             </div>

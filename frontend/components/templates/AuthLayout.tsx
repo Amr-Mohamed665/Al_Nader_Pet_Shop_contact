@@ -73,7 +73,8 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             {/* Hero Content */}
             <div className="relative z-10 space-y-6 my-auto py-8">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-semibold px-3.5 py-1 rounded-full shadow-sm">
-                <span>🐾 Welcome</span>
+                <i className="fa-solid fa-paw" />
+                <span>Welcome</span>
               </div>
 
               <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
@@ -86,19 +87,19 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-                  <span className="text-lg">🐶</span>
+                  <i className="fa-solid fa-dog text-lg text-white" />
                   <span className="text-xs font-medium text-white">Healthy Pets</span>
                 </div>
                 <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-                  <span className="text-lg">🚀</span>
+                  <i className="fa-solid fa-truck-fast text-lg text-white" />
                   <span className="text-xs font-medium text-white">Fast Delivery</span>
                 </div>
                 <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-                  <span className="text-lg">✨</span>
+                  <i className="fa-solid fa-star text-lg text-white" />
                   <span className="text-xs font-medium text-white">Premium Quality</span>
                 </div>
                 <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/10">
-                  <span className="text-lg">🛡️</span>
+                  <i className="fa-solid fa-shield-halved text-lg text-white" />
                   <span className="text-xs font-medium text-white">24/7 Care</span>
                 </div>
               </div>

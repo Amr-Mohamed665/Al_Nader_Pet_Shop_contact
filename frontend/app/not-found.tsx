@@ -21,8 +21,8 @@ export default function NotFound() {
       <div className="flex flex-col items-center justify-center text-center py-16 px-4 max-w-2xl mx-auto animate-fade-in">
         {/* Animated Dog Icon */}
         <div className="relative mb-6">
-          <div className="text-8xl animate-bounce duration-1000 select-none">
-            🐶
+          <div className="text-7xl text-purple-600 animate-bounce duration-1000 select-none">
+            <i className="fa-solid fa-dog" />
           </div>
           {/* Lost Question Mark Icon */}
           <div className="absolute -top-3 -right-3 bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-extrabold shadow-md animate-pulse">

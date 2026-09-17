@@ -20,7 +20,7 @@ export default function Avatar({ name = '', className }: AvatarProps) {
         className
       )}
     >
-      {initials || '👤'}
+      {initials || <i className="fa-solid fa-user text-teal-700 text-xs" />}
     </div>
   );
 }

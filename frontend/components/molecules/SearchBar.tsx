@@ -40,7 +40,7 @@ export default function SearchBar({
       className={cn('relative flex items-center w-full max-w-md', className)}
     >
       <div className="absolute left-3.5 text-slate-400 pointer-events-none">
-        🔍
+        <i className="fa-solid fa-magnifying-glass text-[13px]" />
       </div>
       <input
         type="text"
@@ -55,7 +55,7 @@ export default function SearchBar({
           onClick={handleClear}
           className="absolute right-3.5 p-0.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
         >
-          ✕
+          <i className="fa-solid fa-xmark text-[12px]" />
         </button>
       )}
     </form>

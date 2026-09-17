@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from 'next/link'; // kept for "Create one here" link below
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '@/lib/validators';
@@ -58,18 +58,27 @@ export default function LoginPage() {
     <GuestRoute>
       <AuthLayout>
         <div className="space-y-6">
-          <div className="space-y-1">
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Welcome Back
-            </h2>
-            <p className="text-sm text-slate-500 font-medium">
-              Enter your credentials to access your account and orders.
-            </p>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Welcome Back
+              </h2>
+              <p className="text-sm text-slate-500 font-medium">
+                Enter your credentials to access your account and orders.
+              </p>
+            </div>
+            <Link
+              href="/"
+              className="inline-flex items-center text-xs font-bold text-slate-400 hover:text-purple-600 transition-colors bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/80"
+            >
+              <i className="fa-solid fa-arrow-left text-xs mr-1.5" />
+              Shop
+            </Link>
           </div>
 
           {formError && (
             <div className="bg-rose-50 border border-rose-200 text-xs text-rose-700 p-3.5 rounded-xl font-semibold flex items-center gap-2">
-              <span>⚠️</span>
+              <i className="fa-solid fa-triangle-exclamation text-rose-500 text-sm" />
               <span>{formError}</span>
             </div>
           )}
@@ -84,24 +93,14 @@ export default function LoginPage() {
               type="email"
             />
 
-            <div>
-              <FormField
-                id="password"
-                label="Password"
-                register={register}
-                error={errors.password?.message}
-                placeholder="••••••••"
-                type="password"
-              />
-              <div className="flex justify-end mt-1.5">
-                <Link
-                  href="/forgot-password"
-                  className="text-xs font-bold text-[#7C4DDB] hover:text-[#581C87] hover:underline transition-colors"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            </div>
+            <FormField
+              id="password"
+              label="Password"
+              register={register}
+              error={errors.password?.message}
+              placeholder="••••••••"
+              type="password"
+            />
 
             <Button
               type="submit"
@@ -109,7 +108,7 @@ export default function LoginPage() {
               isLoading={loading}
               className="w-full py-3.5 font-extrabold text-xs sm:text-sm uppercase tracking-wider mt-2 bg-gradient-to-br from-[#7C4DDB] to-[#581C87] hover:opacity-95 text-white rounded-2xl shadow-[0_4px_20px_rgba(124,77,219,0.4)] hover:shadow-[0_0_30px_rgba(124,77,219,0.6)] hover:-translate-y-0.5 transition-all duration-300 border-0"
             >
-              Sign In 🚪
+              Sign In <i className="fa-solid fa-right-to-bracket ml-1.5" />
             </Button>
           </form>
 
@@ -117,8 +116,9 @@ export default function LoginPage() {
 
           <p className="text-center text-xs text-slate-500">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="font-bold text-[#7C4DDB] hover:text-[#581C87] hover:underline">
-              Create one here
+            <Link href="/register" className="font-bold text-[#7C4DDB] hover:text-[#581C87] hover:underline inline-flex items-center gap-1">
+              <span>Create one here</span>
+              <i className="fa-solid fa-arrow-right text-[10px]" />
             </Link>
           </p>
         </div>

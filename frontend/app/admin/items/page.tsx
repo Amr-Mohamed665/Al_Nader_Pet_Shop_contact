@@ -633,7 +633,7 @@ export default function AdminItemsPage() {
             <ErrorState onRetry={() => itemsQuery.refetch()} description={error} />
           ) : filteredItems.length === 0 ? (
             <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center space-y-3">
-              <span className="text-3xl">🐶</span>
+              <i className="fa-solid fa-box-open text-purple-300 text-3xl block" />
               <h3 className="text-sm font-extrabold text-slate-800">No items found</h3>
               <p className="text-xs text-slate-400 max-w-sm mx-auto">
                 {searchTerm || selectedCategory !== 'all'

@@ -516,7 +516,7 @@ export default function AdminCategoriesPage() {
               className="font-extrabold text-xs uppercase tracking-wider shadow-md shadow-teal-500/10 flex-shrink-0"
               onClick={() => setView('add')}
             >
-              <span className="hidden sm:inline">Add New Category</span>
+              <span className="hidden sm:inline"><i className="fa-solid fa-plus mr-1.5" />Add New Category</span>
               <span className="sm:hidden"><i className="fa-solid fa-plus mr-1" />Add</span>
             </Button>
           </div>
@@ -543,7 +543,7 @@ export default function AdminCategoriesPage() {
             <ErrorState onRetry={refetch} description={(error as Error).message || 'Failed to load categories.'} />
           ) : categories.length === 0 ? (
             <div className="py-16 text-center rounded-2xl border border-dashed border-slate-200 bg-white">
-              <p className="text-2xl mb-2">🐾</p>
+              <i className="fa-solid fa-tags text-slate-300 text-2xl mb-2 block" />
               <p className="text-sm font-bold text-slate-500">No categories found.</p>
               <p className="text-xs text-slate-400 mt-1">Click &quot;Add New Category&quot; to get started.</p>
             </div>

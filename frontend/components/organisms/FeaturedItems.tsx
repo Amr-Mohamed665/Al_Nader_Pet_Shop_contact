@@ -24,7 +24,7 @@ export default function FeaturedItems({ items = [] }: FeaturedItemsProps) {
         </div>
         <Link href="/items" className="flex-shrink-0">
           <Button variant="ghost" size="sm" className="font-extrabold text-purple-600 hover:text-purple-700 hover:bg-purple-50">
-            View All Items →
+            View All Items <i className="fa-solid fa-arrow-right text-xs ml-1.5" />
           </Button>
         </Link>
       </div>

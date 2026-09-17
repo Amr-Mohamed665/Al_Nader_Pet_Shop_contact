@@ -15,8 +15,6 @@ export interface UserRecord {
   password: string;
   role: UserRole;
   createdAt: string;
-  resetPasswordToken?: string;
-  resetPasswordExpires?: string;
 }
 
 export interface PublicUser {

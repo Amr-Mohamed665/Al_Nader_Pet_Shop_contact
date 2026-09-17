@@ -36,7 +36,7 @@ export default function CartItemRow({ item, onUpdateQuantity, onRemove }: CartIt
             className="p-1.5 rounded-full hover:bg-rose-50"
             title="Remove item"
           >
-            🗑️
+            <i className="fa-solid fa-trash-can text-rose-500 text-xs" />
           </IconButton>
         </div>
       </div>

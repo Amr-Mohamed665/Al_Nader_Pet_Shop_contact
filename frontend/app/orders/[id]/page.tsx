@@ -48,7 +48,7 @@ export default function OrderDetailPage() {
             onClick={() => router.back()}
             className="text-xs font-bold text-slate-500 hover:text-teal-600 flex items-center gap-1.5 transition-colors cursor-pointer"
           >
-            ← Back to Orders
+            <i className="fa-solid fa-arrow-left text-slate-400" /> Back to Orders
           </button>
 
           {/* Order Header Card */}
@@ -183,10 +183,10 @@ export default function OrderDetailPage() {
           {/* CTA */}
           <div className="flex gap-4">
             <Button variant="outline" onClick={() => router.push('/orders')} className="font-bold text-xs">
-              ← All Orders
+              <i className="fa-solid fa-arrow-left text-slate-400 mr-1.5" /> All Orders
             </Button>
             <Button variant="primary" onClick={() => router.push('/items')} className="font-bold text-xs">
-              Continue Shopping 🛒
+              Continue Shopping <i className="fa-solid fa-cart-shopping ml-1.5" />
             </Button>
           </div>
         </div>

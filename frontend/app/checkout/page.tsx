@@ -407,7 +407,7 @@ export default function CheckoutPage() {
             {step === 'review' && checkoutData && (
               <div className="lg:col-span-2 space-y-6 animate-fade-in">
                 <div className="bg-teal-50 border border-teal-100 rounded-2xl p-5 flex gap-3 text-sm sm:text-base text-teal-800 font-medium">
-                  <span className="text-sm">💡</span>
+                  <i className="fa-solid fa-lightbulb text-amber-500 text-sm mt-0.5" />
                   <p>
                     Please review your delivery details and items below. If everything looks correct, click <strong>Confirm &amp; Place Order</strong> to submit your order.
                   </p>

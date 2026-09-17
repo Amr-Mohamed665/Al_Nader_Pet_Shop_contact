@@ -9,7 +9,7 @@ export default function AboutSection() {
           {/* Text Content */}
           <div className="flex flex-col justify-center p-8 sm:p-10 lg:p-14 order-2 lg:order-1">
             <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold text-[#7C4DDB] uppercase tracking-widest mb-3 bg-[#7C4DDB]/10 px-3 py-1 rounded-full self-start">
-              🐾 ABOUT AL NADER
+              <i className="fa-solid fa-paw text-[#7C4DDB]" /> ABOUT AL NADER
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-5 leading-tight">
               Your Trusted Pet Shop in the <span className="text-[#7C4DDB]">UAE</span>
@@ -28,7 +28,8 @@ export default function AboutSection() {
               href="/about"
               className="group inline-flex items-center gap-2 self-start px-7 py-3.5 bg-gradient-to-br from-[#7C4DDB] to-[#581C87] hover:opacity-95 text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider rounded-2xl transition-all duration-300 shadow-[0_4px_20px_rgba(124,77,219,0.4)] hover:shadow-[0_0_30px_rgba(124,77,219,0.6)] hover:-translate-y-1"
             >
-              Learn More About Us 🐾
+              <span>Learn More About Us</span>
+              <i className="fa-solid fa-arrow-right transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 

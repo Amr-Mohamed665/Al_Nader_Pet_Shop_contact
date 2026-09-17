@@ -81,7 +81,17 @@ export default function ItemCard({ item }: ItemCardProps) {
             onClick={handleAddToCart}
             className="px-3 py-1.5 text-xs font-bold"
           >
-            {available ? 'Add to Cart' : 'Sold Out'}
+            {available ? (
+              <>
+                <i className="fa-solid fa-cart-plus text-xs mr-1" />
+                Add to Cart
+              </>
+            ) : (
+              <>
+                <i className="fa-solid fa-ban text-xs mr-1" />
+                Sold Out
+              </>
+            )}
           </Button>
         </div>
       </div>

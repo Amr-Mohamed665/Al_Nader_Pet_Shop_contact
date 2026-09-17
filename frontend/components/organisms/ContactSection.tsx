@@ -63,14 +63,14 @@ export default function ContactSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Contact Details Column */}
           <div className="flex flex-col justify-center">
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-600 uppercase tracking-widest mb-3">
-              ✉️ CONTACT US
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-purple-600 uppercase tracking-widest mb-3">
+              <i className="fa-solid fa-envelope text-purple-600 text-xs" /> CONTACT US
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-5 leading-tight">
               Get in Touch with <span className="text-purple-600">Al Nader</span>
             </h2>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-8 font-medium">
-              Have questions about our puppies, pet accessories, or services? Fill out the form or reach us via our direct contact channels. We're here to help!
+              Have questions about our puppies, pet accessories, or services? Fill out the form or reach us via our direct contact channels. We&apos;re here to help!
             </p>
 
             <div className="space-y-4">
@@ -191,7 +191,10 @@ export default function ContactSection() {
                     Sending...
                   </>
                 ) : (
-                  'Send Message 🐾'
+                  <>
+                    Send Message
+                    <i className="fa-solid fa-paper-plane text-white text-xs ml-1" />
+                  </>
                 )}
               </button>
             </form>
