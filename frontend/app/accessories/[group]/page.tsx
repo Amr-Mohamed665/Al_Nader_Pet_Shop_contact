@@ -86,6 +86,7 @@ export default function GroupAccessoriesPage() {
             <div className="relative h-16 w-16 rounded-2xl overflow-hidden shadow-md flex-shrink-0 border border-slate-100">
               <img src={groupItem.image} alt={groupItem.name} className="object-cover w-full h-full" />
             </div>
+          ) : (
             <div className="text-2xl bg-purple-50 h-16 w-16 rounded-2xl flex items-center justify-center shadow-inner self-start md:self-auto flex-shrink-0">
               {groupItem.name.toLowerCase().includes('dog') ? (
                 <i className="fa-solid fa-dog text-amber-500" />
@@ -95,6 +96,7 @@ export default function GroupAccessoriesPage() {
                 <i className="fa-solid fa-feather-pointed text-cyan-500" />
               )}
             </div>
+          )}
         </div>
 
         {/* Subcategories Filter Chips */}
