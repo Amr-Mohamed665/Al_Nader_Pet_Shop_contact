@@ -50,6 +50,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
     description: 'Leashes, collars, food bowls, carriers, and grooming accessories.',
     image: '/images/accessories-category.jpg',
     order: 5,
+    isAccessory: true,
   },
 ];
 

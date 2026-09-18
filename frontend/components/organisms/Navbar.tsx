@@ -130,7 +130,7 @@ export default function Navbar() {
                 <Logo />
               </div>
               <span
-                className="text-sm sm:text-base md:text-lg font-medium text-purple-700 tracking-wide leading-none select-none mt-1 whitespace-nowrap"
+                className="hidden sm:block lg:block text-sm sm:text-sm lg:text-base font-medium text-purple-700 tracking-wide leading-none select-none mt-1 whitespace-nowrap md:hidden"
                 style={{ fontFamily: 'var(--font-satisfy), var(--font-great-vibes), cursive' }}
               >
                 Where Pets Become Family
@@ -138,7 +138,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Navigation - Absolute Centered so it NEVER moves on the X-axis */}
-            <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2 space-x-3 lg:space-x-6 xl:space-x-8 z-20">
+            <div className="hidden md:flex items-center justify-center flex-1 space-x-2 lg:space-x-5 xl:space-x-7 z-20 mx-2 lg:mx-4">
               <Link
                 href="/"
                 className={`text-xs md:text-sm font-bold transition-colors whitespace-nowrap ${
@@ -257,7 +257,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Action Buttons */}
-            <div className="hidden md:flex items-center justify-end gap-2 lg:gap-3 flex-shrink-0 ml-auto z-10">
+            <div className="hidden md:flex items-center justify-end gap-1.5 lg:gap-3 flex-shrink-0 z-10">
               {/* Wishlist Button */}
               <Link
                 href="/wishlist"
@@ -361,24 +361,24 @@ export default function Navbar() {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center gap-2 lg:gap-2.5">
+                <div className="flex items-center gap-1.5 lg:gap-2.5">
                   <Button
                     variant="outline"
                     size="md"
                     href="/login"
-                    className="px-3.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold text-purple-700 border-purple-200 hover:bg-purple-50 hover:border-purple-300 rounded-xl transition-all shadow-xs"
+                    className="px-2.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold text-purple-700 border-purple-200 hover:bg-purple-50 hover:border-purple-300 rounded-xl transition-all shadow-xs"
                   >
-                    <i className="fa-solid fa-right-to-bracket mr-1.5" />
-                    Login
+                    <i className="fa-solid fa-right-to-bracket md:mr-0 lg:mr-1.5" />
+                    <span className="hidden lg:inline">Login</span>
                   </Button>
                   <Button
                     variant="primary"
                     size="md"
                     href="/register"
-                    className="px-3.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold text-white bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 rounded-xl shadow-md shadow-purple-600/25 transition-all hover:scale-102"
+                    className="px-2.5 lg:px-5 py-2 text-xs lg:text-sm font-extrabold text-white bg-purple-600 hover:bg-purple-500 focus:ring-purple-500 rounded-xl shadow-md shadow-purple-600/25 transition-all hover:scale-102"
                   >
-                    <i className="fa-solid fa-user-plus mr-1.5" />
-                    Register
+                    <i className="fa-solid fa-user-plus md:mr-0 lg:mr-1.5" />
+                    <span className="hidden lg:inline">Register</span>
                   </Button>
                 </div>
               )}
