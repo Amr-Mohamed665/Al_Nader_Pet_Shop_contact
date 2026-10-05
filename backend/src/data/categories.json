@@ -1,0 +1,88 @@
+[
+  {
+    "id": "1",
+    "name": "Dogs",
+    "slug": "dogs",
+    "description": "Loyal, protective, and energetic canine companions.",
+    "image": "https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1074&auto=format&fit=crop",
+    "order": 1,
+    "parentId": null
+  },
+  {
+    "id": "2",
+    "name": "Cats",
+    "slug": "cats",
+    "description": "Independent, curious, and graceful feline companions.",
+    "image": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1043&auto=format&fit=crop",
+    "order": 2,
+    "parentId": null
+  },
+  {
+    "id": "3",
+    "name": "Birds",
+    "slug": "birds",
+    "description": "Intelligent, active, and colorful feathered companions.",
+    "image": "/images/birds-category.jpg",
+    "order": 3,
+    "parentId": null
+  },
+  {
+    "id": "5",
+    "name": "Hamster",
+    "slug": "hamster",
+    "description": "Cute, small, and active pocket rodents.",
+    "image": "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?q=80&w=1076&auto=format&fit=crop",
+    "order": 0,
+    "parentId": null
+  },
+  {
+    "id": "6",
+    "name": "Reptiles",
+    "slug": "reptiles",
+    "description": "Cold-blooded, fascinating, and quiet exotic pets.",
+    "image": "https://images.unsplash.com/photo-1504450874802-0ba2bcd9b5ae?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "order": 4,
+    "parentId": null,
+    "isAccessory": false
+  },
+  {
+    "id": "1787939097482",
+    "name": "Cat Accessories",
+    "slug": "cat-accessories",
+    "description": "",
+    "image": "https://res.cloudinary.com/lslwlv9d/image/fetch/w_800,q_auto,f_auto/https%3A%2F%2Fimg.kwcdn.com%2Fproduct%2Fopen%2F2023-10-16%2F1697456888580-94155d8e0e2947b2844b49d3902e981b-goods.jpeg%3FimageView2%2F2%2Fw%2F800%2Fq%2F70%2Fformat%2Favif",
+    "order": 6,
+    "parentId": null,
+    "isAccessory": true
+  },
+  {
+    "id": "1787939894650",
+    "name": "Dog Accessories",
+    "slug": "dog-accessories",
+    "description": "",
+    "image": "https://res.cloudinary.com/lslwlv9d/image/upload/v1787940617/uuztpitwckudg8wsbbff.jpg",
+    "order": 7,
+    "parentId": null,
+    "isAccessory": true
+  },
+  {
+    "id": "1787948158725",
+    "name": "Hamster Accessories",
+    "slug": "hamester-accessories",
+    "description": "",
+    "image": "https://res.cloudinary.com/lslwlv9d/image/upload/v1787948148/hq7zfzj2ekvhhv2s8vlw.jpg",
+    "order": 8,
+    "parentId": null,
+    "isAccessory": true
+  },
+  {
+    "id": "1787948579237",
+    "name": "Reptiles Accessories",
+    "slug": "reptiles-accessories",
+    "description": "",
+    "image": "https://res.cloudinary.com/lslwlv9d/image/fetch/w_800,q_auto,f_auto/https%3A%2F%2Fwww.petcity.com.au%2Fassets%2Fimages%2FHousing-2.jpg",
+    "order": 9,
+    "parentId": null,
+    "isAccessory": true
+  }
+]

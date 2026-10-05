@@ -1,0 +1,482 @@
+[
+  {
+    "id": "1787091273131",
+    "name": "Pomeranian",
+    "category": "dogs",
+    "price": 7500,
+    "description": "Small, lively, and affectionate. A playful companion with a fluffy coat.",
+    "image": "https://www.borrowmydoggy.com/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2F4ij0poqn%2Fproduction%2Fa3b04d63d14c2c4940c346df1f7cc7537340d400-800x600.jpg&w=1080&q=80",
+    "available": true,
+    "createdAt": "2026-08-18T22:14:33.131Z"
+  },
+  {
+    "id": "1787091490742",
+    "name": "Labrador Retriever Puppy",
+    "category": "dogs",
+    "price": 7500,
+    "description": "Playful, friendly, and energetic. A wonderful choice for active families.",
+    "image": "https://polarwhitelabs.com/wp-content/uploads/2025/05/IMG_7581-1152x1536.webp",
+    "available": true,
+    "createdAt": "2026-08-18T22:18:10.742Z"
+  },
+  {
+    "id": "1787091569460",
+    "name": "French Bulldog Puppy",
+    "category": "dogs",
+    "price": 7000,
+    "description": "Affectionate and playful with a charming personality. Great for apartment living.",
+    "image": "https://cdn11.bigcommerce.com/s-fduu8evurl/images/stencil/960w/uploaded_images/blue.jpg?t=1593485603",
+    "available": true,
+    "createdAt": "2026-08-18T22:19:29.460Z"
+  },
+  {
+    "id": "1787091698598",
+    "name": "Husky Puppy",
+    "category": "dogs",
+    "price": 8000,
+    "description": "Energetic and adventurous with a beautiful appearance. Best suited for active owners.",
+    "image": "https://www.everypaw.com/.imaging/mte/everypaw/500x500/dam/dog-breed-guides/siberian-husky/siberian-husky-1.jpg/jcr:content/siberian-husky-1.webp",
+    "available": true,
+    "createdAt": "2026-08-18T22:21:38.598Z"
+  },
+  {
+    "id": "1787091856279",
+    "name": "Rottweiler Puppy",
+    "category": "dogs",
+    "price": 7000,
+    "description": "Confident, loyal, and protective. Strongly bonded to its family with proper training.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/0/05/Rottweiler_puppy_-21603071920.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+    "available": true,
+    "createdAt": "2026-08-18T22:24:16.279Z"
+  },
+  {
+    "id": "1787092012895",
+    "name": "Cocker Spaniel Puppy",
+    "category": "dogs",
+    "price": 6000,
+    "description": "Friendly, affectionate, and playful, the Cocker Spaniel is known for its beautiful silky coat and gentle personality. It is an energetic and social companion that makes a wonderful family pet.",
+    "image": "https://i.pinimg.com/474x/d7/e9/14/d7e914a4d0a880452198aab4417d8be4.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T22:26:52.895Z"
+  },
+  {
+    "id": "1787092133091",
+    "name": "Shih Tzu Puppy",
+    "category": "dogs",
+    "price": 5000,
+    "description": "Gentle, affectionate, and playful. A small companion dog with a beautiful long coat.",
+    "image": "https://pikespeakvet.com/wp-content/uploads/2024/02/shih-tzu-7209095_1280-e1708297263722.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T22:28:53.091Z"
+  },
+  {
+    "id": "1787092318248",
+    "name": "Toy Poodle Puppy",
+    "category": "dogs",
+    "price": 5000,
+    "description": "Intelligent, playful, and affectionate, the Toy Poodle is a small companion known for its curly coat and lively personality.",
+    "image": "https://i.pinimg.com/474x/7d/14/83/7d14839bbe990807044889f3c46370c3.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T22:31:58.248Z"
+  },
+  {
+    "id": "1787092435719",
+    "name": "Maltese Puppy",
+    "category": "dogs",
+    "price": 5000,
+    "description": "Gentle, affectionate, and playful, the Maltese is a small companion with a beautiful silky white coat.",
+    "image": "https://i.pinimg.com/474x/b6/86/5d/b6865db526fa1ab1131794ca2d12f1cb.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T22:33:55.719Z"
+  },
+  {
+    "id": "1787092597911",
+    "name": "Yorkshire Terrier",
+    "category": "dogs",
+    "price": 6000,
+    "description": "Small, confident, and affectionate, the Yorkshire Terrier is known for its beautiful silky coat and energetic nature.",
+    "image": "https://images.squarespace-cdn.com/content/v1/66b142e9c5d1ce2057ef3c4c/7d5ac319-0995-4726-be0c-f0b0a94740b7/available-female-yorkshire-terrier-puppy-southern-california.jpg?format=1000w",
+    "available": true,
+    "createdAt": "2026-08-18T22:36:37.911Z"
+  },
+  {
+    "id": "1787092780195",
+    "name": "Doberman Puppy",
+    "category": "dogs",
+    "price": 7000,
+    "description": "Intelligent, athletic, and devoted, the Doberman is an elegant and highly trainable companion.",
+    "image": "https://static.wixstatic.com/media/36d80e_496ebb913f4648f49fa1b1ae5caa31d2~mv2.jpg/v1/fill/w_623,h_776,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/36d80e_496ebb913f4648f49fa1b1ae5caa31d2~mv2.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T22:39:40.195Z"
+  },
+  {
+    "id": "1787092980737",
+    "name": "Pug Puppy",
+    "category": "dogs",
+    "price": 5000,
+    "description": "Affectionate, playful, and charming, the Pug is a small companion known for its expressive face and friendly personality.",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5pVKpRfFZQtk-3leCS4IDPbfSav7XVCIVviI9tiTFdw&s",
+    "available": true,
+    "createdAt": "2026-08-18T22:43:00.737Z"
+  },
+  {
+    "id": "1787093263897",
+    "name": "Akita",
+    "category": "dogs",
+    "price": 1000,
+    "description": "Loyal, dignified, and independent, the Akita is a strong and devoted companion with a distinctive appearance.",
+    "image": "https://pethelpful.com/.image/NDowMDAwMDAwMDAwMTY1NDEx/puppy-of-red-new-years-akita-dogs-lies-on-stairs-in-nature-at-sunlight.jpg?profile=w1536&ar=16-9",
+    "available": true,
+    "createdAt": "2026-08-18T22:47:43.897Z"
+  },
+  {
+    "id": "1787093390425",
+    "name": "Bichon Frise",
+    "category": "dogs",
+    "price": 4500,
+    "description": "Cheerful, affectionate, and playful, the Bichon Frise is a small companion known for its soft, fluffy coat.",
+    "image": "https://res.cloudinary.com/deqangexi/image/upload/2la6iypst7l6cmmmgb7082xiepxg?_a=BACMTiGT",
+    "available": true,
+    "createdAt": "2026-08-18T22:49:50.425Z"
+  },
+  {
+    "id": "1787093494156",
+    "name": "Boston Terrier",
+    "category": "dogs",
+    "price": 5500,
+    "description": "Friendly, lively, and affectionate, the Boston Terrier is a compact breed with a playful and gentle temperament.",
+    "image": "https://i.pinimg.com/474x/ef/6d/5b/ef6d5bad03bdb5028d60094874010b7b.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T22:51:34.156Z"
+  },
+  {
+    "id": "1787093616516",
+    "name": "Budgerigar",
+    "category": "birds",
+    "price": 150,
+    "description": "Small, colorful, and social. A cheerful companion that is relatively easy to care for.",
+    "image": "https://images.squarespace-cdn.com/content/v1/6188b0ecfd31c1533aeb2496/1636531195273-RWPKW3DL2SC3DT4E8S8I/unsplash-image-zOKrNguZwKo.jpg?format=2500w",
+    "available": true,
+    "createdAt": "2026-08-18T22:53:36.516Z"
+  },
+  {
+    "id": "1787093677923",
+    "name": "Canary",
+    "category": "birds",
+    "price": 200,
+    "description": "Small and cheerful, famous for its beautiful singing and bright colors.",
+    "image": "https://cdn.britannica.com/33/226533-050-404C15AF/Canary-on-pear-branch.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T22:54:37.923Z"
+  },
+  {
+    "id": "1787093745361",
+    "name": "Cockatiel",
+    "category": "birds",
+    "price": 700,
+    "description": "Friendly, intelligent, and playful. Known for its expressive crest and ability to whistle.",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfba0mWjcJqUvrbO0FFJgsHwUe56tpBK3_ibmMLCvfWVEXLRftsBxcjAE2Os7z3Mvs_-c2Gl8NhmHSz8eVtcfa9BHdt4Ol_YaNLuobEeGI&s=10",
+    "available": true,
+    "createdAt": "2026-08-18T22:55:45.361Z"
+  },
+  {
+    "id": "1787093917917",
+    "name": "Indian Ringneck",
+    "category": "birds",
+    "price": 900,
+    "description": "Intelligent, active, and colorful. Can develop a strong bond with its owner.",
+    "image": "https://parrotsforsale.ca/wp-content/uploads/2025/12/What-is-he-eating%F0%9F%92%9A%F0%9F%92%9Aexplore-parrotlovers-indianringneck.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T22:58:37.917Z"
+  },
+  {
+    "id": "1787094033783",
+    "name": "Sun Conure",
+    "category": "birds",
+    "price": 1500,
+    "description": "Vibrant, playful, and social with a striking combination of bright colors.",
+    "image": "https://www.akronzoo.org/sites/default/files/styles/square_large/public/assets/animals/Vega%20-%20Sun%20conure%20at%20the%20Akron%20Zoo.png?h=b39c9232&itok=dRhay1Uk",
+    "available": true,
+    "createdAt": "2026-08-18T23:00:33.783Z"
+  },
+  {
+    "id": "1787094182903",
+    "name": "African Grey Parrot",
+    "category": "birds",
+    "price": 5000,
+    "description": "Highly intelligent and social, with an impressive ability to learn sounds and words.",
+    "image": "https://paradisepark.org.uk/wp-content/uploads/2015/05/African-Grey-Parrot-Paradise-Park-Cornwall-719x1000.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T23:03:02.903Z"
+  },
+  {
+    "id": "1787094407506",
+    "name": "Lovebird",
+    "category": "birds",
+    "price": 300,
+    "description": "Small, colorful, and affectionate. A lively bird that enjoys companionship.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Agapornis_roseicollis_-Peach-faced_Lovebird_pet_on_perch.jpg?utm_source=ar.wikipedia.org&utm_campaign=index&utm_content=original",
+    "available": true,
+    "createdAt": "2026-08-18T23:06:47.506Z"
+  },
+  {
+    "id": "1787094647220",
+    "name": "Cockatoo",
+    "category": "birds",
+    "price": 7000,
+    "description": "Intelligent, affectionate, and highly social, the Cockatoo is known for its beautiful crest, expressive personality, and strong bond with its owner. It is an active bird that thrives on attention, interaction, and mental stimulation.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Cacatua_galerita_2_-_Austin%27s_Ferry.jpg?utm_source=ar.wikipedia.org&utm_campaign=index&utm_content=original",
+    "available": true,
+    "createdAt": "2026-08-18T23:10:47.220Z"
+  },
+  {
+    "id": "1787094801092",
+    "name": "Macaw",
+    "category": "birds",
+    "price": 1500,
+    "description": "Large, intelligent, and highly social. Known for its spectacular colors and strong personality.",
+    "image": "https://cdn.britannica.com/35/3635-050-96241EC1/Scarlet-macaw-ara-macao.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T23:13:21.092Z"
+  },
+  {
+    "id": "1787095122729",
+    "name": "Syrian Hamster",
+    "category": "hamster",
+    "price": 60,
+    "description": "Friendly, gentle, and easy to handle, the Syrian Hamster is the largest and one of the most popular pet hamsters. It is best kept alone as an adult",
+    "image": "https://s3.animalia.bio/animals/photos/full/1x1/koreahamsterjpg.webp?id=e6d91ba2b9d88c61088ec00505a7022f",
+    "available": true,
+    "createdAt": "2026-08-18T23:18:42.729Z"
+  },
+  {
+    "id": "1787095672468",
+    "name": "Dwarf Russian Hamster",
+    "category": "hamster",
+    "price": 60,
+    "description": "Small, active, and adorable, the Russian Dwarf Hamster is a lively companion with a compact size and playful personality.",
+    "image": "https://s7d2.scene7.com/is/image/PetSmart/5194341_alt1",
+    "available": true,
+    "createdAt": "2026-08-18T23:27:52.468Z"
+  },
+  {
+    "id": "1787096235124",
+    "name": "Winter White Dwarf Hamster",
+    "category": "hamster",
+    "price": 70,
+    "description": "Sweet, active, and charming, the Winter White is known for its soft coat and may develop a lighter winter coloration.",
+    "image": "https://www.animalfunfacts.net/images/stories/pets/hamster/djungarian_dwarf_hamster_l.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T23:37:15.124Z"
+  },
+  {
+    "id": "1787096338043",
+    "name": "Campbell's Dwarf Hamster",
+    "category": "hamster",
+    "price": 70,
+    "description": "Energetic and curious, Campbell's Dwarf Hamster is a small, active pet that enjoys exploring and playing.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Campbell_hamster_agouti.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+    "available": true,
+    "createdAt": "2026-08-18T23:38:58.043Z"
+  },
+  {
+    "id": "1787096435572",
+    "name": "Roborovski Hamster",
+    "category": "hamster",
+    "price": 100,
+    "description": "Tiny, extremely energetic, and fast-moving, the Roborovski is best suited to owners who enjoy watching an active hamster.",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Phodopus_roborovskii.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+    "available": true,
+    "createdAt": "2026-08-18T23:40:35.572Z"
+  },
+  {
+    "id": "1787096542945",
+    "name": "Chinese Hamster",
+    "category": "hamster",
+    "price": 100,
+    "description": "Gentle and curious, the Chinese Hamster has a distinctive longer tail and a slim body. It is less commonly available than other pet hamsters",
+    "image": "https://www.enzo.com/wp-content/uploads/2023/01/2023-01-TN-What-are-the-Advantages-of-Using-Chinese-Hamster-Ovary-CHO-Cells-1.jpg?resize=832,797",
+    "available": true,
+    "createdAt": "2026-08-18T23:42:22.945Z"
+  },
+  {
+    "id": "1787096697252",
+    "name": "Leopard Gecko",
+    "category": "reptiles",
+    "price": 500,
+    "description": "Calm, friendly, and relatively easy to care for, making it an excellent beginner reptile.",
+    "image": "https://www.fearfreehappyhomes.com/wp-content/uploads/2021/04/bigstock-Leopard-Gecko-Licking-Lips-2587432.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T23:44:57.252Z"
+  },
+  {
+    "id": "1787096828016",
+    "name": "Bearded Dragon",
+    "category": "reptiles",
+    "price": 1200,
+    "description": "Friendly, curious, and easy to handle, the Bearded Dragon is one of the most popular pet lizards.",
+    "image": "https://natureplacelacrosse.org/wp-content/uploads/2024/06/20230908_083317-1-1381x1536.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T23:47:08.016Z"
+  },
+  {
+    "id": "1787096920496",
+    "name": "Crested Gecko",
+    "category": "reptiles",
+    "price": 850,
+    "description": "Gentle and active, with a unique appearance and excellent climbing ability.",
+    "image": "https://reptilia.ae/cdn/shop/files/DSC09943.jpg?v=1770906786",
+    "available": true,
+    "createdAt": "2026-08-18T23:48:40.496Z"
+  },
+  {
+    "id": "1787097113161",
+    "name": "Corn Snake",
+    "category": "reptiles",
+    "price": 550,
+    "description": "Calm, colorful, and manageable, making it a popular choice for beginner snake keepers.",
+    "image": "https://exoticskeeper.com/wp-content/uploads/image-138-1536x1133.jpeg",
+    "available": true,
+    "createdAt": "2026-08-18T23:51:53.161Z"
+  },
+  {
+    "id": "1787097337777",
+    "name": "Ball Python",
+    "category": "reptiles",
+    "price": 1500,
+    "description": "Calm and beautiful, known for its distinctive patterns and relaxed temperament.",
+    "image": "https://www.snakemuseum.com/4-thickbox_default/ball-pythons.jpg",
+    "available": true,
+    "createdAt": "2026-08-18T23:55:37.777Z"
+  },
+  {
+    "id": "1787097438184",
+    "name": "Russian Tortoise",
+    "category": "reptiles",
+    "price": 500,
+    "description": "Small, hardy, and gentle, making it a popular tortoise for suitable homes.",
+    "image": "https://zodiacvet.com/zodiac/generated/pet-care/russian-tortoise-care.webp",
+    "available": true,
+    "createdAt": "2026-08-18T23:57:18.184Z"
+  },
+  {
+    "id": "1787097499128",
+    "name": "Red-Footed Tortoise",
+    "category": "reptiles",
+    "price": 1300,
+    "description": "A calm tortoise with attractive red and yellow markings and a friendly nature.",
+    "image": "https://img1.wsimg.com/isteam/ip/db08553d-ab7e-4f74-8098-55ae5ce43ec5/Image%204.jpeg/:/cr=t:12.32%25,l:4.16%25,w:73.53%25,h:73.53%25/rs=w:365,h:365,cg:true,m",
+    "available": true,
+    "createdAt": "2026-08-18T23:58:19.128Z"
+  },
+  {
+    "id": "1787097833429",
+    "name": "Blue-Tongued Skink",
+    "category": "reptiles",
+    "price": 2500,
+    "description": "Docile and curious, recognized for its distinctive blue tongue and sturdy body",
+    "image": "https://sdzwildlifeexplorers.org/sites/default/files/2017-06/skink-03.jpg",
+    "available": true,
+    "createdAt": "2026-08-19T00:03:53.429Z"
+  },
+  {
+    "id": "1787097975881",
+    "name": "Chinese Water Dragon",
+    "category": "reptiles",
+    "price": 1500,
+    "description": "Active and eye-catching, with a distinctive green appearance and strong climbing ability.",
+    "image": "https://i.pinimg.com/474x/d6/fb/4a/d6fb4a6a6a713f2ffc24afea96c4bea9.jpg",
+    "available": true,
+    "createdAt": "2026-08-19T00:06:15.881Z"
+  },
+  {
+    "id": "1787098573172",
+    "name": "Dog Collar",
+    "category": "accessories",
+    "price": 35,
+    "description": "Comfortable and adjustable collar for everyday walks and outdoor activities.",
+    "image": "https://images.unsplash.com/photo-1667716705760-233650f8f3fe?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:16:13.172Z"
+  },
+  {
+    "id": "1787098634414",
+    "name": "Dog Leash",
+    "category": "accessories",
+    "price": 50,
+    "description": "Durable leash with a comfortable handle for safe and controlled walks",
+    "image": "https://images.unsplash.com/photo-1708062270853-ee7c66b69f07?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:17:14.414Z"
+  },
+  {
+    "id": "1787098775656",
+    "name": "Dog Bed",
+    "category": "accessories",
+    "price": 150,
+    "description": "Soft and comfortable bed providing a cozy place for your dog to rest.",
+    "image": "https://images.unsplash.com/photo-1646195164326-124b72fb9d34?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:19:35.656Z"
+  },
+  {
+    "id": "1787098902958",
+    "name": "Chew Toy",
+    "category": "accessories",
+    "price": 40,
+    "description": "Durable toy designed to satisfy natural chewing instincts and provide entertainment.",
+    "image": "https://plus.unsplash.com/premium_photo-1677102356411-01ce3d7d62f1?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:21:42.958Z"
+  },
+  {
+    "id": "1787099020055",
+    "name": "Pet Carrier",
+    "category": "accessories",
+    "price": 180,
+    "description": "Comfortable and secure carrier for transporting your pet safely.",
+    "image": "https://plus.unsplash.com/premium_photo-1663133698547-660d78434cdd?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:23:40.055Z"
+  },
+  {
+    "id": "1787099172459",
+    "name": "Cat Bowl",
+    "category": "accessories",
+    "price": 30,
+    "description": "Practical food and water bowl that is easy to clean and maintain",
+    "image": "https://images.unsplash.com/photo-1734654901149-02a9a5f7993b?q=80&w=1181&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:26:12.459Z"
+  },
+  {
+    "id": "1787099273041",
+    "name": "Cat Scratching Post",
+    "category": "accessories",
+    "price": 120,
+    "description": "Practical food and water bowl that is easy to clean and maintain",
+    "image": "https://images.unsplash.com/photo-1636543459630-8975a3548121?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:27:53.041Z"
+  },
+  {
+    "id": "1787099382669",
+    "name": "Bird Feeder",
+    "category": "accessories",
+    "price": 40,
+    "description": "Convenient feeder designed for clean and easy daily feeding.",
+    "image": "https://images.unsplash.com/photo-1621807147195-580cddd8f758?q=80&w=1102&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:29:42.669Z"
+  },
+  {
+    "id": "1787099504561",
+    "name": "Nesting Box",
+    "category": "accessories",
+    "price": 65,
+    "description": "Comfortable enclosed space designed to provide birds with a secure resting area.",
+    "image": "https://images.unsplash.com/photo-1717314160324-ecc6e845f66b?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "available": true,
+    "createdAt": "2026-08-19T00:31:44.561Z"
+  }
+]
